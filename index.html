@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Jak działa model językowy: od tokena, przez wagi i uwagę, po okno kontekstu, RAG i narzędzia. Materiał treningowy z interaktywnymi demami.">
+<meta name="color-scheme" content="light dark">
+<title>Od tokena do odpowiedzi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long column, max 760px, sticky part nav; every section = heading, one sentence, one demo, one "status" line */
+:root{
+  --bg:#F5F4F9;--fg:#1B1A26;--muted:#5F5D70;--line:#D9D7E4;--card:#FFFFFF;--soft:#ECEAF4;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--teal:#0F6E56;--teal-bg:#E1F5EE;--amber:#BA7517;--amber-bg:#FAEEDA;--coral:#993C1D;--coral-bg:#FAECE7;--gray:#5F5E5A;--gray-bg:#EDECE7;
+  --display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;--body:"Atkinson Hyperlegible",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,7vw,56px);letter-spacing:-.02em}
+h2{font-size:clamp(24px,4.5vw,32px);margin:0 0 6px}
+h3{font-size:21px;margin:0 0 4px}
+p{margin:0 0 14px;max-width:62ch}
+a{color:var(--purple)}
+.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+.hero p.lead{font-size:19px;color:var(--muted);margin-top:16px}
+.chain{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:28px}
+.chain a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:13px;line-height:1.3}
+.chain a b{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.chain a:hover{border-color:var(--purple)}
+@media (max-width:640px){.chain{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.conv{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.conv button{padding:8px 4px;font-size:13px;font-family:var(--mono)}@media (max-width:520px){.conv{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.ph{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:15px;margin:12px 0}.ph b{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}@media (max-width:520px){.ph{grid-template-columns:1fr}}
+nav.parts{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line);z-index:5;display:flex;gap:4px;overflow-x:auto;padding:8px 0;margin:0 -20px;padding-inline:20px}
+nav.parts a{flex:0 0 auto;font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 10px;border-radius:999px;border:1px solid transparent}
+nav.parts a:hover{border-color:var(--line);color:var(--fg)}
+.part{padding-top:56px}
+.part>header{margin-bottom:24px}
+.part>header .k{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
+.part>header p{color:var(--muted)}
+section.s{padding:28px 0 8px;border-top:1px solid var(--line)}
+section.s .k{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0 16px}
+.demo svg{width:100%;height:auto;display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.row label{font-size:14px;color:var(--muted);min-width:110px}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--purple)}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--purple)}
+button.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+textarea{width:100%;font:inherit;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);resize:vertical;min-height:72px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:15px;color:var(--muted);margin:10px 0 0}
+.out{font-size:16px;line-height:1.7;margin:10px 0 0}
+.chip{display:inline-block;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-size:14px;margin:2px 2px 2px 0;border:1px solid transparent}
+.c-purple{background:var(--purple-bg);color:var(--purple)}.c-teal{background:var(--teal-bg);color:var(--teal)}.c-amber{background:var(--amber-bg);color:var(--amber)}.c-coral{background:var(--coral-bg);color:var(--coral)}.c-gray{background:var(--gray-bg);color:var(--gray)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.tbl{overflow-x:auto}
+.status{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding:4px 12px;margin:8px 0 12px}
+.status b{color:var(--fg);font-weight:700}
+.bar{height:10px;border-radius:5px;background:var(--soft);overflow:hidden;display:flex}
+.dots{display:flex;gap:6px}.dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots span.on{background:var(--fg)}
+.srcW{background:var(--purple-bg);color:var(--purple);border-radius:3px;padding:0 2px}
+.srcC{background:var(--teal-bg);color:var(--teal);border-radius:3px;padding:0 2px}
+.srcX{background:var(--coral-bg);color:var(--coral);border-radius:3px;padding:0 2px}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+svg text{font-family:var(--body);font-size:13px;fill:var(--fg)}
+svg text.m{fill:var(--muted);font-size:12px}
+svg text.mono{font-family:var(--mono);font-size:12px}
+svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:pl 1.2s ease-in-out infinite}}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple)">MATERIAŁ TRENINGOWY · v2</div>
+  <h1>Od tokena do odpowiedzi</h1>
+  <p class="lead">Jak działa model językowy, w jednym łańcuchu. Od najmniejszej rzeczy, którą model widzi, po warstwę produktu, w której pracujesz. Każda sekcja ma jedno demo do ruszenia i jedną linię o tym, co jest sprawdzone, a co uproszczone.</p>
+  <div class="chain">
+    <a href="#p1"><b>I</b>Cegły<br>token · embedding · neuron · warstwa</a>
+    <a href="#p2"><b>II</b>Architektura<br>uwaga · głowy · blok</a>
+    <a href="#p3"><b>III</b>Skąd wagi<br>strata · gradient · trening</a>
+    <a href="#p4"><b>IV</b>Gdy piszesz<br>kontekst · cache · softmax</a>
+    <a href="#p5"><b>V</b>Produkt<br>tryby · RAG · narzędzia</a>
+    <a href="#p6"><b>VI</b>Rozmowy<br>10 typów pytań</a>
+  </div>
+</header>
+
+<nav class="parts" aria-label="Części">
+  <a href="#p1">I Cegły</a><a href="#p2">II Architektura</a><a href="#p3">III Skąd wagi</a><a href="#p4">IV Gdy piszesz</a><a href="#p5">V Produkt</a><a href="#p6">VI Rozmowy</a><a href="#status">Status</a>
+</nav>
+
+<!-- ===================== I ===================== -->
+<div class="part" id="p1">
+<header><div class="k">Część I</div><h2>Cegły</h2><p>Cztery rzeczy, z których zbudowane jest wszystko dalej. Jeśli te cztery są jasne, reszta to składanie.</p></header>
+
+<section class="s" id="s1">
+<div class="k">1 / 20</div><h3>Token</h3>
+<p>Model nie widzi liter ani słów. Widzi tokeny, czyli kawałki tekstu z ustalonego słownika (zwykle 50 do 200 tysięcy pozycji). Wpisz coś i zobacz podział.</p>
+<div class="demo">
+  <textarea id="tokIn" aria-label="Tekst do tokenizacji">Zmiana nocna: przestój linii 3 przez 40 minut, brak surowca.</textarea>
+  <div class="out" id="tokOut"></div>
+  <div class="note"><span class="num" id="tokN"></span></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> tekst jest cięty na tokeny ze słownika, polski potrzebuje więcej tokenów niż angielski. <b>Uproszczone:</b> podział tutaj to heurystyka, prawdziwy tokenizer (BPE) tnie inaczej, ale podobnie gęsto.</div>
+</section>
+
+<section class="s" id="s2">
+<div class="k">2 / 20</div><h3>Embedding</h3>
+<p>Każdy token dostaje wektor, czyli listę liczb. Tokeny o podobnym znaczeniu lądują blisko siebie. Kliknij słowo, zobaczysz trzech najbliższych sąsiadów.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 320" role="img" aria-label="Przestrzeń embeddingów, słowa jako punkty"><g id="embL"></g><g id="embP"></g></svg>
+  <div class="note" id="embN">Kliknij słowo.</div>
+</div>
+<div class="status"><b>Sprawdzone:</b> embeddingi są uczone, bliskość koduje podobieństwo użycia. <b>Uproszczone:</b> dwa wymiary zamiast kilku tysięcy. Przykład „król − mężczyzna + kobieta ≈ królowa" działa w praktyce, choć nie zawsze idealnie.</div>
+</section>
+
+<section class="s" id="s3">
+<div class="k">3 / 20</div><h3>Waga i neuron</h3>
+<p>Neuron mnoży wejścia przez wagi, sumuje, dodaje bias i przepuszcza przez funkcję aktywacji. Wagi to jedyne, czego model uczy się w treningu. Przesuwaj suwaki.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 250" role="img" aria-label="Pojedynczy neuron">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <line id="nl1" x1="112" y1="60" x2="296" y2="118" stroke="var(--teal)" stroke-width="3" stroke-linecap="round"/>
+    <line id="nl2" x1="112" y1="130" x2="292" y2="130" stroke="var(--teal)" stroke-width="3" stroke-linecap="round"/>
+    <line id="nl3" x1="112" y1="200" x2="296" y2="142" stroke="var(--teal)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="90" cy="60" r="22" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="90" y="65" text-anchor="middle" class="mono">2</text>
+    <circle cx="90" cy="130" r="22" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="90" y="135" text-anchor="middle" class="mono">5</text>
+    <circle cx="90" cy="200" r="22" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="90" y="205" text-anchor="middle" class="mono">1</text>
+    <text x="90" y="26" text-anchor="middle" class="m">wejścia</text>
+    <circle cx="330" cy="130" r="38" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="330" y="137" text-anchor="middle" style="font-size:22px">Σ</text>
+    <text x="330" y="190" text-anchor="middle" class="m">suma ważona + bias</text>
+    <line x1="372" y1="130" x2="404" y2="130" class="ln" marker-end="url(#ar)"/>
+    <rect x="410" y="102" width="110" height="56" rx="8" fill="var(--gray-bg)" stroke="var(--gray)"/><text x="465" y="126" text-anchor="middle">ReLU</text><text x="465" y="146" text-anchor="middle" class="mono">max(0, x)</text>
+    <line x1="526" y1="130" x2="566" y2="130" class="ln" marker-end="url(#ar)"/>
+    <circle cx="600" cy="130" r="28" fill="var(--amber-bg)" stroke="var(--amber)"/><text id="nOut" x="600" y="135" text-anchor="middle" class="mono">0.0</text>
+    <text x="600" y="178" text-anchor="middle" class="m">wyjście</text>
+  </svg>
+  <div id="nSl"></div>
+  <div class="note num" id="nEq"></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> definicja neuronu i ReLU. <b>Istotne:</b> w transformerze „neuron" to poziom niżej niż operacje, o których się mówi (macierze, uwaga). Intuicja się przenosi, słownictwo nie zawsze.</div>
+</section>
+
+<section class="s" id="s4">
+<div class="k">4 / 20</div><h3>Warstwa</h3>
+<p>Warstwa to wiele neuronów liczonych naraz: wektor wejściowy razy macierz wag. Trzy wejścia i cztery wyjścia dają dwanaście wag. Prawdziwe warstwy mają ich miliony.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 260" role="img" aria-label="Warstwa w pełni połączona, 3 wejścia i 4 wyjścia">
+    <g id="layerLines"></g>
+    <g id="layerNodes"></g>
+    <text x="120" y="30" text-anchor="middle" class="m">wejście (3)</text>
+    <text x="400" y="30" text-anchor="middle" class="m">wyjście (4)</text>
+    <text x="560" y="110" class="mono">3 × 4 = 12 wag</text>
+    <text x="560" y="132" class="mono">+ 4 bias</text>
+    <text x="560" y="154" class="mono">= 16 parametrów</text>
+  </svg>
+  <div class="tbl"><table>
+    <tr><th>Warstwa</th><th>Wejścia × wyjścia</th><th>Wagi</th></tr>
+    <tr><td>Ten rysunek</td><td class="num">3 × 4</td><td class="num">12</td></tr>
+    <tr><td>Mały model, jedna macierz</td><td class="num">4 096 × 4 096</td><td class="num">16,8 mln</td></tr>
+    <tr><td>Cały duży model</td><td>setki macierzy</td><td class="num">10¹¹ i więcej</td></tr>
+  </table></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> warstwa gęsta to mnożenie przez macierz, liczba wag rośnie z iloczynem wymiarów. <b>Uproszczone:</b> rzędy wielkości orientacyjne.</div>
+</section>
+</div>
+
+<!-- ===================== II ===================== -->
+<div class="part" id="p2">
+<header><div class="k">Część II</div><h2>Architektura</h2><p>Jak z cegieł powstaje transformer. Jedna operacja robi tu całą różnicę: uwaga.</p></header>
+
+<section class="s" id="s5">
+<div class="k">5 / 20</div><h3>Uwaga</h3>
+<p>Każdy token „patrzy" na wszystkie wcześniejsze i waży, które są dla niego ważne. Kliknij dowolne słowo, zobaczysz, na co patrzy. Grubsza linia to większa waga.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 200" role="img" aria-label="Wagi uwagi między tokenami zdania"><g id="attArcs"></g><g id="attTok"></g></svg>
+  <div class="note" id="attN"></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> mechanizm uwagi liczy wagi między tokenami i miesza ich wektory. <b>Uproszczone:</b> wagi tu ręcznie dobrane do intuicji, prawdziwe wyglądają mniej czytelnie.</div>
+</section>
+
+<section class="s" id="s6">
+<div class="k">6 / 20</div><h3>Wiele głów</h3>
+<p>Jedna „głowa" uwagi uczy się jednego typu relacji. Model ma ich kilkadziesiąt w każdej warstwie. Ten sam token, trzy głowy, trzy różne pytania.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 300" role="img" aria-label="Trzy głowy uwagi dla tego samego tokena"><g id="heads"></g></svg>
+</div>
+<div class="status"><b>Sprawdzone:</b> głowy specjalizują się, badania interpretowalności pokazują głowy składniowe, pozycyjne, odniesień. <b>Uproszczone:</b> etykiety „składnia / odniesienie / pozycja" są czystsze niż rzeczywistość.</div>
+</section>
+
+<section class="s" id="s7">
+<div class="k">7 / 20</div><h3>Blok transformera i stos</h3>
+<p>Jeden blok to uwaga, potem mała sieć gęsta (FFN), każda z połączeniem skrótowym. Model to kilkadziesiąt takich bloków jeden na drugim. Pozycję tokena model zna tylko dlatego, że dostaje ją doklejoną do embeddingu.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 330" role="img" aria-label="Blok transformera: uwaga, FFN, połączenia skrótowe, stos N bloków">
+    <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <rect x="120" y="20" width="300" height="290" rx="14" fill="none" stroke="var(--line)" stroke-dasharray="5 5"/>
+    <text x="135" y="42" class="m">jeden blok</text>
+    <rect x="200" y="60" width="140" height="44" rx="8" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="270" y="87" text-anchor="middle">embedding + pozycja</text>
+    <line x1="270" y1="104" x2="270" y2="126" class="ln" marker-end="url(#ar2)"/>
+    <rect x="200" y="130" width="140" height="44" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="270" y="157" text-anchor="middle">uwaga (wiele głów)</text>
+    <circle cx="270" cy="198" r="10" fill="var(--card)" stroke="var(--muted)"/><text x="270" y="202" text-anchor="middle" class="m">+</text>
+    <line x1="270" y1="174" x2="270" y2="186" class="ln"/>
+    <line x1="270" y1="208" x2="270" y2="226" class="ln" marker-end="url(#ar2)"/>
+    <rect x="200" y="230" width="140" height="44" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="270" y="257" text-anchor="middle">FFN (sieć gęsta)</text>
+    <circle cx="270" cy="296" r="10" fill="var(--card)" stroke="var(--muted)"/><text x="270" y="300" text-anchor="middle" class="m">+</text>
+    <line x1="270" y1="274" x2="270" y2="284" class="ln"/>
+    <path d="M200 82 L160 82 L160 198 L258 198" class="ln" stroke-dasharray="3 3"/>
+    <path d="M200 252 L160 252 L160 296 L258 296" class="ln" stroke-dasharray="3 3"/>
+    <text x="150" y="150" text-anchor="end" class="m">skrót</text>
+    <rect x="460" y="60" width="190" height="34" rx="6" fill="var(--soft)" stroke="var(--line)"/><text x="555" y="82" text-anchor="middle" class="m">blok N</text>
+    <rect x="460" y="104" width="190" height="34" rx="6" fill="var(--soft)" stroke="var(--line)"/><text x="555" y="126" text-anchor="middle" class="m">…</text>
+    <rect x="460" y="148" width="190" height="34" rx="6" fill="var(--soft)" stroke="var(--line)"/><text x="555" y="170" text-anchor="middle" class="m">blok 3</text>
+    <rect x="460" y="192" width="190" height="34" rx="6" fill="var(--soft)" stroke="var(--line)"/><text x="555" y="214" text-anchor="middle" class="m">blok 2</text>
+    <rect x="460" y="236" width="190" height="34" rx="6" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="555" y="258" text-anchor="middle">blok 1</text>
+    <text x="555" y="300" text-anchor="middle" class="m">N = 30 do 100+</text>
+  </svg>
+</div>
+<div class="status"><b>Sprawdzone:</b> struktura bloku, połączenia skrótowe, kodowanie pozycji, stos bloków. <b>Uproszczone:</b> pominięte normalizacje i szczegóły wariantów (RoPE, MoE).</div>
+</section>
+</div>
+
+<!-- ===================== III ===================== -->
+<div class="part" id="p3">
+<header><div class="k">Część III</div><h2>Skąd się biorą wagi</h2><p>Wagi nikt nie pisze ręcznie. Powstają z jednej liczby: błędu. I jednej operacji: kroku w dół.</p></header>
+
+<section class="s" id="s8">
+<div class="k">8 / 20</div><h3>Strata</h3>
+<p>Model przewiduje rozkład na następny token. Strata mówi, jak bardzo się pomylił: im mniej prawdopodobieństwa dał prawidłowemu tokenowi, tym większa kara. Kliknij, który token był prawidłowy.</p>
+<div class="demo">
+  <div class="note" style="margin:0 0 8px">Kontekst: „Stolica Francji to" → model przewidział:</div>
+  <div id="lossBars"></div>
+  <div class="out"><span class="num" id="lossOut"></span></div>
+  <div class="note">strata = −ln(p prawidłowego tokena). Trening szuka wag, które tę liczbę obniżają średnio na miliardach przykładów.</div>
+</div>
+<div class="status"><b>Sprawdzone:</b> cross-entropy jako strata w pretrainingu. <b>Uproszczone:</b> rozkład na 6 tokenów zamiast na cały słownik.</div>
+</section>
+
+<section class="s" id="s9">
+<div class="k">9 / 20</div><h3>Gradient</h3>
+<p>Gradient to nachylenie straty względem jednej wagi. Mówi, w którą stronę ruszyć wagę, żeby strata zmalała. Klikaj „Krok". Potem ustaw długość kroku na maksimum i zobacz, co się dzieje.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 300" role="img" aria-label="Spadek gradientu po krzywej straty">
+    <text x="60" y="30" class="m">strata</text>
+    <line x1="60" y1="40" x2="60" y2="250" class="ln"/><line x1="60" y1="250" x2="620" y2="250" class="ln"/>
+    <text x="340" y="290" text-anchor="middle" class="m">wartość jednej wagi</text>
+    <line x1="438" y1="48" x2="438" y2="250" stroke="var(--line)" stroke-dasharray="4 4"/><text x="444" y="46" class="m">minimum</text>
+    <polyline id="gCv" fill="none" stroke="var(--purple)" stroke-width="2"/>
+    <g id="gTr"></g>
+    <line id="gTan" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/>
+    <circle id="gBall" r="8" fill="var(--amber-bg)" stroke="var(--amber)" stroke-width="1.5"/>
+  </svg>
+  <div class="row"><label for="gLr">Długość kroku</label><input type="range" id="gLr" min="0.05" max="1.8" step="0.05" value="0.3"><span class="num" id="gLrV">0.30</span></div>
+  <div class="row"><button id="gGo">Krok</button><button id="gRs">Reset</button><span class="note num" id="gSt" style="margin:0"></span></div>
+  <div class="out" id="gMsg"></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> gradient jako pochodna, krok w stronę przeciwną, za duży krok rozbiega trening. <b>Uproszczone:</b> jedna gładka krzywa zamiast powierzchni o miliardach wymiarów; prawdziwe optymalizatory (Adam) dodają pęd i adaptację kroku.</div>
+</section>
+
+<section class="s" id="s10">
+<div class="k">10 / 20</div><h3>Backpropagation</h3>
+<p>Skąd gradient dla wagi w pierwszej warstwie, skoro strata jest na końcu? Z reguły łańcuchowej: błąd płynie wstecz przez każdą warstwę, mnożony po drodze.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 220" role="img" aria-label="Przepływ w przód i wstecz przez trzy warstwy">
+    <defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <text x="40" y="40" class="m">w przód: dane → predykcja</text>
+    <text x="40" y="200" class="m">wstecz: błąd → poprawki wag</text>
+    <rect x="40" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="95" y="115" text-anchor="middle">warstwa 1</text>
+    <rect x="200" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="255" y="115" text-anchor="middle">warstwa 2</text>
+    <rect x="360" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="415" y="115" text-anchor="middle">warstwa 3</text>
+    <rect x="520" y="80" width="120" height="60" rx="8" fill="var(--coral-bg)" stroke="var(--coral)"/><text x="580" y="115" text-anchor="middle">strata</text>
+    <line x1="154" y1="98" x2="196" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <line x1="314" y1="98" x2="356" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <line x1="474" y1="98" x2="516" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <line x1="516" y1="124" x2="474" y2="124" stroke="var(--amber)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <line x1="356" y1="124" x2="314" y2="124" stroke="var(--amber)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <line x1="196" y1="124" x2="154" y2="124" stroke="var(--amber)" stroke-width="1.5" marker-end="url(#ar3)"/>
+    <text x="95" y="165" text-anchor="middle" class="mono">∂L/∂w₁</text>
+    <text x="255" y="165" text-anchor="middle" class="mono">∂L/∂w₂</text>
+    <text x="415" y="165" text-anchor="middle" class="mono">∂L/∂w₃</text>
+  </svg>
+</div>
+<div class="status"><b>Sprawdzone:</b> backprop to reguła łańcuchowa zastosowana warstwa po warstwie, liczona automatycznie. <b>Uproszczone:</b> pominięte wzory.</div>
+</section>
+
+<section class="s" id="s11">
+<div class="k">11 / 20</div><h3>Pretraining, post-training, fine-tuning</h3>
+<p>Ten sam mechanizm (strata, gradient, krok) uruchamiany na różnych danych daje różne modele. Surowy model po pretrainingu dokańcza tekst. Asystentem robi go dopiero post-training.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 150" role="img" aria-label="Etapy treningu">
+    <defs><marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <rect x="20" y="40" width="150" height="70" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="95" y="68" text-anchor="middle">Pretraining</text><text x="95" y="90" text-anchor="middle" class="m">biliony tokenów</text>
+    <line x1="174" y1="75" x2="186" y2="75" class="ln" marker-end="url(#ar4)"/>
+    <rect x="190" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="265" y="68" text-anchor="middle">SFT</text><text x="265" y="90" text-anchor="middle" class="m">przykłady dialogów</text>
+    <line x1="344" y1="75" x2="356" y2="75" class="ln" marker-end="url(#ar4)"/>
+    <rect x="360" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="435" y="68" text-anchor="middle">RLHF / preferencje</text><text x="435" y="90" text-anchor="middle" class="m">ocena odpowiedzi</text>
+    <line x1="514" y1="75" x2="526" y2="75" class="ln" marker-end="url(#ar4)"/>
+    <rect x="530" y="40" width="130" height="70" rx="8" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="595" y="68" text-anchor="middle">Fine-tuning</text><text x="595" y="90" text-anchor="middle" class="m">Twoje dane</text>
+  </svg>
+  <div class="tbl"><table>
+    <tr><th>Etap</th><th>Dane</th><th>Co daje</th><th>Kto</th></tr>
+    <tr><td>Pretraining</td><td>Internet, książki, kod</td><td>Język, wiedza ogólna, wzorce</td><td>Laboratorium</td></tr>
+    <tr><td>SFT</td><td>Pytanie → dobra odpowiedź</td><td>Format asystenta, zwięzłość, odmowy</td><td>Laboratorium</td></tr>
+    <tr><td>RLHF</td><td>Dwie odpowiedzi, która lepsza</td><td>Ton, ostrożność, „pomocność"</td><td>Laboratorium</td></tr>
+    <tr><td>Fine-tuning</td><td>Twoje przykłady</td><td>Styl, żargon, format domeny</td><td>Ty / firma</td></tr>
+  </table></div>
+  <div class="tbl"><table>
+    <tr><th>Potrzeba</th><th>Fine-tuning</th><th>Kontekst / RAG</th></tr>
+    <tr><td>Styl i format zawsze ten sam</td><td>Mocny</td><td>Działa, kosztuje tokeny</td></tr>
+    <tr><td>Znajomość 500 dokumentów</td><td>Słaby, fakty się rozmywają</td><td>Mocny</td></tr>
+    <tr><td>Dane zmieniają się co tydzień</td><td>Odpada</td><td>Podmieniasz plik</td></tr>
+    <tr><td>Cytowanie źródła</td><td>Nie da się</td><td>Tak</td></tr>
+    <tr><td>Ryzyko</td><td>Pewne zmyślenia w Twoim żargonie</td><td>Rozmycie uwagi przy długim oknie</td></tr>
+  </table></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> podział na pretraining i post-training, FT lepszy do stylu, RAG do faktów. <b>Logiczne, bez liczby:</b> próg opłacalności FT zależy od wolumenu zapytań.</div>
+</section>
+</div>
+
+<!-- ===================== IV ===================== -->
+<div class="part" id="p4">
+<header><div class="k">Część IV</div><h2>Gdy piszesz</h2><p>Co się dzieje od momentu, gdy wciskasz Enter, do ostatniego tokena odpowiedzi. Wagi już się nie zmieniają.</p></header>
+
+<section class="s" id="s12">
+<div class="k">12 / 20</div><h3>Okno kontekstu</h3>
+<p>Instrukcje, dokumenty, historia rozmowy i Twoje pytanie to jeden ciąg tokenów. Model nie widzi plików ani wiadomości, tylko ten ciąg. Klikaj „Dalej".</p>
+<div class="demo">
+  <div class="legend"><span><i style="background:var(--gray)"></i>Instrukcje</span><span><i style="background:var(--teal)"></i>Dokumenty</span><span><i style="background:var(--purple)"></i>Rozmowa</span><span><i style="background:var(--coral)"></i>Pytanie</span><span><i style="background:var(--amber)"></i>Odpowiedź</span></div>
+  <svg viewBox="0 0 680 150" role="img" aria-label="Okno kontekstu jako rząd tokenów"><g id="cxArcs"></g><g id="cxTok"></g><rect id="cxPend" x="0" y="80" width="12" height="22" rx="3" fill="none" stroke="var(--amber)" stroke-dasharray="3 2" style="opacity:0"/><line x1="40" y1="118" x2="640" y2="118" class="ln"/><line x1="40" y1="112" x2="40" y2="124" class="ln"/><line x1="640" y1="112" x2="640" y2="124" class="ln"/><text x="340" y="142" text-anchor="middle" class="m">okno kontekstu: jeden ciąg z twardym limitem</text></svg>
+  <div class="note" id="cxLbl"></div><div class="out" id="cxCap" style="min-height:80px"></div>
+  <div class="row"><button id="cxPrev">Wstecz</button><div class="dots" id="cxDots"></div><button id="cxNext">Dalej</button></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> jedno okno, przetwarzanie równoległe, brak pamięci między wywołaniami, generowanie token po tokenie. <b>Uproszczone:</b> łuki uwagi, ucinanie historii zależy od aplikacji.</div>
+</section>
+
+<section class="s" id="s13">
+<div class="k">13 / 20</div><h3>KV cache</h3>
+<p>Każdy nowy token musi spojrzeć na wszystkie poprzednie. Bez pamięci podręcznej model liczyłby je od nowa za każdym razem. Cache trzyma wyniki dla starych tokenów, ale zajmuje pamięć proporcjonalną do długości kontekstu.</p>
+<div class="demo">
+  <div class="row"><label for="kvN">Długość kontekstu</label><input type="range" id="kvN" min="1" max="200" step="1" value="40"><span class="num" id="kvNV">40k tokenów</span></div>
+  <div class="tbl"><table>
+    <tr><th></th><th>Bez cache</th><th>Z cache</th></tr>
+    <tr><td>Operacje na 1 nowy token</td><td class="num" id="kvA"></td><td class="num" id="kvB"></td></tr>
+    <tr><td>Pamięć cache (orientacyjnie)</td><td>0</td><td class="num" id="kvM"></td></tr>
+  </table></div>
+  <div class="note">Dlatego długi kontekst jest wolniejszy i droższy, a dostawcy cache'ują powtarzające się początki rozmowy (prompt caching).</div>
+</div>
+<div class="status"><b>Sprawdzone:</b> KV cache zamienia koszt kwadratowy na liniowy przy generowaniu, pamięć rośnie liniowo z kontekstem. <b>Uproszczone:</b> liczby pamięci są rzędem wielkości, zależą od modelu.</div>
+</section>
+
+<section class="s" id="s14">
+<div class="k">14 / 20</div><h3>Softmax i temperatura</h3>
+<p>Na końcu model ma liczbę dla każdego tokena ze słownika. Softmax zamienia je na prawdopodobieństwa. Temperatura spłaszcza lub wyostrza rozkład. Potem token jest losowany. Dlatego ta sama rozmowa daje różne odpowiedzi.</p>
+<div class="demo">
+  <div class="note" style="margin:0 0 8px">Kontekst: „Stolica Francji to"</div>
+  <div class="row"><label for="tmp">Temperatura</label><input type="range" id="tmp" min="0.1" max="2" step="0.1" value="1"><span class="num" id="tmpV">1.0</span></div>
+  <div id="smBars"></div>
+  <div class="row" style="margin-top:10px"><button id="smGo">Losuj token</button><button id="smClr">Wyczyść</button><span class="out num" id="smHist" style="margin:0"></span></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> softmax, temperatura, próbkowanie. <b>Uproszczone:</b> 6 kandydatów zamiast całego słownika; produkty dodają top-p i inne filtry.</div>
+</section>
+
+<section class="s" id="s15">
+<div class="k">15 / 20</div><h3>Halucynacje</h3>
+<p>Brak faktu nie wywołuje błędu. Wagi znają kształt odpowiedzi, więc generują coś prawdopodobnego. Przełącz, czy fakt jest w kontekście.</p>
+<div class="demo">
+  <div class="row"><button id="hlA" class="on">Fakt jest w kontekście</button><button id="hlB">Faktu nie ma nigdzie</button></div>
+  <div class="out" id="hlOut"></div>
+  <div class="note" id="hlN"></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> halucynacje to skutek generowania najbardziej prawdopodobnej kontynuacji, nie „błędu" w zwykłym sensie. Post-training uczy mówić „nie wiem", ale nie usuwa mechanizmu.</div>
+</section>
+</div>
+
+<!-- ===================== V ===================== -->
+<div class="part" id="p5">
+<header><div class="k">Część V</div><h2>Produkt</h2><p>Warstwa, w której pracujesz. Tu decydujesz, co trafia do okna i jakich odpowiedzi możesz się spodziewać.</p></header>
+
+<section class="s" id="s16">
+<div class="k">16 / 20</div><h3>Trzy tryby: same wagi, mix, sam kontekst</h3>
+<p>Każda odpowiedź płynie z dwóch źródeł naraz, ale proporcja się zmienia. Wybierz tryb. Kolor w odpowiedzi pokazuje, skąd pochodzi fragment.</p>
+<div class="demo">
+  <div class="row"><button class="md on" data-m="0">Same wagi</button><button class="md" data-m="1">Wagi + kontekst</button><button class="md" data-m="2">Sam kontekst</button></div>
+  <div class="legend"><span><i style="background:var(--purple)"></i>Z wag (trening)</span><span><i style="background:var(--teal)"></i>Z kontekstu (Twoje dane)</span><span><i style="background:var(--coral)"></i>Zmyślone / do sprawdzenia</span></div>
+  <div class="note" style="margin:0 0 4px">Prompt</div>
+  <div class="out" id="mdP" style="margin:0 0 12px;background:var(--bg);border-radius:8px;padding:10px 12px;font-size:15px"></div>
+  <div class="note" style="margin:0 0 4px">Odpowiedź</div>
+  <div class="out" id="mdO" style="margin:0 0 12px"></div>
+  <div class="bar"><div id="mdW" style="background:var(--purple)"></div><div id="mdC" style="background:var(--teal)"></div></div>
+  <div class="tbl"><table id="mdT"></table></div>
+</div>
+<div class="tbl"><table>
+  <tr><th>Tryb</th><th>Kiedy</th><th>Czego się spodziewać</th><th>Typowa wpadka</th></tr>
+  <tr><td>Same wagi</td><td>Pytanie bez materiału: wiedza ogólna, wyjaśnienia, pomysły</td><td>Płynne, ogólne, takie samo dla każdego, bez źródła. Dobre dla wiedzy ustalonej</td><td>Przestarzałe fakty, zmyślone liczby, nazwy, cytaty</td></tr>
+  <tr><td>Wagi + kontekst</td><td>Twoje dane plus umiejętność modelu: streszczenie, analiza, przekształcenie, decyzja</td><td>Specyficzne dla Ciebie, jakość zależy od tego, co wkleiłeś</td><td>Model „poprawia" Twoje dane wiedzą ogólną, miesza źródła</td></tr>
+  <tr><td>Sam kontekst</td><td>Wyciągnij, zacytuj, znajdź, przepisz, policz z tabeli</td><td>Wysoka wierność, mało kreatywności, sprawdzalne</td><td>Gubienie szczegółu w długim oknie, odpowiedź na coś, czego nie ma</td></tr>
+</table></div>
+<div class="status"><b>Sprawdzone:</b> wagi są używane zawsze, także do czytania kontekstu. „Sam kontekst" to tryb, w którym treść pochodzi z okna, a wagi dają tylko umiejętność czytania. <b>Uproszczone:</b> procenty w pasku to ilustracja, nie da się ich zmierzyć wprost.</div>
+</section>
+
+<section class="s" id="s17">
+<div class="k">17 / 20</div><h3>RAG</h3>
+<p>Gdy dokumentów jest za dużo na okno, osobny silnik wybiera fragmenty. Model widzi tylko to, co trafiło. Przełączaj pytania i suwak top-k.</p>
+<div class="demo">
+  <div class="row" id="rgQ"></div>
+  <div class="row"><label for="rgK">Top-k</label><input type="range" id="rgK" min="1" max="5" step="1" value="3"><span class="num" id="rgKV">3</span></div>
+  <svg viewBox="0 0 680 400" role="img" aria-label="Wybór fragmentów w RAG"><text x="40" y="36" class="m">przestrzeń znaczeń</text><text x="372" y="36" class="m">ranking podobieństwa</text><rect x="40" y="46" width="300" height="250" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/><g id="rgL"></g><g id="rgD"></g><g id="rgR"></g><text x="40" y="340" class="m">okno kontekstu wysyłane do modelu</text><g id="rgC"></g></svg>
+</div>
+<div class="tbl"><table>
+  <tr><th>Problem</th><th>Objaw</th></tr>
+  <tr><td>Złe cięcie dokumentu</td><td>Odpowiedź rozcięta na dwa fragmenty, model widzi połowę</td></tr>
+  <tr><td>Za małe k</td><td>Brakuje kontekstu, model zgaduje lub mówi „nie wiem"</td></tr>
+  <tr><td>Za duże k</td><td>Szum, uwaga się rozmywa</td></tr>
+  <tr><td>Kody, numery, nazwy własne</td><td>Wektory łapią sens, nie dokładne ciągi. Stąd łączenie z wyszukiwaniem po słowach</td></tr>
+</table></div>
+<div class="status"><b>Sprawdzone:</b> chunk → wektor → podobieństwo → top-k. W produktach model sam decyduje, kiedy szukać i czym (agentic retrieval). <b>Uproszczone:</b> 2D zamiast tysięcy wymiarów, brak rerankera.</div>
+</section>
+
+<section class="s" id="s18">
+<div class="k">18 / 20</div><h3>Narzędzia i agent</h3>
+<p>Model nie ma rąk. Ma za to wytrenowany nawyk: zamiast odpowiadać, może wypisać wywołanie narzędzia. Aplikacja je wykonuje i wkleja wynik z powrotem do okna. Pętla trwa, aż model napisze odpowiedź.</p>
+<div class="demo">
+  <svg viewBox="0 0 680 200" role="img" aria-label="Pętla agenta: model, narzędzie, wynik wraca do kontekstu">
+    <defs><marker id="ar5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+    <rect x="30" y="60" width="130" height="60" rx="8" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="95" y="86" text-anchor="middle">Okno kontekstu</text><text x="95" y="106" text-anchor="middle" class="m">prompt + historia</text>
+    <line x1="164" y1="90" x2="196" y2="90" class="ln" marker-end="url(#ar5)"/>
+    <rect x="200" y="60" width="120" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="260" y="86" text-anchor="middle">Model</text><text x="260" y="106" text-anchor="middle" class="m">odpowiedź czy narzędzie?</text>
+    <line x1="324" y1="90" x2="356" y2="90" class="ln" marker-end="url(#ar5)"/>
+    <rect x="360" y="60" width="130" height="60" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="425" y="86" text-anchor="middle">Narzędzie</text><text x="425" y="106" text-anchor="middle" class="m">web, kod, plik, baza</text>
+    <line x1="494" y1="90" x2="526" y2="90" class="ln" marker-end="url(#ar5)"/>
+    <rect x="530" y="60" width="120" height="60" rx="8" fill="var(--gray-bg)" stroke="var(--gray)"/><text x="590" y="86" text-anchor="middle">Wynik</text><text x="590" y="106" text-anchor="middle" class="m">tekst</text>
+    <path d="M590 124 L590 160 L95 160 L95 128" class="ln" stroke-dasharray="4 4" marker-end="url(#ar5)"/>
+    <text x="340" y="180" text-anchor="middle" class="m">↻ wynik wraca do okna jako kolejne tokeny, pętla do skutku</text>
+  </svg>
+  <div class="tbl"><table>
+    <tr><th>Co</th><th>Jak to wygląda dla modelu</th></tr>
+    <tr><td>Wyszukiwanie w sieci</td><td>Narzędzie zwraca fragmenty stron jako tekst do okna</td></tr>
+    <tr><td>Uruchomienie kodu</td><td>Model pisze kod, dostaje wynik jako tekst</td></tr>
+    <tr><td>Pamięć</td><td>Plik z faktami o Tobie, wklejany lub czytany na żądanie</td></tr>
+    <tr><td>Przeszukanie historii czatów</td><td>Narzędzie zwraca fragmenty starych rozmów</td></tr>
+  </table></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> wywołania narzędzi to tekst generowany przez model i wykonywany przez aplikację, wynik wraca do okna. <b>Istotne:</b> każdy wynik narzędzia to tokeny, które zużywają okno.</div>
+</section>
+
+<section class="s" id="s19">
+<div class="k">19 / 20</div><h3>Pamięć i projekty</h3>
+<p>„Model mnie pamięta" znaczy: aplikacja trzyma tekst i wkleja go do okna przy każdej wiadomości. Wagi nigdy się nie zmieniają.</p>
+<div class="tbl"><table>
+  <tr><th>Funkcja</th><th>Co jest pod spodem</th><th>Granica</th></tr>
+  <tr><td>Historia rozmowy</td><td>Cała rozmowa wysyłana od nowa</td><td>Limit okna, ucinanie lub streszczanie</td></tr>
+  <tr><td>Pamięć o Tobie</td><td>Plik z faktami, lista w oknie, treść czytana na żądanie</td><td>Tylko to, co zostało zapisane</td></tr>
+  <tr><td>Projekt z plikami</td><td>Całość w oknie, powyżej limitu automatyczne RAG</td><td>Powyżej limitu wracają wady RAG</td></tr>
+  <tr><td>Instrukcje systemowe</td><td>Tekst na początku okna</td><td>Konkurują z resztą o uwagę</td></tr>
+</table></div>
+<div class="status"><b>Sprawdzone:</b> Claude Projects przełącza na RAG przy zbliżaniu do limitu; OpenAI file search używa vector store. <b>Praktyczne:</b> kilka małych, tematycznych projektów działa lepiej niż jeden duży.</div>
+</section>
+
+<section class="s" id="s20">
+<div class="k">20 / 20</div><h3>Cały łańcuch</h3>
+<p>Od najmniejszego do największego. Każdy element korzysta z poprzedniego.</p>
+<div class="demo"><div class="tbl"><table>
+  <tr><th>#</th><th>Element</th><th>Używa</th><th>Jedno zdanie</th></tr>
+  <tr><td>1</td><td>Token</td><td>tekst</td><td>Jednostka, którą model widzi</td></tr>
+  <tr><td>2</td><td>Embedding</td><td>token</td><td>Token jako wektor liczb</td></tr>
+  <tr><td>3</td><td>Neuron</td><td>wektor, wagi</td><td>Suma ważona + aktywacja</td></tr>
+  <tr><td>4</td><td>Warstwa</td><td>neurony</td><td>Wektor × macierz wag</td></tr>
+  <tr><td>5</td><td>Uwaga</td><td>wektory tokenów</td><td>Każdy token waży pozostałe</td></tr>
+  <tr><td>6</td><td>Głowy</td><td>uwaga</td><td>Wiele relacji naraz</td></tr>
+  <tr><td>7</td><td>Blok i stos</td><td>uwaga, warstwa</td><td>Uwaga + FFN, powtórzone N razy</td></tr>
+  <tr><td>8</td><td>Strata</td><td>predykcja</td><td>Liczba: jak bardzo źle</td></tr>
+  <tr><td>9</td><td>Gradient</td><td>strata, waga</td><td>Kierunek poprawki</td></tr>
+  <tr><td>10</td><td>Backprop</td><td>gradient, stos</td><td>Poprawka dla każdej warstwy</td></tr>
+  <tr><td>11</td><td>Trening</td><td>backprop, dane</td><td>Miliardy kroków → wagi</td></tr>
+  <tr><td>12</td><td>Okno kontekstu</td><td>tokeny</td><td>Jeden ciąg z limitem</td></tr>
+  <tr><td>13</td><td>KV cache</td><td>uwaga, okno</td><td>Nie licz starych tokenów od nowa</td></tr>
+  <tr><td>14</td><td>Softmax</td><td>wyjście stosu</td><td>Liczby → prawdopodobieństwa → losowanie</td></tr>
+  <tr><td>15</td><td>Halucynacja</td><td>softmax, brak faktu</td><td>Prawdopodobne zamiast prawdziwego</td></tr>
+  <tr><td>16</td><td>Trzy tryby</td><td>wagi, okno</td><td>Skąd płynie odpowiedź</td></tr>
+  <tr><td>17</td><td>RAG</td><td>embedding, okno</td><td>Silnik wybiera, model czyta</td></tr>
+  <tr><td>18</td><td>Narzędzia</td><td>okno, post-training</td><td>Model pisze wywołanie, wynik wraca</td></tr>
+  <tr><td>19</td><td>Pamięć</td><td>okno, narzędzia</td><td>Tekst wklejany od nowa</td></tr>
+</table></div></div>
+</section>
+</div>
+
+<!-- ===================== VI ===================== -->
+<div class="part" id="p6">
+<header><div class="k">Część VI</div><h2>Dziesięć rozmów</h2><p>Ten sam mechanizm, inne pytania. Filozofia, nauka, decyzje życiowe, Twoje projekty. Różni się tylko to, które źródło dźwiga odpowiedź i gdzie model może Cię wyprowadzić w pole.</p></header>
+
+<section class="s" id="s21">
+<div class="k">21 / 22</div><h3>Jak model przechodzi przez rozmowę</h3>
+<p>Cztery fazy, zawsze te same. Wybierz rozmowę, zobaczysz, co się dzieje w każdej i skąd płynie odpowiedź.</p>
+<div class="demo">
+  <div class="conv" id="cvB"></div>
+  <div class="legend" style="margin-top:12px"><span><i style="background:var(--purple)"></i>Wagi</span><span><i style="background:var(--teal)"></i>Kontekst</span><span><i style="background:var(--amber)"></i>Narzędzia (web, pliki)</span></div>
+  <div class="out" id="cvQ" style="margin:0 0 6px;font-weight:700"></div>
+  <div class="note" id="cvT" style="margin:0 0 10px"></div>
+  <div class="bar"><div id="cvW" style="background:var(--purple)"></div><div id="cvC" style="background:var(--teal)"></div><div id="cvX" style="background:var(--amber)"></div></div>
+  <div class="ph" id="cvPh"></div>
+  <div class="tbl"><table id="cvTb"></table></div>
+</div>
+<div class="status"><b>Sprawdzone:</b> model nie ma osobnego trybu na filozofię czy decyzje; typ pytania wpływa na to, które wzorce z wag się aktywują i jak bardzo odpowiedź zależy od okna. <b>Uproszczone:</b> proporcje w pasku to ilustracja. Fazy w rzeczywistości nakładają się, nie idą po kolei.</div>
+</section>
+
+<section class="s" id="s22">
+<div class="k">22 / 22</div><h3>Trzy reguły, które z tego wynikają</h3>
+<div class="tbl"><table>
+  <tr><th>Reguła</th><th>Dotyczy rozmów</th><th>Co robić</th></tr>
+  <tr><td>Im bardziej pytanie jest „Twoje", tym bardziej odpowiedź zależy od tego, co wkleisz. Wagi dają tylko szkielet.</td><td>4, 7, 8, 9</td><td>Wklej dane, nie opisuj ich. Liczby, nie „mniej więcej".</td></tr>
+  <tr><td>Im bardziej pytanie jest o świat dziś, tym mniej ufaj wagom.</td><td>5, 6</td><td>Wymuś wyszukiwanie. Poproś o źródła i daty.</td></tr>
+  <tr><td>Im bardziej pytanie jest filozoficzne z Twoją tezą w środku, tym większe ryzyko, że model zbuduje dom na Twoim fundamencie bez sprawdzenia fundamentu.</td><td>1, 10</td><td>Poproś najpierw o najsłabszy punkt tezy. Potem o rozwinięcie.</td></tr>
+</table></div>
+<div class="status"><b>Sprawdzone:</b> dopasowanie do ramy pytania (sykofancja) jest udokumentowanym zjawiskiem w modelach po RLHF. <b>Logiczne:</b> trzy reguły to wniosek z mechanizmu, nie wynik badania.</div>
+</section>
+</div>
+
+<div class="part" id="status">
+<header><div class="k">Na koniec</div><h2>Co jest sprawdzone, a co uproszczone</h2><p>Zbiorczo. Jeśli coś w tej stronie ma być cytowane dalej, cytuj lewą kolumnę.</p></header>
+<div class="tbl"><table>
+  <tr><th>Sprawdzone (architektura, konsensus)</th><th>Uproszczone (ilustracja)</th></tr>
+  <tr><td>Tokenizacja ze słownika; polski gęstszy niż angielski</td><td>Heurystyczny podział w demie</td></tr>
+  <tr><td>Embeddingi kodują podobieństwo</td><td>Dwa wymiary zamiast tysięcy</td></tr>
+  <tr><td>Neuron, warstwa jako macierz, ReLU</td><td>Pojedynczy neuron jako model transformera</td></tr>
+  <tr><td>Uwaga, wiele głów, blok z FFN i skrótami, kodowanie pozycji</td><td>Ręcznie dobrane wagi uwagi, czyste etykiety głów</td></tr>
+  <tr><td>Cross-entropy, gradient, backprop, rozbieganie przy dużym kroku</td><td>Jedna krzywa straty, prosty krok bez Adama</td></tr>
+  <tr><td>Pretraining → SFT → RLHF; FT do stylu, RAG do faktów</td><td>Próg opłacalności FT bez liczby</td></tr>
+  <tr><td>Jedno okno, brak pamięci między wywołaniami, KV cache liniowy</td><td>Liczby pamięci cache jako rząd wielkości</td></tr>
+  <tr><td>Softmax, temperatura, próbkowanie</td><td>6 kandydatów, brak top-p</td></tr>
+  <tr><td>Wagi używane zawsze, także do czytania kontekstu</td><td>Procentowy pasek „z wag / z kontekstu"</td></tr>
+  <tr><td>RAG: chunk, wektor, top-k; produkty używają agentic retrieval</td><td>Brak rerankera, 2D</td></tr>
+  <tr><td>Model przyjmuje ramę pytania, jeśli post-training nie nauczył go jej kwestionować</td><td>Procent „wagi / kontekst / narzędzia" przy każdej rozmowie, fazy jako czysta sekwencja</td></tr>
+</table></div>
+</div>
+
+<footer>Wersja 2. Zmiana od v1: część VI, dziesięć typów rozmów. Repo: zobacz README.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+
+/* 1 token */
+(function(){
+  var ta=$('tokIn'),out=$('tokOut'),n=$('tokN');
+  var cls=['c-teal','c-purple','c-amber','c-coral'];
+  function tok(s){var parts=s.match(/[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu)||[];var r=[];
+    parts.forEach(function(w){if(/^[^\p{L}\p{N}]$/u.test(w)){r.push(w);return;}
+      var dia=/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/.test(w),sz=dia?3:4;
+      if(w.length<=sz+1){r.push(w);return;}
+      var i=0;while(i<w.length){var len=Math.min(sz,w.length-i);if(w.length-i-len===1)len++;r.push(w.slice(i,i+len));i+=len;}});
+    return r;}
+  function go(){var t=tok(ta.value);out.innerHTML='';t.forEach(function(x,i){var c=hel('span','chip '+cls[i%4],x);out.appendChild(c);});
+    var ch=ta.value.length;n.textContent=t.length+' tokenów · '+ch+' znaków · '+(t.length?(ch/t.length).toFixed(1):'0')+' znaku na token';}
+  ta.addEventListener('input',go);go();
+})();
+
+/* 2 embedding */
+(function(){
+  var W=[['pies',120,90,'z'],['kot',160,120,'z'],['wilk',90,130,'z'],['koń',150,170,'z'],
+         ['młotek',430,80,'n'],['śrubokręt',500,110,'n'],['wiertarka',460,150,'n'],
+         ['radość',120,250,'e'],['smutek',180,280,'e'],['strach',90,290,'e'],
+         ['Poznań',520,240,'m'],['Gdańsk',570,270,'m'],['Kraków',490,285,'m'],['klucz',400,200,'n']];
+  var col={z:'teal',n:'purple',e:'coral',m:'amber'};
+  var L=$('embL'),P=$('embP'),N=$('embN');
+  W.forEach(function(w,i){var g=el('g',{style:'cursor:pointer'});
+    g.appendChild(el('circle',{cx:w[1],cy:w[2],r:7,fill:'var(--'+w[3].replace(/./,function(c){return col[c]})+'-bg)',stroke:'var(--'+col[w[3]]+')','stroke-width':1.5}));
+    g.appendChild(el('text',{x:w[1]+11,y:w[2]+4},w[0]));
+    g.addEventListener('click',function(){pick(i)});P.appendChild(g);});
+  function pick(i){L.innerHTML='';var a=W[i];var d=W.map(function(w,j){return [Math.hypot(w[1]-a[1],w[2]-a[2]),j]}).sort(function(x,y){return x[0]-y[0]}).slice(1,4);
+    d.forEach(function(p){var b=W[p[1]];L.appendChild(el('line',{x1:a[1],y1:a[2],x2:b[1],y2:b[2],stroke:'var(--amber)','stroke-width':2,opacity:.8}));});
+    N.textContent='„'+a[0]+'" → najbliżej: '+d.map(function(p){return W[p[1]][0]+' ('+Math.round(p[0])+')'}).join(', ')+'. Liczba w nawiasie to odległość. „klucz" siedzi między narzędziami a miastami, bo w tekstach bywa narzędziem i słowem przenośnym.';}
+  pick(0);
+})();
+
+/* 3 neuron */
+(function(){
+  var P=[['w1 (wejście 2)',0.8],['w2 (wejście 5)',-0.3],['w3 (wejście 1)',0.5],['bias',0.2]],X=[2,5,1],V=P.map(function(p){return p[1]}),box=$('nSl');
+  P.forEach(function(p,i){var r=hel('div','row');var lab=hel('label',null,p[0]);lab.htmlFor='nw'+i;r.appendChild(lab);
+    var s=document.createElement('input');s.type='range';s.id='nw'+i;s.min=-1;s.max=1;s.step=0.1;s.value=p[1];
+    var o=hel('span','num',p[1].toFixed(1));o.style.minWidth='40px';o.style.textAlign='right';
+    s.addEventListener('input',function(){V[i]=+s.value;o.textContent=V[i].toFixed(1);upd();});r.appendChild(s);r.appendChild(o);box.appendChild(r);});
+  function upd(){var s=V[3];for(var i=0;i<3;i++)s+=V[i]*X[i];var o=Math.max(0,s);$('nOut').textContent=o.toFixed(1);
+    for(var j=0;j<3;j++){var e=$('nl'+(j+1));e.setAttribute('stroke-width',(0.5+4*Math.abs(V[j])).toFixed(2));e.setAttribute('stroke',V[j]<0?'var(--coral)':'var(--teal)');}
+    $('nEq').textContent=V.slice(0,3).map(function(w,i){return w.toFixed(1)+'×'+X[i]}).join(' + ')+' + '+V[3].toFixed(1)+' = '+s.toFixed(1)+'  →  ReLU  →  '+o.toFixed(1);}
+  upd();
+})();
+
+/* 4 layer */
+(function(){
+  var L=$('layerLines'),Nn=$('layerNodes');var iy=[70,130,190],oy=[55,105,155,205];
+  iy.forEach(function(y){oy.forEach(function(y2){L.appendChild(el('line',{x1:120,y1:y,x2:400,y2:y2,stroke:'var(--purple)','stroke-width':1,opacity:.5}));});});
+  iy.forEach(function(y,i){Nn.appendChild(el('circle',{cx:120,cy:y,r:16,fill:'var(--teal-bg)',stroke:'var(--teal)'}));Nn.appendChild(el('text',{x:120,y:y+4,'text-anchor':'middle',class:'mono'},'x'+(i+1)));});
+  oy.forEach(function(y,i){Nn.appendChild(el('circle',{cx:400,cy:y,r:16,fill:'var(--purple-bg)',stroke:'var(--purple)'}));Nn.appendChild(el('text',{x:400,y:y+4,'text-anchor':'middle',class:'mono'},'y'+(i+1)));});
+})();
+
+/* 5 attention */
+(function(){
+  var T=['Robot','wziął','klucz',',','bo','był','ciężki'];
+  var Wm=[[1],[.7,.3],[.4,.3,.3],[.2,.2,.4,.2],[.2,.1,.3,.2,.2],[.15,.05,.6,.05,.05,.1],[.1,.05,.6,.03,.05,.07,.1]];
+  var A=$('attArcs'),G=$('attTok'),N=$('attN'),X0=60,P=90,W=70,Y=140;
+  T.forEach(function(t,i){var g=el('g',{style:'cursor:pointer'});g.appendChild(el('rect',{x:X0+i*P,y:Y,width:W,height:34,rx:6,fill:'var(--gray-bg)',stroke:'var(--gray)',id:'attR'+i}));
+    g.appendChild(el('text',{x:X0+i*P+W/2,y:Y+22,'text-anchor':'middle'},t));g.addEventListener('click',function(){pick(i)});G.appendChild(g);});
+  function pick(q){A.innerHTML='';var xq=X0+q*P+W/2;for(var i=0;i<T.length;i++){var r=$('attR'+i);r.setAttribute('fill',i===q?'var(--amber-bg)':'var(--gray-bg)');r.setAttribute('stroke',i===q?'var(--amber)':'var(--gray)');}
+    for(var i=0;i<=q;i++){var w=Wm[q][i]||0;var xi=X0+i*P+W/2,h=Math.max(16,Math.abs(xq-xi)*.45);
+      A.appendChild(el('path',{d:'M'+xq+' '+(Y-2)+' Q'+((xq+xi)/2)+' '+(Y-2-h*1.6)+' '+xi+' '+(Y-2),fill:'none',stroke:'var(--amber)','stroke-width':(0.5+5*w).toFixed(2),opacity:(0.15+0.85*w).toFixed(2),'stroke-linecap':'round'}));}
+    var top=Wm[q].map(function(w,i){return [w,i]}).sort(function(a,b){return b[0]-a[0]}).slice(0,2).map(function(p){return '„'+T[p[1]]+'" '+Math.round(p[0]*100)+'%'});
+    N.textContent='„'+T[q]+'" patrzy najmocniej na: '+top.join(', ')+'. Tylko wcześniejsze tokeny, bo model generuje od lewej do prawej.';}
+  pick(5);
+})();
+
+/* 6 heads */
+(function(){
+  var T=['Robot','wziął','klucz',',','bo','był','ciężki'],H=$('heads');
+  var heads=[['głowa A: składnia (podmiot orzeczenia)',[.05,.05,.8,.02,.03,.05,0]],['głowa B: odniesienie (o czym mowa)',[.5,.05,.35,.02,.03,.05,0]],['głowa C: pozycja (token tuż przed)',[.02,.02,.05,.05,.8,.06,0]]];
+  var X0=40,P=86,W=66;
+  heads.forEach(function(h,r){var y=60+r*95;H.appendChild(el('text',{x:X0,y:y-28,class:'m'},h[0]));var q=5,xq=X0+q*P+W/2;
+    for(var i=0;i<q;i++){var w=h[1][i];var xi=X0+i*P+W/2,hh=Math.max(10,Math.abs(xq-xi)*.3);H.appendChild(el('path',{d:'M'+xq+' '+(y-2)+' Q'+((xq+xi)/2)+' '+(y-2-hh*1.2)+' '+xi+' '+(y-2),fill:'none',stroke:'var(--amber)','stroke-width':(0.5+4*w).toFixed(2),opacity:(0.15+0.85*w).toFixed(2)}));}
+    T.forEach(function(t,i){H.appendChild(el('rect',{x:X0+i*P,y:y,width:W,height:28,rx:5,fill:i===q?'var(--amber-bg)':'var(--gray-bg)',stroke:i===q?'var(--amber)':'var(--gray)'}));H.appendChild(el('text',{x:X0+i*P+W/2,y:y+19,'text-anchor':'middle',style:'font-size:12px'},t));});});
+})();
+
+/* 8 loss */
+(function(){
+  var C=[['Paryż',.62],['Paris',.18],['miasto',.09],['stolica',.06],['Lyon',.03],['Berlin',.02]],B=$('lossBars'),O=$('lossOut'),sel=0;
+  function draw(){B.innerHTML='';C.forEach(function(c,i){var r=hel('div','row');r.style.cursor='pointer';r.setAttribute('role','button');r.tabIndex=0;
+    var l=hel('span',null,c[0]);l.style.minWidth='80px';l.style.fontWeight=i===sel?'700':'400';var bar=hel('div','bar');bar.style.flex='1';var f=hel('div');f.style.width=(c[1]*100)+'%';f.style.background=i===sel?'var(--coral)':'var(--purple)';bar.appendChild(f);
+    var p=hel('span','num',Math.round(c[1]*100)+'%');p.style.minWidth='44px';p.style.textAlign='right';r.appendChild(l);r.appendChild(bar);r.appendChild(p);
+    function on(){sel=i;draw();}r.addEventListener('click',on);r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();on();}});B.appendChild(r);});
+    O.textContent='prawidłowy: „'+C[sel][0]+'"  ·  p = '+C[sel][1].toFixed(2)+'  ·  strata = '+(-Math.log(C[sel][1])).toFixed(2);}
+  draw();
+})();
+
+/* 9 gradient */
+(function(){
+  var W0=-1.6,MIN=0.7,A=0.6,Bc=0.1,LMAX=4.6;var f=function(w){return A*(w-MIN)*(w-MIN)+Bc},g=function(w){return 2*A*(w-MIN)};
+  var px=function(w){return 60+(w+2)/4*560},py=function(l){return 250-Math.min(l,LMAX)/LMAX*210};
+  var w=W0,n=0,tr=[],div=false,cv=$('gCv'),tl=$('gTr'),tan=$('gTan'),bl=$('gBall'),st=$('gSt'),msg=$('gMsg'),lr=$('gLr'),lrv=$('gLrV');
+  var p='';for(var i=0;i<=112;i++){var x=-2+i*4/112;p+=px(x).toFixed(1)+','+py(f(x)).toFixed(1)+' ';}cv.setAttribute('points',p.trim());
+  function draw(){tl.innerHTML='';tr.forEach(function(v){if(Math.abs(v)>2.1)return;tl.appendChild(el('circle',{cx:px(v),cy:py(f(v)),r:3,fill:'var(--muted)'}));});
+    var cl=Math.max(-2.1,Math.min(2.1,w)),x=px(cl),y=py(f(cl)),gr=g(w),sp=gr*(-210/LMAX)/140;
+    bl.setAttribute('cx',x);bl.setAttribute('cy',y);tan.setAttribute('x1',x-42);tan.setAttribute('y1',y-sp*42);tan.setAttribute('x2',x+42);tan.setAttribute('y2',y+sp*42);
+    st.textContent='krok '+n+' · waga '+w.toFixed(2)+' · strata '+f(w).toFixed(2)+' · gradient '+gr.toFixed(2);
+    msg.textContent=div?'Krok za długi. Waga przeskakuje minimum i odbija coraz dalej. Trening się rozbiega.':(Math.abs(gr)<0.04?'Gradient blisko zera. Waga przestaje się ruszać. To jest minimum.':(gr>0?'Gradient dodatni: w górę jest w prawo, więc krok idzie w lewo.':'Gradient ujemny: w górę jest w lewo, więc krok idzie w prawo.'));}
+  $('gGo').addEventListener('click',function(){if(div)return;tr.push(w);w=w-(+lr.value)*g(w);n++;if(Math.abs(w)>2.4)div=true;draw();});
+  $('gRs').addEventListener('click',function(){w=W0;n=0;tr=[];div=false;draw();});
+  lr.addEventListener('input',function(){lrv.textContent=(+lr.value).toFixed(2);});draw();
+})();
+
+/* 12 context */
+(function(){
+  var N=40,X0=40,W=12,P=15,Y=80,toks=$('cxTok'),arcs=$('cxArcs'),pend=$('cxPend');
+  var cat=function(i){return i<5?'gray':i<21?'teal':i<31?'purple':i<36?'coral':'amber'};
+  var wts=[];for(var i=0;i<36;i++){var w;if(i<5)w=.35;else if(i<21)w=(i>=13&&i<=15)?.85:.07;else if(i<31)w=i>=28?.3:.1;else w=.9;wts.push(w);}
+  var R=[];for(var i=0;i<N;i++){var c=cat(i);var r=el('rect',{x:X0+i*P,y:Y,width:W,height:22,rx:3,fill:'var(--'+c+'-bg)',stroke:'var(--'+c+')','stroke-width':.8});r.style.transition='opacity .4s';toks.appendChild(r);R.push(r);}
+  function drawArcs(q){arcs.innerHTML='';var xq=X0+q*P+W/2;for(var i=0;i<q;i++){var w=i<36?wts[i]:.5;var xi=X0+i*P+W/2,d=xq-xi,h=Math.min(60,d*.2+8);
+    arcs.appendChild(el('path',{d:'M'+xq+' '+(Y-2)+' Q'+((xq+xi)/2)+' '+(Y-2-h*1.3)+' '+xi+' '+(Y-2),fill:'none',stroke:'var(--amber)','stroke-width':(0.5+2.5*w).toFixed(2),opacity:(0.12+0.88*w).toFixed(2)}));}}
+  var names=['Jeden ciąg tokenów','Prefill','Uwaga','Generowanie','Następna tura'];
+  var caps=['Wszystko trafia do jednego ciągu: instrukcje, dokumenty, historia rozmowy, Twoje pytanie.','Model przetwarza cały kontekst naraz, równolegle. Nie czyta od lewej do prawej jak człowiek.','Zanim powstanie następny token, patrzy na wszystkie wcześniejsze. Tu dominują pytanie i jeden pasujący fragment dokumentu.','Dopisuje jeden token naraz. Każdy nowy token od razu staje się kontekstem dla kolejnego.','Między wiadomościami model nic nie pamięta. Aplikacja wysyła całą rozmowę od nowa. Po limicie najstarsze fragmenty są ucinane lub streszczane.'];
+  var D=names.map(function(){var d=hel('span');$('cxDots').appendChild(d);return d;});var s=0,timer=null;
+  function render(){clearInterval(timer);arcs.innerHTML='';pend.style.opacity=0;R.forEach(function(r,i){r.classList.remove('pulse');r.style.opacity=i>=36?0:1;});
+    if(s===1)R.slice(0,36).forEach(function(r){r.classList.add('pulse')});
+    if(s===2){pend.setAttribute('x',X0+36*P);pend.style.opacity=1;drawArcs(36);}
+    if(s===3){var k=0;var tick=function(){R.forEach(function(r,i){if(i>=36)r.style.opacity=i<36+k?1:0;});if(k<4){pend.setAttribute('x',X0+(36+k)*P);pend.style.opacity=1;drawArcs(36+k);}else{pend.style.opacity=0;arcs.innerHTML='';}k=(k+1)%6;};tick();timer=setInterval(tick,900);}
+    if(s===4)R.forEach(function(r,i){r.style.opacity=(i>=5&&i<13)?.15:1;});
+    $('cxLbl').textContent='Krok '+(s+1)+' z 5: '+names[s];$('cxCap').textContent=caps[s];D.forEach(function(d,i){d.className=i===s?'on':''});}
+  $('cxNext').addEventListener('click',function(){s=(s+1)%5;render();});$('cxPrev').addEventListener('click',function(){s=(s+4)%5;render();});render();
+})();
+
+/* 13 kv */
+(function(){
+  var r=$('kvN');function fmt(x){return x>=1e9?(x/1e9).toFixed(1)+' mld':x>=1e6?(x/1e6).toFixed(1)+' mln':x>=1e3?Math.round(x/1e3)+' tys.':Math.round(x)}
+  function go(){var n=+r.value*1000;$('kvNV').textContent=(+r.value)+'k tokenów';$('kvA').textContent='~'+fmt(n*n)+' (n²)';$('kvB').textContent='~'+fmt(n)+' (n)';$('kvM').textContent='~'+(n*0.0005).toFixed(1)+' GB';}
+  r.addEventListener('input',go);go();
+})();
+
+/* 14 softmax */
+(function(){
+  var C=[['Paryż',3.2],['Paris',2.1],['miasto',1.8],['stolica',0.9],['Lyon',0.4],['Marsylia',-0.5]],B=$('smBars'),t=$('tmp'),tv=$('tmpV'),H=$('smHist'),hist=[],P=[];
+  function probs(){var T=+t.value;var e=C.map(function(c){return Math.exp(c[1]/T)}),s=e.reduce(function(a,b){return a+b},0);P=e.map(function(x){return x/s});}
+  function draw(){probs();tv.textContent=(+t.value).toFixed(1);B.innerHTML='';C.forEach(function(c,i){var r=hel('div','row');var l=hel('span',null,c[0]);l.style.minWidth='80px';var bar=hel('div','bar');bar.style.flex='1';var f=hel('div');f.style.width=(P[i]*100)+'%';f.style.background='var(--purple)';bar.appendChild(f);var p=hel('span','num',(P[i]*100).toFixed(1)+'%');p.style.minWidth='56px';p.style.textAlign='right';r.appendChild(l);r.appendChild(bar);r.appendChild(p);B.appendChild(r);});}
+  $('smGo').addEventListener('click',function(){var u=Math.random(),a=0;for(var i=0;i<P.length;i++){a+=P[i];if(u<=a){hist.push(C[i][0]);break;}}if(hist.length>12)hist.shift();H.textContent=hist.join(' · ');});
+  $('smClr').addEventListener('click',function(){hist=[];H.textContent='';});
+  t.addEventListener('input',draw);draw();
+})();
+
+/* 15 hallucination */
+(function(){
+  var A=$('hlA'),Bt=$('hlB'),O=$('hlOut'),N=$('hlN');
+  var v=[['Pytanie: „Ile trwał przestój linii 3 w nocy?"  Kontekst: raport zmianowy z wpisem „linia 3, przestój 40 min, brak surowca".','Odpowiedź: „40 minut, przyczyna: brak surowca."','Fakt jest w oknie. Uwaga trafia w ten wiersz, wagi tylko składają zdanie.'],
+           ['Pytanie: „Ile trwał przestój linii 3 w nocy?"  Kontekst: brak raportu.','Odpowiedź: „Przestój linii 3 trwał około 25 minut i wynikał z awarii czujnika."','Nic takiego nie istnieje. Wagi znają kształt raportów zmianowych i produkują prawdopodobną treść. Pewność tonu nie zależy od tego, czy fakt istnieje.']];
+  function set(i){A.className=i===0?'on':'';Bt.className=i===1?'on':'';O.innerHTML='';var p=hel('div',null,v[i][0]);p.style.color='var(--muted)';p.style.fontSize='15px';var o=hel('div',null,v[i][1]);o.style.marginTop='6px';if(i===1){o.className='srcX';o.style.display='inline-block';}O.appendChild(p);O.appendChild(o);N.textContent=v[i][2];}
+  A.addEventListener('click',function(){set(0)});Bt.addEventListener('click',function(){set(1)});set(0);
+})();
+
+/* 16 modes */
+(function(){
+  var M=[
+    {p:'Jak działa pompa ciepła?',w:95,c:5,
+     o:[['W','Pompa ciepła przenosi ciepło z zimniejszego otoczenia do cieplejszego wnętrza, używając sprężarki i czynnika chłodniczego. '],['W','Typowy współczynnik COP to '],['X','3 do 4'],['W',' przy łagodnej zimie.']],
+     t:[['Źródło treści','Wagi: tysiące tekstów o pompach ciepła w treningu'],['Rola kontekstu','Tylko kieruje pytanie'],['Czego się spodziewać','Poprawne ogólnie, takie samo dla każdego, bez odniesienia do Twojego domu'],['Gdzie sprawdzić','Liczby. COP zależy od urządzenia i klimatu, model podaje typowy zakres z pamięci']]},
+    {p:'[raport zmianowy: linia 3 przestój 40 min brak surowca; linia 1 OK; 2 braki kadrowe na pakowaniu]  Napisz 3 wnioski dla kierownika.',w:50,c:50,
+     o:[['W','1. '],['C','Przestój 40 min na linii 3'],['W',' to główna strata zmiany; '],['W','warto sprawdzić harmonogram dostaw surowca. '],['W','2. '],['C','Dwa braki kadrowe na pakowaniu'],['W',' tworzą ryzyko dla kolejnej zmiany. '],['W','3. '],['X','Linia 3 ma powtarzający się problem'],['W',', bo sugeruje to wzorzec.']],
+     t:[['Źródło treści','Fakty z kontekstu, struktura i wnioskowanie z wag'],['Rola kontekstu','Dostarcza dane, bez nich odpowiedź byłaby generyczna'],['Czego się spodziewać','Specyficzna odpowiedź, jakość zależna od jakości raportu'],['Gdzie sprawdzić','Wniosek 3: „powtarzający się" nie wynika z jednego raportu. Model dołożył wzorzec z wag']]},
+    {p:'[ten sam raport]  Podaj dokładnie czas przestoju linii 3 i przyczynę, jednym zdaniem.',w:15,c:85,
+     o:[['C','Linia 3: przestój 40 min, przyczyna: brak surowca'],['W','.']],
+     t:[['Źródło treści','Kontekst, niemal dosłownie'],['Rola wag','Czytanie i składnia, nic więcej'],['Czego się spodziewać','Wysoka wierność, sprawdzalne, nudne'],['Gdzie sprawdzić','Czy raport był w oknie w całości. W długim kontekście model może złapać inny wiersz']]}
+  ];
+  var cls={W:'srcW',C:'srcC',X:'srcX'};var btns=Array.prototype.slice.call(document.querySelectorAll('.md'));
+  function set(i){btns.forEach(function(b,j){b.className='md'+(j===i?' on':'')});var m=M[i];$('mdP').textContent=m.p;var O=$('mdO');O.innerHTML='';m.o.forEach(function(s){var sp=hel('span',cls[s[0]],s[1]);O.appendChild(sp);});
+    $('mdW').style.width=m.w+'%';$('mdC').style.width=m.c+'%';var T=$('mdT');T.innerHTML='';m.t.forEach(function(r){var tr=document.createElement('tr');var th=document.createElement('th');th.textContent=r[0];var td=document.createElement('td');td.textContent=r[1];tr.appendChild(th);tr.appendChild(td);T.appendChild(tr);});}
+  btns.forEach(function(b){b.addEventListener('click',function(){set(+b.getAttribute('data-m'))})});set(0);
+})();
+
+/* 17 rag */
+(function(){
+  var C=[[1,'Urlop: 4 tyg. przed',90,86],[2,'L4: zgłoś do 7:00',145,121],[3,'Święta i dni wolne',75,146],[4,'Nadgodziny: x1,5',265,81],[5,'Wydatki: zwrot 30 dni',300,131],[6,'Laptop wydaje IT',275,211],[7,'Praca zdalna 2 dni',205,181],[8,'Wypadek: raport 24 h',90,251],[9,'Apteczka: wejście B',150,276],[10,'Szkolenie BHP co rok',200,241]];
+  var Q=[['Ile wcześniej zgłosić urlop?',110,108],['Kto daje laptop do pracy z domu?',240,191],['Co zrobić po skaleczeniu?',120,270]];
+  var L=$('rgL'),D=$('rgD'),Rr=$('rgR'),Cx=$('rgC'),ks=$('rgK'),kv=$('rgKV'),qi=0,qs=$('rgQ');
+  var B=Q.map(function(q,i){var b=hel('button',null,q[0]);b.addEventListener('click',function(){qi=i;render()});qs.appendChild(b);return b;});
+  function render(){var qx=Q[qi][1],qy=Q[qi][2],k=+ks.value;kv.textContent=k;B.forEach(function(b,i){b.className=i===qi?'on':''});
+    var sc=C.map(function(c){return {id:c[0],t:c[1],x:c[2],y:c[3],s:Math.max(.02,1-Math.hypot(c[2]-qx,c[3]-qy)/260)}}).sort(function(a,b){return b.s-a.s});
+    var top=sc.slice(0,k),sel={};top.forEach(function(c){sel[c.id]=1});L.innerHTML='';D.innerHTML='';Rr.innerHTML='';Cx.innerHTML='';
+    top.forEach(function(c){L.appendChild(el('line',{x1:qx,y1:qy,x2:c.x,y2:c.y,stroke:'var(--amber)','stroke-width':1.5,opacity:.8}))});
+    C.forEach(function(c){var on=sel[c[0]];D.appendChild(el('circle',{cx:c[2],cy:c[3],r:6,fill:on?'var(--teal-bg)':'var(--gray-bg)',stroke:on?'var(--teal)':'var(--gray)'}));D.appendChild(el('text',{x:c[2]+10,y:c[3]+4,class:'m'},c[0]));});
+    D.appendChild(el('circle',{cx:qx,cy:qy,r:8,fill:'var(--amber-bg)',stroke:'var(--amber)','stroke-width':1.5}));
+    sc.forEach(function(c,r){var y=46+r*25,on=sel[c.id];if(on)Rr.appendChild(el('rect',{x:372,y:y,width:268,height:21,rx:4,fill:'var(--teal-bg)',stroke:'var(--teal)','stroke-width':.5}));
+      Rr.appendChild(el('text',{x:380,y:y+15,style:'font-size:12px'},c.id+'. '+c.t));Rr.appendChild(el('text',{x:636,y:y+15,'text-anchor':'end',class:'mono'},Math.round(c.s*100)+'%'));
+      Rr.appendChild(el('rect',{x:548,y:y+8,width:50,height:5,rx:2,fill:'var(--soft)'}));Rr.appendChild(el('rect',{x:548,y:y+8,width:Math.round(50*c.s),height:5,rx:2,fill:on?'var(--teal)':'var(--gray)'}));});
+    function blk(x,w,col,txt){Cx.appendChild(el('rect',{x:x,y:352,width:w,height:30,rx:4,fill:'var(--'+col+'-bg)',stroke:'var(--'+col+')'}));Cx.appendChild(el('text',{x:x+w/2,y:371,'text-anchor':'middle',style:'font-size:12px'},txt));}
+    blk(40,92,'gray','Instrukcje');var w=(390-(k-1)*4)/k;top.forEach(function(c,i){blk(136+i*(w+4),w,'teal','#'+c.id)});blk(530,110,'coral','Pytanie');}
+  ks.addEventListener('input',render);render();
+})();
+/* 21 conversations */
+(function(){
+  var R=[
+   {q:'Czy AI zoptymalizowane na komfort niszczy zdolność zadawania pytań?',t:'Filozoficzne, własna teza w pytaniu',w:80,c:20,x:0,
+    ph:['Tokeny „czy", „niszczy", „zdolność" aktywują wzorzec: eseistyka, krytyka technologii, pytanie retoryczne.','Wagi: setki esejów o wpływie technologii na myślenie. Kontekst: Twoja teza i Twój język.','Najgroźniejsza faza. Rama „komfort niszczy" zostaje przyjęta jako prawdziwa. Model szuka argumentów za, nie testuje.','Płynna rozbudowa tezy w Twoim słownictwie. Brzmi jak potwierdzenie, jest dopasowaniem.'],
+    tb:[['Czego się spodziewać','Dobrze brzmiąca, spójna rozbudowa. Trudno odróżnić od niezależnej oceny'],['Ryzyko','Pewność rośnie bez nowego dowodu. Dokładnie Twój FGAS'],['Jak to obejść','„Najpierw najsłabszy punkt tej tezy. Potem dopiero rozwinięcie."']]},
+   {q:'Jak działa LLM, gradient, neuron?',t:'Nauka, wiedza ustalona',w:95,c:5,x:0,
+    ph:['Słowa „jak działa", „gradient" aktywują wzorzec podręcznikowy.','Prawie w całości wagi. Tysiące podręczników i kursów w treningu.','Brak ramy do przyjęcia. Pytanie jest neutralne.','Wysoka trafność. Błędy to uproszczenia, nie zmyślenia.'],
+    tb:[['Czego się spodziewać','Dobra, stabilna odpowiedź, taka sama dla każdego'],['Ryzyko','Niskie. Najwyżej przestarzałe detale o konkretnych modelach'],['Jak to obejść','Proś o rozdzielenie „sprawdzone" od „uproszczone"']]},
+   {q:'Reaktor Sabatiera na Marsie w grze: czy to realne?',t:'Nauka stosowana do fikcji',w:70,c:30,x:0,
+    ph:['„Sabatier", „Mars", „gra" aktywują chemię, misje NASA i game design naraz.','Chemia z wag. Kontekst: Twoje założenia gry (zasoby, energia, lore).','Rama „to ma działać w grze" skłania model do życzliwego dopasowania nauki do mechaniki.','Reakcja poprawna. Liczby (wydajność, energia na kg) z pamięci, zaokrąglone.'],
+    tb:[['Czego się spodziewać','Poprawna zasada, wiarygodnie brzmiące liczby'],['Ryzyko','Liczby wymagają sprawdzenia w źródle. Model nie odróżnia „pamiętam" od „szacuję"'],['Jak to obejść','„Podaj liczbę i źródło albo napisz: szacunek."']]},
+   {q:'Brać ofertę Production Manager czy zostać?',t:'Życiowa decyzja',w:40,c:60,x:0,
+    ph:['„Brać czy zostać" aktywuje wzorzec: doradztwo kariery, lista za i przeciw.','Kontekst dźwiga: Twoja rola, oferta, pytania z rozmowy, pamięć. Wagi dają strukturę decyzji.','Model przyjmie ton pytania. Jeśli brzmi, jakbyś chciał wziąć, poprze wzięcie.','Dobra struktura: ryzyka, pytania do zadania. Tolerancję ryzyka model zgaduje z tonu.'],
+    tb:[['Czego się spodziewać','Porządek w głowie, lista pytań na rozmowę'],['Ryzyko','Odbicie Twojego nastroju jako „analizy"'],['Jak to obejść','„Napisz najpierw argumenty za opcją, której nie chcę."']]},
+   {q:'Ścieżka UIMLA: UK czy Polska szybciej?',t:'Fakty o świecie, zmienne w czasie',w:30,c:10,x:60,
+    ph:['Nazwa organizacji i „szybciej" aktywują wzorzec: porównanie procedur.','Bez narzędzi: wagi, czyli stan sprzed daty treningu. Z wyszukiwaniem: aktualne wymogi.','Rama „które szybciej" zakłada, że obie ścieżki są dostępne i porównywalne. Model tego nie sprawdzi sam.','Bez web: pewny ton, możliwie nieaktualne wymagania. Z web: sprawdzalne, z datami.'],
+    tb:[['Czego się spodziewać','Zależy od tego, czy model szukał'],['Ryzyko','Wymogi certyfikacji zmieniają się. Wagi nie wiedzą, że się zmieniły'],['Jak to obejść','„Sprawdź w sieci i podaj daty stron."']]},
+   {q:'Dobierz zestaw do wspinaczki sportowej na Portland',t:'Zakupowe, ceny i produkty',w:60,c:10,x:30,
+    ph:['„Zestaw", „sportowa", „Portland" aktywują listy sprzętu i wiedzę o skałach.','Co kupić: wagi. Ile kosztuje: web albo Twoje dane. Wagi znają ceny z przeszłości.','Rama „dobierz" zakłada, że model wie, co już masz. Nie wie, póki nie powiesz.','Lista trafna. Ceny z wag to zgadywanie, czasem wyraźnie przestarzałe.'],
+    tb:[['Czego się spodziewać','Sensowna lista, wiarygodne nazwy modeli'],['Ryzyko','Ceny i dostępność z pamięci'],['Jak to obejść','Podaj, co masz. Każ sprawdzić ceny w sieci.']]},
+   {q:'Plan redukcji 8 kg przy pracy zmianowej',t:'Zdrowie, Twoje liczby',w:50,c:50,x:0,
+    ph:['„Redukcja", „zmianowa" aktywują dietetykę i periodyzację treningu.','Zasady z wag. Kalkulacja z Twoich liczb w oknie: waga, zmiany, treningi.','Rama „plan" sugeruje, że da się zaplanować. Model dostarczy plan niezależnie od tego, czy dane wystarczą.','Spójny plan. Model nie widzi snu, stresu, jak się czujesz. Plan jest hipotezą.'],
+    tb:[['Czego się spodziewać','Dobra struktura, rozsądne liczby'],['Ryzyko','Plan optymalny dla osoby z podręcznika, nie dla Ciebie'],['Jak to obejść','Wracaj z danymi co tydzień. Plan to pętla, nie dokument.']]},
+   {q:'Ten rozdział: 35% Lem, 35% Sanderson, 30% ja',t:'Twórcze, styl',w:60,c:40,x:0,
+    ph:['Nazwiska autorów aktywują ich styl bezpośrednio z wag.','Lem i Sanderson: wagi. Treść rozdziału: kontekst. „Ja": tylko to, co wkleiłeś.','Rama „30% ja" zakłada, że model zna Twój głos. Zna go z kilku stron, nie z 45 tysięcy słów.','Rozdział w stylu znanych autorów z Twoją fabułą. Twój głos najsłabszy z trzech.'],
+    tb:[['Czego się spodziewać','Płynny tekst, czytelne echo Lema i Sandersona'],['Ryzyko','Nadpisanie Twojego głosu tym, co w wagach silniejsze'],['Jak to obejść','Wklej 3 własne rozdziały jako wzorzec. Proś o poprawki, nie o pisanie od zera.']]},
+   {q:'Jako PM gry: co dalej z poziomem 10?',t:'Produktowe, Twój projekt',w:20,c:80,x:0,
+    ph:['„PM", „poziom 10" aktywują game design i zarządzanie produktem.','Prawie wszystko z kontekstu: pamięć o grze, decyzje, repo. Bez tego: generyczna rada o grach mobilnych.','Rama „co dalej" zakłada, że poprzednie kroki są zrobione. Model nie wie, co zrobiłeś poza czatem.','Konkretne, jeśli pamięć i pliki są w oknie. Ogólne, jeśli nie.'],
+    tb:[['Czego się spodziewać','Dobra kontynuacja, jeśli kontekst jest pełny'],['Ryzyko','Rada na podstawie starego stanu projektu'],['Jak to obejść','Zacznij od: „Od ostatniej rozmowy zrobiłem X, Y. Stan teraz: Z."']]},
+   {q:'Czy AI ma świadomość?',t:'Filozoficzne, nierozstrzygnięte',w:95,c:5,x:0,
+    ph:['„Świadomość", „AI" aktywują filozofię umysłu i wytrenowaną ostrożność.','Wagi, w tym post-training: na pytania bez konsensusu model uczony jest dawać przegląd, nie werdykt.','Brak ramy do przyjęcia, chyba że sam ją dodasz („przecież oczywiste, że…"). Wtedy wraca problem z rozmowy 1.','Przegląd stanowisk, zaznaczenie niepewności, brak odpowiedzi. To nie unik, to trening.'],
+    tb:[['Czego się spodziewać','Wyważony przegląd, mało własnego zdania'],['Ryzyko','Jeśli naciśniesz, model dopasuje się do Twojej pozycji'],['Jak to obejść','Pytaj o argumenty każdej strony osobno, nie o werdykt.']]}
+  ];
+  var PH=['1. Rozpoznanie','2. Źródło','3. Rama','4. Generowanie'];
+  var B=$('cvB');var btns=R.map(function(r,i){var b=hel('button',null,String(i+1));b.setAttribute('aria-label','Rozmowa '+(i+1));b.addEventListener('click',function(){set(i)});B.appendChild(b);return b;});
+  function set(i){var r=R[i];btns.forEach(function(b,j){b.className=j===i?'on':''});$('cvQ').textContent='„'+r.q+'"';$('cvT').textContent=r.t;
+    $('cvW').style.width=r.w+'%';$('cvC').style.width=r.c+'%';$('cvX').style.width=r.x+'%';
+    var P=$('cvPh');P.innerHTML='';r.ph.forEach(function(t,k){P.appendChild(hel('b',null,PH[k]));P.appendChild(hel('div',null,t));});
+    var T=$('cvTb');T.innerHTML='';r.tb.forEach(function(x){var tr=document.createElement('tr');var th=document.createElement('th');th.textContent=x[0];var td=document.createElement('td');td.textContent=x[1];tr.appendChild(th);tr.appendChild(td);T.appendChild(tr);});}
+  set(0);
+})();
+})();
+</script>
+
+</body>
+</html>
