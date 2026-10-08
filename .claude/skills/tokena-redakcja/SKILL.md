@@ -70,7 +70,7 @@ Pauzy (—) i półpauzy (–) w tekście czytelnika. Zwroty: „warto zauważy�
 
 ## Procedura
 
-1. Uruchom skrypt na pliku z `--sekcje`. Zapisz wyniki przed.
+1. Uruchom skrypt na pliku z `--sekcje`: `python3 .claude/skills/tokena-redakcja/scripts/czytelnosc.py <plik> --sekcje` z katalogu repo (sklonuj repo, jeśli go nie ma). Zapisz wyniki przed.
 2. Wypisz sekcje poza progiem i terminy bez objaśnienia. To jest lista robocza, pokaż ją krótko.
 3. Redaguj tylko tekst czytelnika: `p`, `td`, `li`, nagłówki, `.status`, teksty w tablicach JS dem (stringi w `<script>`). Nie ruszaj CSS, struktury HTML, logiki dem, identyfikatorów `id`.
 4. Uruchom skrypt ponownie. Pokaż tabelę przed i po dla zmienionych sekcji.
