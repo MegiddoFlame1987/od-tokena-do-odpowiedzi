@@ -9,7 +9,8 @@ Mała encyklopedia AI pod materiały szkoleniowe. Strony statyczne, zero zależn
 | `/` | `index.html` | 1. Jak działa model językowy, od tokena do produktu. 22 sekcje, 10 dem. |
 | `/agenci` | `agenci.html` | 2. Od zadania do agenta. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |
 | `/warsztat` | `warsztat.html` | 3. Od czatu do warsztatu. Umiejętności, API i koszt, MCP i routery, agenci w terminalu, modele lokalne, GitHub. 16 sekcji, 8 dem. Stan na 2026-10-08. |
-| `/nowosci` | `nowosci.html` | 4. Nowości. Dane w bloku `<script type="application/json" id="dane">`, strona renderuje się z niego. |
+| `/wykrywanie` | `wykrywanie.html` | 4. Czy to zrobiła AI? Znak wodny, metryczka C2PA, metadane, detektory tekstu, drzewko decyzyjne. 12 sekcji, 6 dem. Stan na 2026-10-08. |
+| `/nowosci` | `nowosci.html` | 5. Nowości. Dane w bloku `<script type="application/json" id="dane">`, strona renderuje się z niego. |
 
 Każda sekcja: nagłówek, jedno zdanie, jedno demo, jedna linia „sprawdzone / uproszczone". Każda strona kończy się tabelą zbiorczą tego, co można cytować dalej. Każda strona ma u góry pasek zakładek `nav.tabs`.
 
@@ -19,8 +20,11 @@ Każda sekcja: nagłówek, jedno zdanie, jedno demo, jedna linia „sprawdzone /
 |---|---|
 | `tokena-redakcja` | Redakcja pod szerszą publiczność. Progi czytelności skalibrowane na v3, słownik stały, skrypt `scripts/czytelnosc.py`. |
 | `tokena-pm` | Product manager: co dalej, backlog, procedura odświeżania `/nowosci`. |
+| `sprawdz-pochodzenie` | Realne użycie: skąd pochodzi plik. Czyta C2PA, XMP, EXIF i bloki PNG skryptem `scripts/pochodzenie.py`, prowadzi przez SynthID, pilnuje, żeby brak śladów nie stał się dowodem. |
 
 Pomiar czytelności: `python3 .claude/skills/tokena-redakcja/scripts/czytelnosc.py warsztat.html --sekcje`
+
+Sprawdzenie pochodzenia pliku: `python3 .claude/skills/sprawdz-pochodzenie/scripts/pochodzenie.py plik.jpg`
 
 ## Deploy na Vercel
 
@@ -43,6 +47,8 @@ Najwyżej 7 pozycji. Prowadzi go umiejętność `tokena-pm`.
 - [S] Drugie wydanie Nowości. Zrobione, gdy: wydanie 2 na `main`.
 - [S] Pilotaż: jedna osoba spoza czatu przechodzi zakładkę 3. Zrobione, gdy: zapisane trzy miejsca, w których się zgubiła.
 
+- [S] Odświeżyć listę partnerów SynthID i limit dzienny na `/wykrywanie#s6` oraz w skillu `sprawdz-pochodzenie`. Zrobione, gdy: tabela ma datę sprawdzenia nie starszą niż kwartał.
+
 Może kiedyś: zakładka o bezpiecznym użyciu AI w firmie (polityka, dane, zgody) jako osobny moduł szkolenia.
 
 ## Wersje
@@ -50,3 +56,4 @@ Może kiedyś: zakładka o bezpiecznym użyciu AI w firmie (polityka, dane, zgod
 - v2: część VI, dziesięć typów rozmów i jak model przez nie przechodzi (sekcje 21–22).
 - v3: osobna strona `/agenci`, część druga materiału. Link z hero, nawigacji i sekcji 18.
 - v4: zakładki na każdej stronie, `/warsztat` (część trzecia), `/nowosci` (wydanie 1), umiejętności redakcji i PM w `.claude/skills`.
+- v5: zakładka `/wykrywanie` (część czwarta), umiejętność `sprawdz-pochodzenie` ze skryptem czytającym metadane. Nowości przesunięte na 5.
