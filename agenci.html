@@ -94,11 +94,16 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .verdict{font-family:var(--display);font-size:20px;font-weight:700;margin:4px 0 2px}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 @media (max-width:640px){.scroll svg{min-width:620px}.scroll::after{content:"← przewiń →";display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:6px}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tabs a:hover{color:var(--fg);border-color:var(--purple)}
+.tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="hero">
+  <nav class="tabs" aria-label="Zakładki materiału"><a href="/">1 Tokeny</a><a href="/agenci" aria-current="page">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/nowosci">4 Nowości</a></nav>
   <a class="back" href="/">← OD TOKENA DO ODPOWIEDZI</a>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · AGENCI</div>
   <h1>Od zadania do agenta</h1>
@@ -113,7 +118,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </header>
 
 <nav class="parts" aria-label="Części">
-  <a href="/">← Tokeny</a><a href="#p1">I Pętla</a><a href="#p2">II Anatomia</a><a href="#p3">III Rodzaje</a><a href="#p4">IV Co potrafi</a><a href="#p5">V Gdzie się psuje</a><a href="#status">Status</a>
+  <a href="/">← Tokeny</a><a href="#p1">I Pętla</a><a href="#p2">II Anatomia</a><a href="#p3">III Rodzaje</a><a href="#p4">IV Co potrafi</a><a href="#p5">V Gdzie się psuje</a><a href="#status">Status</a><a href="/warsztat" style="color:var(--purple)">Warsztat →</a>
 </nav>
 
 <!-- ===================== I ===================== -->
@@ -363,7 +368,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </table></div>
 </div>
 
-<footer>Część druga materiału. Pierwsza: <a href="/">Od tokena do odpowiedzi</a>, mechanizm modelu językowego. Ta: co się dzieje, gdy ten sam model dostanie pętlę i narzędzia.</footer>
+<footer>Część druga materiału. Pierwsza: <a href="/">Od tokena do odpowiedzi</a>, mechanizm modelu językowego. Ta: co się dzieje, gdy ten sam model dostanie pętlę i narzędzia. Trzecia: <a href="/warsztat">Od czatu do warsztatu</a>, narzędzia, którymi model sięga dalej.</footer>
 </div>
 
 <script>

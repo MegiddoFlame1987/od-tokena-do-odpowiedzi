@@ -87,12 +87,17 @@ svg text.mono{font-family:var(--mono);font-size:12px}
 svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 @media (prefers-reduced-motion:no-preference){.pulse{animation:pl 1.2s ease-in-out infinite}}
 @keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tabs a:hover{color:var(--fg);border-color:var(--purple)}
+.tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
 </style>
 
 </head>
 <body>
 <div class="wrap">
 <header class="hero">
+  <nav class="tabs" aria-label="Zakładki materiału"><a href="/" aria-current="page">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/nowosci">4 Nowości</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple)">MATERIAŁ TRENINGOWY · CZĘŚĆ PIERWSZA · v3</div>
   <h1>Od tokena do odpowiedzi</h1>
   <p class="lead">Jak działa model językowy, w jednym łańcuchu. Od najmniejszej rzeczy, którą model widzi, po warstwę produktu, w której pracujesz. Każda sekcja ma jedno demo do ruszenia i jedną linię o tym, co jest sprawdzone, a co uproszczone.</p>
@@ -108,7 +113,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </header>
 
 <nav class="parts" aria-label="Części">
-  <a href="#p1">I Cegły</a><a href="#p2">II Architektura</a><a href="#p3">III Skąd wagi</a><a href="#p4">IV Gdy piszesz</a><a href="#p5">V Produkt</a><a href="#p6">VI Rozmowy</a><a href="#status">Status</a><a href="/agenci" style="color:var(--purple)">Agenci →</a>
+  <a href="#p1">I Cegły</a><a href="#p2">II Architektura</a><a href="#p3">III Skąd wagi</a><a href="#p4">IV Gdy piszesz</a><a href="#p5">V Produkt</a><a href="#p6">VI Rozmowy</a><a href="#status">Status</a><a href="/agenci" style="color:var(--purple)">Agenci →</a><a href="/warsztat" style="color:var(--purple)">Warsztat →</a>
 </nav>
 
 <!-- ===================== I ===================== -->
@@ -555,7 +560,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </table></div>
 </div>
 
-<footer>Wersja 3. Zmiana od v2: część druga na osobnej stronie, <a href="/agenci">Od zadania do agenta</a>. Repo: zobacz README.</footer>
+<footer>Wersja 4. Zmiana od v3: zakładki u góry każdej strony, część trzecia <a href="/warsztat">Od czatu do warsztatu</a> i <a href="/nowosci">Nowości</a>. Repo: zobacz README.</footer>
 </div>
 
 <script>
