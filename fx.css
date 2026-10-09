@@ -72,3 +72,7 @@ h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-ch
 nav.parts{scrollbar-width:none;-ms-overflow-style:none}
 nav.parts::-webkit-scrollbar{display:none}
 @media (min-width:700px){nav.parts{flex-wrap:wrap;overflow:visible;justify-content:flex-start}}
+
+/* zakładka szkolenia: wyróżniona w pasku zakładek */
+.tabs a.tab-train{color:var(--teal);border-color:var(--teal)}
+.tabs a.tab-train[aria-current="page"]{background:var(--teal-bg)}

@@ -11,10 +11,14 @@ Strona to baza materiału szkoleniowego MAZOR AI (praktyczna znajomość AI i be
 
 | Zakładka | Plik | Rola | Odświeżanie |
 |---|---|---|---|
+| Szkolenie `/szkolenie` | `szkolenie.html` | Program szkolenia MAZOR: 8 modułów, 4 kategorie, 3 formaty, ćwiczenia z kluczem, handout, pilotaż. Linkuje do sekcji zakładek 1 do 5 jako materiału do pokazów | Po każdym pilotażu: czasy, lista wycięć, efekty |
 | 1 `/` | `index.html` | Mechanizm modelu, token → produkt | Rzadko. Mechanizm się nie starzeje |
 | 2 `/agenci` | `agenci.html` | Pętla, narzędzia, uprawnienia | Rzadko |
 | 3 `/warsztat` | `warsztat.html` | Umiejętności, API, MCP, programy, GitHub | Co kwartał. Nazwy modeli, ceny i wsparcie się zmieniają |
-| 4 `/nowosci` | `nowosci.html` | Co się zmieniło i co to znaczy dla pracownika | Co 1–2 tygodnie, procedura niżej |
+| 4 `/wykrywanie` | `wykrywanie.html` | Czy to zrobiła AI: znak wodny, C2PA, metadane, detektory | Co kwartał |
+| 5 `/nowosci` | `nowosci.html` | Co się zmieniło i co to znaczy dla pracownika | Co 1–2 tygodnie, procedura niżej |
+
+Menu: zakładki tylko u góry (`nav.tabs`), podmenu części strony (`nav.parts`) tylko z linkami `#` do tej samej strony. Nowa sekcja w szkoleniu, która nie wspiera efektu „wartość następnego dnia w pracy”, trafia do sekcji „Co wyciąć”.
 
 Pierwszym krokiem każdej sesji jest `git log --oneline -5` i przeczytanie README. Nie zakładaj stanu z pamięci.
 

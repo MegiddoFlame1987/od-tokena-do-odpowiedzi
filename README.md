@@ -6,6 +6,7 @@ Mała encyklopedia AI pod materiały szkoleniowe. Strony statyczne, zero zależn
 
 | Adres | Plik | Temat |
 |---|---|---|
+| `/szkolenie` | `szkolenie.html` | Program szkolenia MAZOR AI v1.0: 8 modułów w 4 kategoriach, formaty 2h, pół dnia, cały dzień, ćwiczenia z kluczem, handout do druku, plan pilotażu. 19 sekcji, 9 dem. |
 | `/` | `index.html` | 1. Jak działa model językowy, od tokena do produktu. 22 sekcje, 10 dem. |
 | `/agenci` | `agenci.html` | 2. Od zadania do agenta. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |
 | `/warsztat` | `warsztat.html` | 3. Od czatu do warsztatu. Umiejętności, API i koszt, MCP i routery, agenci w terminalu, modele lokalne, GitHub. 16 sekcji, 8 dem. Stan na 2026-10-08. |
@@ -45,11 +46,13 @@ Najwyżej 7 pozycji. Prowadzi go umiejętność `tokena-pm`.
 
 - [S] Sprawdzić cennik GPT-6 w API i podmienić modele OpenAI w kalkulatorze `/warsztat#s7`. Zrobione, gdy: kalkulator ma ceny z datą sprawdzenia.
 - [S] Drugie wydanie Nowości. Zrobione, gdy: wydanie 2 na `main`.
-- [S] Pilotaż: jedna osoba spoza czatu przechodzi zakładkę 3. Zrobione, gdy: zapisane trzy miejsca, w których się zgubiła.
+- [M] Pilotaż szkolenia, pół dnia, 5 do 15 osób. Zrobione, gdy: ankiety zebrane i czasy w `/szkolenie#s5` poprawione według pomiaru.
+- [S] Pakiet fikcyjnych dokumentów i kluczy do ćwiczeń (raport czysty i z ukrytą instrukcją, notatki do handover, SOP z 4 błędami). Zrobione, gdy: pliki w repo w folderze `cwiczenia/`.
+- [S] Handout po angielsku. Zrobione, gdy: wersja EN drukuje się z `/szkolenie#s16`.
 
 - [S] Odświeżyć listę partnerów SynthID i limit dzienny na `/wykrywanie#s6` oraz w skillu `sprawdz-pochodzenie`. Zrobione, gdy: tabela ma datę sprawdzenia nie starszą niż kwartał.
 
-Może kiedyś: zakładka o bezpiecznym użyciu AI w firmie (polityka, dane, zgody) jako osobny moduł szkolenia.
+Może kiedyś: osobny moduł szkolenia o polityce AI w firmie (dla zarządu).
 
 ## Wersje
 - v1: łańcuch 20 sekcji, 10 interaktywnych dem.
@@ -58,3 +61,4 @@ Może kiedyś: zakładka o bezpiecznym użyciu AI w firmie (polityka, dane, zgod
 - v4: zakładki na każdej stronie, `/warsztat` (część trzecia), `/nowosci` (wydanie 1), umiejętności redakcji i PM w `.claude/skills`.
 - v5: zakładka `/wykrywanie` (część czwarta), umiejętność `sprawdz-pochodzenie` ze skryptem czytającym metadane. Nowości przesunięte na 5.
 - v6: redakcja pięciu stron pod szerszą publiczność (wszystkie sekcje FOG ≤ 10,5), wspólna warstwa wizualna `fx.css` + `fx.js`, naprawiony zdublowany nagłówek na `/wykrywanie`.
+- v6.1: zakładka `/szkolenie` (program MAZOR AI 1.0), jedno menu u góry, podmenu bez paska przewijania, tekst bez formy „my”, reguła osoby w `tokena-redakcja`.
