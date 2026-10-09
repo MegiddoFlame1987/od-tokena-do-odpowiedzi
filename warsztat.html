@@ -107,7 +107,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <nav class="tabs" aria-label="Zakładki materiału"><a href="/">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat" aria-current="page">3 Warsztat</a><a href="/wykrywanie">4 Wykrywanie</a><a href="/nowosci">5 Nowości</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · WARSZTAT</div>
   <h1>Od czatu do warsztatu</h1>
-  <p class="lead">Okno czatu to tylko jedne drzwi do modelu. Za nimi stoi cały warsztat: umiejętności, API, bramki do innych systemów, programy na komputer i GitHub, skąd to wszystko się pobiera. Ta strona pokazuje każde z tych narzędzi osobno. Przy każdym to samo pytanie: czego model może dzięki temu dotknąć i kto za to odpowiada.</p>
+  <p class="lead">Okno czatu to tylko jedne drzwi do modelu. Za nimi stoi cały warsztat. Umiejętności, czyli gotowe instrukcje dla modelu. API, czyli wejście dla programów. Do tego bramki do innych systemów, programy na komputer i GitHub, skąd to wszystko się pobiera. Ta strona pokazuje każde z tych narzędzi osobno. Przy każdym to samo pytanie: czego model może dzięki temu dotknąć i kto za to odpowiada.</p>
   <div class="chain six">
     <a href="#p1"><b>I</b>Mapa<br>pięć drzwi do modelu</a>
     <a href="#p2"><b>II</b>Umiejętności<br>skille i ich wczytywanie</a>
@@ -116,7 +116,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <a href="#p5"><b>V</b>Programy<br>terminal · model lokalny</a>
     <a href="#p6"><b>VI</b>GitHub<br>repo · instrukcja dla agenta</a>
   </div>
-  <p class="note" style="margin-top:16px">Nazwy modeli, ceny i lista wspieranych programów: stan na 8 października 2026. Mechanizmy opisane niżej starzeją się wolno, cenniki szybko. Zmiany trafiają do zakładki <a href="/nowosci">Nowości</a>.</p>
+  <p class="note" style="margin-top:16px">Nazwy modeli, ceny i lista obsługiwanych programów: stan na 8 października 2026. Mechanizmy opisane niżej starzeją się wolno, cenniki szybko. Zmiany trafiają do zakładki <a href="/nowosci">Nowości</a>.</p>
 </header>
 
 <nav class="parts" aria-label="Części">
@@ -135,7 +135,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="verdict" id="drT"></div>
   <div class="ph" id="drPh"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> wszyscy główni dostawcy udostępniają swoje modele jednocześnie w czacie, w aplikacji na komputer, przez API i w narzędziach dla programistów. <b>Uproszczone:</b> granice się zacierają. Aplikacja na komputer potrafi dziś uruchomić agenta w terminalu, a czat w przeglądarce ma konektory do poczty.</div>
+<div class="status"><b>Sprawdzone:</b> każdy z głównych dostawców daje ten sam model naraz w czacie, w aplikacji, przez API i w narzędziach programisty. <b>Uproszczone:</b> granice się zacierają. Aplikacja na komputer potrafi dziś uruchomić agenta w terminalu, opisanego w części V. Czat w przeglądarce ma konektory, czyli gotowe połączenia z pocztą.</div>
 </section>
 
 <section class="s" id="s2">
@@ -148,17 +148,17 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Konektor do poczty lub dysku</td><td>W chmurze, z Twoim zalogowaniem</td><td>Model widzi to, co widzisz Ty. Także to, czego nie chciałeś mu pokazać</td></tr>
   <tr><td>Umiejętność</td><td>Tam, gdzie agent</td><td>Instrukcja i skrypty działają z uprawnieniami agenta</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> modele w czacie, aplikacji i API działają na serwerach dostawcy. To, co dostawca robi z danymi, zależy od planu i umowy, nie od technologii. <b>Praktyczne:</b> przed pierwszym użyciem w pracy sprawdź, czy firma ma plan z wyłączonym trenowaniem na danych.</div>
+<div class="status"><b>Sprawdzone:</b> modele w czacie, aplikacji i API działają na serwerach dostawcy, czyli jego komputerach w centrum danych. To, co dostawca robi z danymi, zależy od planu i umowy, nie od technologii. <b>Praktyczne:</b> przed pierwszym użyciem w pracy sprawdź, czy firma ma plan, w którym dostawca nie trenuje modeli na Waszych danych.</div>
 </section>
 </div>
 
 <!-- ===================== II ===================== -->
 <div class="part" id="p2">
-<header><div class="k">Część II</div><h2>Umiejętności</h2><p>Skill, po polsku umiejętność. Sposób, żeby nie pisać tej samej długiej instrukcji po raz dwudziesty. Model wczytuje ją sam, gdy zadanie pasuje.</p></header>
+<header><div class="k">Część II</div><h2>Umiejętności</h2><p>Skill, po polsku umiejętność, to folder z instrukcją, który model wczytuje sam, gdy zadanie pasuje. Dzięki temu nie piszesz tej samej długiej instrukcji po raz dwudziesty.</p></header>
 
 <section class="s" id="s3">
 <div class="k">3 / 16</div><h3>Umiejętność to folder</h3>
-<p>Nic więcej. W środku jeden obowiązkowy plik z instrukcją, a obok opcjonalnie skrypty i materiały. Klikaj części, żeby zobaczyć, do czego służą.</p>
+<p>W środku jest jeden obowiązkowy plik z instrukcją. Obok mogą leżeć skrypty i materiały. Kliknij część folderu, żeby zobaczyć, do czego służy.</p>
 <div class="demo">
   <div class="pick" id="skB"></div>
   <div class="code" id="skC"></div>
@@ -169,7 +169,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s4">
 <div class="k">4 / 16</div><h3>Trzy piętra wczytywania</h3>
-<p>Dlaczego można mieć sto umiejętności i nie zapchać okna. Na starcie model widzi tylko nazwę i opis każdej. Treść wczytuje dopiero wtedy, gdy zadanie pasuje do opisu.</p>
+<p>Można mieć sto umiejętności i nie zapchać okna kontekstu, czyli wszystkiego, co model widzi w jednej chwili. Okno mierzy się w tokenach, czyli kawałkach tekstu, na które model tnie zdanie. Na starcie model widzi tylko nazwę i opis każdej umiejętności. Treść wczytuje dopiero wtedy, gdy zadanie pasuje do opisu.</p>
 <div class="demo">
   <div class="row"><label for="pdN">Zainstalowane</label><input type="range" id="pdN" min="1" max="100" step="1" value="30"><span class="num" id="pdNv"></span></div>
   <div class="row"><label for="pdU">Pasuje do zadania</label><input type="range" id="pdU" min="0" max="3" step="1" value="1"><span class="num" id="pdUv"></span></div>
@@ -189,7 +189,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><th>Sposób</th><th>Co to jest</th><th>Kiedy wybrać</th></tr>
   <tr><td>Instrukcja w rozmowie</td><td>Tekst, który wklejasz albo zapisujesz w ustawieniach projektu</td><td>Jedna rzecz, która ma obowiązywać zawsze w tej rozmowie</td></tr>
   <tr><td>Umiejętność</td><td>Folder z instrukcją, wczytywany, gdy zadanie pasuje</td><td>Powtarzalna procedura: raport, redakcja, kontrola jakości</td></tr>
-  <tr><td>Narzędzie, na przykład z serwera MCP</td><td>Funkcja, która coś robi w świecie</td><td>Model musi odczytać lub zmienić dane w innym systemie</td></tr>
+  <tr><td>Narzędzie, na przykład z serwera MCP z części IV</td><td>Funkcja z opisem, którą program uruchamia na prośbę modelu</td><td>Model musi odczytać lub zmienić dane w innym systemie</td></tr>
   <tr><td>Podagent</td><td>Osobny agent z czystym oknem, który wraca z wnioskiem</td><td>Szerokie zadanie, które da się podzielić. Opisane w <a href="/agenci#s10">części drugiej</a></td></tr>
 </table></div>
 <div class="status"><b>Praktyczne:</b> umiejętność uczy, jak coś zrobić. Narzędzie daje możliwość, żeby to zrobić. Dobra umiejętność często mówi, którego narzędzia użyć. <b>Uproszczone:</b> nazwy różnią się między produktami. W Gemini umiejętności zastępują dawne „Gemy”, w ChatGPT podobną rolę grały „GPT-y”.</div>
@@ -207,7 +207,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="row"><button id="apGo">Następny etap</button><button id="apRst">Od nowa</button></div>
   <div id="apOut"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> każde wywołanie API zwraca liczbę tokenów wejścia i wyjścia, a płaci się osobno za jedne i drugie. Wyjście jest zawsze droższe. <b>Uproszczone:</b> zapytanie skrócono do najważniejszych pól. Ceny z cennika Anthropic, stan na 8.10.2026.</div>
+<div class="status"><b>Sprawdzone:</b> każde wywołanie API zwraca liczbę tokenów wejścia i wyjścia, czyli wysłanego tekstu i odpowiedzi. Płaci się osobno za jedne i drugie. Wyjście jest zawsze droższe. <b>Uproszczone:</b> zapytanie skrócono do najważniejszych pól. Ceny z cennika Anthropic, stan na 8.10.2026.</div>
 </section>
 
 <section class="s" id="s7">
@@ -222,7 +222,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="verdict num" id="ksOut"></div>
   <div class="note" id="ksNote"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> ceny katalogowe w dolarach za milion tokenów ze stron Anthropic, OpenAI i Google, stan na 8.10.2026. Tryb wsadowy, czyli przetwarzanie bez czekania na odpowiedź, kosztuje połowę u wszystkich trzech. <b>Uproszczone:</b> 700 tokenów na stronę polskiego tekstu to przybliżenie. Pominięto zniżkę za pamięć podręczną, która przy powtarzanym wejściu obniża koszt wejścia nawet o 90%. Miesiąc liczony jako 22 dni robocze.</div>
+<div class="status"><b>Sprawdzone:</b> ceny katalogowe w dolarach za milion tokenów ze stron Anthropic, OpenAI i Google, stan na 8.10.2026. Tryb wsadowy, czyli przetwarzanie bez czekania na odpowiedź, kosztuje połowę u wszystkich trzech. <b>Uproszczone:</b> 700 tokenów na stronę polskiego tekstu to przybliżenie. Pominięto zniżkę za pamięć podręczną, czyli tańsze wejście, gdy ten sam tekst wraca w kolejnych zapytaniach. Obniża ona koszt wejścia nawet o 90%. Miesiąc liczony jako 22 dni robocze.</div>
 </section>
 
 <section class="s" id="s8">
@@ -232,10 +232,10 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><th>Rób</th><th>Nie rób</th></tr>
   <tr><td>Ustaw limit wydatków na koncie u dostawcy, zanim użyjesz klucza</td><td>Nie wklejaj klucza do czatu, maila ani dokumentu</td></tr>
   <tr><td>Osobny klucz na każdy projekt, żeby dało się wyłączyć jeden</td><td>Nie zapisuj klucza w pliku, który trafia na GitHub</td></tr>
-  <tr><td>Trzymaj klucz w zmiennej środowiskowej albo menedżerze haseł</td><td>Nie dawaj klucza firmowego do prywatnych eksperymentów</td></tr>
+  <tr><td>Trzymaj klucz w menedżerze haseł albo w zmiennej środowiskowej, czyli ustawieniu systemu poza plikami projektu</td><td>Nie dawaj klucza firmowego do prywatnych eksperymentów</td></tr>
   <tr><td>Po wycieku: unieważnij klucz od razu, potem szukaj przyczyny</td><td>Nie czekaj z unieważnieniem na wyjaśnienie</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> wszyscy trzej główni dostawcy rozliczają API z góry albo z limitem na koncie i pozwalają unieważnić klucz jednym kliknięciem. Dokumentacja Claude Code wprost zabrania zapisywania kluczy w repozytorium. <b>Praktyczne:</b> automatyczne skanery przeszukują publiczne repozytoria w poszukiwaniu kluczy. Opublikowany klucz traktuj jak spalony.</div>
+<div class="status"><b>Sprawdzone:</b> wszyscy trzej główni dostawcy rozliczają API z góry albo z limitem na koncie i pozwalają unieważnić klucz jednym kliknięciem. Dokumentacja Claude Code wprost zabrania zapisywania kluczy w plikach, które trafiają na GitHub. <b>Praktyczne:</b> automatyczne skanery przeszukują publiczne projekty w poszukiwaniu kluczy. Opublikowany klucz traktuj jak spalony.</div>
 </section>
 </div>
 
@@ -245,7 +245,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s9">
 <div class="k">9 / 16</div><h3>MCP: jedna wtyczka zamiast setek kabli</h3>
-<p>MCP, Model Context Protocol, to wspólny standard podłączania modeli do innych systemów. Bez niego każdą aplikację AI trzeba osobno łączyć z każdym systemem. Z nim każdy łączy się raz.</p>
+<p>MCP, Model Context Protocol, to wspólny standard podłączania modeli do innych systemów. Bez niego każdą aplikację AI trzeba osobno łączyć z każdym systemem. Z nim każdy łączy się raz. Po stronie systemu stoi serwer MCP: mały program, który udostępnia modelowi narzędzia tego systemu.</p>
 <div class="demo">
   <div class="row"><label for="mcA">Aplikacje AI</label><input type="range" id="mcA" min="1" max="8" step="1" value="4"><span class="num" id="mcAv"></span></div>
   <div class="row"><label for="mcS">Systemy w firmie</label><input type="range" id="mcS" min="1" max="12" step="1" value="6"><span class="num" id="mcSv"></span></div>
@@ -258,11 +258,11 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s10">
 <div class="k">10 / 16</div><h3>Serwer lokalny i zdalny</h3>
-<p>Serwer MCP to mały program, który wystawia narzędzia jednego systemu. Może działać na Twoim komputerze albo gdzieś w sieci. To zmienia, kto ma dostęp do czego.</p>
+<p>Serwer MCP może działać na Twoim komputerze albo gdzieś w sieci. To zmienia, kto ma dostęp do czego.</p>
 <div class="tbl"><table>
   <tr><th></th><th>Lokalny</th><th>Zdalny</th></tr>
   <tr><td>Gdzie działa</td><td>Na Twoim komputerze, uruchamiany przez aplikację AI</td><td>Na serwerze firmy albo dostawcy, pod adresem w sieci</td></tr>
-  <tr><td>Typowy przykład</td><td>Pliki w folderze, lokalna baza, przeglądarka</td><td>Poczta, kalendarz, CRM, GitHub</td></tr>
+  <tr><td>Typowy przykład</td><td>Pliki w folderze, lokalna baza, przeglądarka</td><td>Poczta, kalendarz, baza klientów, GitHub</td></tr>
   <tr><td>Jak się logujesz</td><td>Działa z Twoimi uprawnieniami na komputerze</td><td>Logowanie przez przeglądarkę, jak „Zaloguj przez Google”</td></tr>
   <tr><td>Główne ryzyko</td><td>Program z internetu działa na Twoim komputerze</td><td>Twoje dane przechodzą przez cudzy serwer</td></tr>
 </table></div>
@@ -271,13 +271,13 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s11">
 <div class="k">11 / 16</div><h3>Router modeli</h3>
-<p>Druga rodzina bramek działa w odwrotną stronę. Jeden program, jeden klucz, dostęp do wielu modeli różnych firm. Przydaje się, gdy chcesz porównać modele albo nie uzależniać się od jednego dostawcy.</p>
+<p>Druga rodzina bramek działa w odwrotną stronę. Router modeli daje jednemu programowi, z jednym kluczem, dostęp do modeli wielu firm. Przydaje się, gdy chcesz porównać modele albo nie uzależniać się od jednego dostawcy.</p>
 <div class="tbl"><table>
   <tr><th>Bramka</th><th>Co robi</th><th>Dla kogo</th></tr>
   <tr><td>OpenRouter</td><td>Jedno konto i jedno saldo do kilkuset modeli kilkudziesięciu dostawców</td><td>Porównywanie modeli, małe projekty</td></tr>
   <tr><td>LiteLLM</td><td>Otwarte oprogramowanie, które stawiasz u siebie. Jeden sposób wywołania do ponad stu dostawców, limity i liczenie kosztów</td><td>Firma, która chce trzymać kontrolę u siebie</td></tr>
-  <tr><td>Vercel AI Gateway</td><td>Bramka w chmurze: logi, budżety, automatyczne przełączenie na innego dostawcę, gdy jeden nie działa</td><td>Aplikacje webowe</td></tr>
-  <tr><td>Cloudflare AI Gateway</td><td>Pośrednik do podglądu i kontroli: pamięć podręczna, limity, logi</td><td>Kontrola kosztów i ruchu</td></tr>
+  <tr><td>Vercel AI Gateway</td><td>Bramka w chmurze: dziennik zapytań, budżety, automatyczne przełączenie na innego dostawcę, gdy jeden nie działa</td><td>Aplikacje internetowe</td></tr>
+  <tr><td>Cloudflare AI Gateway</td><td>Pośrednik do podglądu i kontroli: zapamiętywanie powtarzanych odpowiedzi, limity, dziennik zapytań</td><td>Kontrola kosztów i ruchu</td></tr>
 </table></div>
 <div class="status"><b>Sprawdzone:</b> opisy funkcji z dokumentacji producentów, stan na 8.10.2026. <b>Niesprawdzone:</b> liczba modeli w OpenRouter pochodzi od samej firmy. <b>Praktyczne:</b> router to dodatkowy pośrednik, przez który przechodzą Twoje dane. Ta sama zasada co przy serwerze zdalnym.</div>
 </section>
@@ -296,17 +296,17 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Zgoda człowieka przed każdym zapisem i wysyłką</td><td>Specyfikacja MCP sama tego wymaga od aplikacji</td></tr>
   <tr><td>Tyle serwerów, ile potrzebuje zadanie, nie więcej</td><td>Każdy serwer to nowy zestaw drzwi</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> oba incydenty opisali badacze bezpieczeństwa. Specyfikacja MCP mówi wprost, że narzędzia to wykonywanie dowolnego kodu, a ich opisy trzeba traktować jako niezaufane. <b>Logiczne:</b> zasady w drugiej tabeli to wniosek z incydentów, nie norma.</div>
+<div class="status"><b>Sprawdzone:</b> oba incydenty opisali badacze bezpieczeństwa. Specyfikacja MCP mówi wprost, że narzędzie może uruchomić dowolny kod. Jego opisowi nie wolno ufać z góry. <b>Logiczne:</b> zasady w drugiej tabeli to wniosek z incydentów, nie norma.</div>
 </section>
 </div>
 
 <!-- ===================== V ===================== -->
 <div class="part" id="p5">
-<header><div class="k">Część V</div><h2>Programy</h2><p>„Exe”, czyli AI jako program na komputerze. Dwie zupełnie różne rzeczy kryją się pod tą nazwą: agent, który korzysta z modelu w chmurze, i model, który działa w całości u Ciebie.</p></header>
+<header><div class="k">Część V</div><h2>Programy</h2><p>„Exe” to potoczna nazwa programu na komputer, od końcówki plików programów w Windows. Pod tą nazwą kryją się dwie zupełnie różne rzeczy. Agent, który korzysta z modelu w chmurze. I model, który działa w całości u Ciebie.</p></header>
 
 <section class="s" id="s13">
 <div class="k">13 / 16</div><h3>Agent w terminalu</h3>
-<p>Po angielsku CLI, od command line. Terminal to okno, w którym wpisuje się polecenia tekstem. Agent w terminalu czyta i zmienia pliki w folderze, uruchamia programy i sprawdza wyniki. To najmocniejsze i najbardziej ryzykowne drzwi z części I.</p>
+<p>Terminal to okno, w którym wpisuje się polecenia tekstem. Program obsługiwany w ten sposób to CLI, od angielskiego command line interface. Agent w terminalu czyta i zmienia pliki w folderze, uruchamia programy i sprawdza wyniki. To najmocniejsze i najbardziej ryzykowne drzwi z części I.</p>
 <div class="tbl"><table>
   <tr><th>Program</th><th>Firma</th><th>Kod otwarty</th><th>Dostęp</th></tr>
   <tr><td>Claude Code</td><td>Anthropic</td><td>Nie. Publiczny na GitHub, ale z zastrzeżonymi prawami</td><td>Płatny plan Claude albo klucz API</td></tr>
@@ -314,18 +314,18 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Gemini CLI</td><td>Google</td><td>Tak, licencja Apache 2.0</td><td>Darmowy limit po zalogowaniu kontem Google</td></tr>
   <tr><td>Copilot CLI</td><td>GitHub</td><td>Nie. Licencja zabrania zmian w kodzie</td><td>Płatna subskrypcja Copilot</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> licencje i sposoby dostępu z repozytoriów i dokumentacji producentów, stan na 8.10.2026. Wszystkie cztery wysyłają treść czytanych plików do modelu w chmurze. <b>Praktyczne:</b> uruchamiaj agenta w folderze z jednym projektem, nigdy w katalogu domowym. Folder to granica tego, co agent widzi. Uprawnienia z <a href="/agenci#s7">części drugiej</a> działają tu dosłownie.</div>
+<div class="status"><b>Sprawdzone:</b> licencje, czyli zasady korzystania z kodu, oraz sposoby dostępu ze stron projektów na GitHub i z dokumentacji producentów, stan na 8.10.2026. Wszystkie cztery wysyłają treść czytanych plików do modelu w chmurze. <b>Praktyczne:</b> uruchamiaj agenta w folderze z jednym projektem, nigdy w folderze domowym, gdzie leżą wszystkie Twoje pliki. Folder to granica tego, co agent widzi. Uprawnienia z <a href="/agenci#s7">części drugiej</a> działają tu dosłownie.</div>
 </section>
 
 <section class="s" id="s14">
 <div class="k">14 / 16</div><h3>Model na własnym komputerze</h3>
-<p>Modele z otwartymi wagami można pobrać i uruchomić bez internetu. Nic nie wychodzi z komputera. Ceną jest pamięć i to, że lokalny model jest słabszy od największych w chmurze. Sprawdź, co zmieści Twój sprzęt.</p>
+<p>Wagi to liczby, w których zapisane jest to, czego model się nauczył. Modele z otwartymi wagami można pobrać i uruchomić bez internetu. Nic nie wychodzi z komputera. Ceną jest pamięć i to, że lokalny model jest słabszy od największych w chmurze. Sprawdź, co zmieści Twój sprzęt.</p>
 <div class="demo">
   <div class="row"><label for="lmR">Pamięć RAM</label><input type="range" id="lmR" min="8" max="128" step="8" value="16"><span class="num" id="lmRv"></span></div>
   <div class="tbl"><table id="lmT"></table></div>
   <div class="note">Programy do uruchamiania: Ollama i LM Studio dla zwykłego użytkownika, llama.cpp jako silnik pod spodem. Rodziny modeli dostępne do pobrania: Llama, Qwen, Mistral, Gemma, gpt-oss, DeepSeek.</div>
 </div>
-<div class="status"><b>Sprawdzone:</b> Ollama i llama.cpp mają otwarty kod na licencji MIT, LM Studio jest darmowe także do pracy od lipca 2025. Kompresja wag, czyli kwantyzacja, zmniejsza model kilkukrotnie kosztem dokładności. <b>Uproszczone:</b> przelicznik w demo, około 0,6 GB na miliard parametrów przy kompresji do 4 bitów plus 2 GB zapasu, to reguła kciuka, nie dane producenta. Sprawdź rozmiar pliku konkretnego modelu.</div>
+<div class="status"><b>Sprawdzone:</b> Ollama i llama.cpp mają otwarty kod na licencji MIT, LM Studio jest darmowe także do pracy od lipca 2025. Kwantyzacja, czyli zapis wag mniejszą liczbą bitów, zmniejsza model kilkukrotnie kosztem dokładności. <b>Uproszczone:</b> demo liczy około 0,6 GB na miliard wag przy zapisie w 4 bitach, plus 2 GB zapasu. To reguła kciuka, nie dane producenta. Sprawdź rozmiar pliku konkretnego modelu.</div>
 </section>
 </div>
 
@@ -349,7 +349,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Release</td><td>Oznaczona wersja do pobrania</td></tr>
   <tr><td>Licencja</td><td>Plik, który mówi, co wolno z kodem zrobić. Brak licencji znaczy: nic</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> ataki przez podmienione paczki to realne zdarzenia. We wrześniu 2025 samopowielający się robak w rejestrze npm wykradał hasła programistów, a GitHub usunął ponad 500 paczek. W marcu 2026 przejęte konto opiekuna popularnej biblioteki axios przez około 3 godziny rozsyłało wersję z programem szpiegującym. <b>Logiczne:</b> lista w demo to filtr pierwszego przejścia. Gwiazdki i liczba pobrań nie są dowodem bezpieczeństwa.</div>
+<div class="status"><b>Sprawdzone:</b> ataki przez podmienione paczki to realne zdarzenia. We wrześniu 2025 samopowielający się robak w npm, rejestrze gotowych paczek kodu, wykradał hasła programistów. GitHub usunął ponad 500 paczek. W marcu 2026 ktoś przejął konto opiekuna axios, popularnej biblioteki kodu. Przez około 3 godziny rozsyłała ona wersję z programem szpiegującym. <b>Logiczne:</b> lista w demo to filtr pierwszego przejścia. Gwiazdki i liczba pobrań nie są dowodem bezpieczeństwa.</div>
 </section>
 
 <section class="s" id="s16">
@@ -373,7 +373,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Ten sam model jest dostępny przez czat, aplikację, API i narzędzia programistów</td><td>Granice między tymi drogami się zacierają</td></tr>
   <tr><td>Umiejętność to folder z plikiem SKILL.md, otwarty standard od grudnia 2025</td><td>Przykład instrukcji skrócony</td></tr>
   <tr><td>Wczytywanie w trzech piętrach: około 100 tokenów na start, treść poniżej 5 tys.</td><td>Demo zakłada maksymalną długość treści</td></tr>
-  <tr><td>API rozlicza osobno tokeny wejścia i wyjścia, wsad kosztuje połowę</td><td>700 tokenów na stronę to przybliżenie. Ceny zmieniają się co kilka miesięcy</td></tr>
+  <tr><td>API rozlicza osobno tokeny wejścia i wyjścia, tryb wsadowy kosztuje połowę</td><td>700 tokenów na stronę to przybliżenie. Ceny zmieniają się co kilka miesięcy</td></tr>
   <tr><td>MCP: otwarty standard, od grudnia 2025 w fundacji przy Linux Foundation</td><td>Rachunek połączeń pokazuje sens, nie koszt wdrożenia</td></tr>
   <tr><td>Opisy narzędzi MCP to niezaufany tekst, dwa udokumentowane incydenty</td><td>Zasady ochrony to wniosek, nie norma</td></tr>
   <tr><td>Licencje i dostęp do agentów w terminalu</td><td>Liczba modeli w routerach podana przez producentów</td></tr>
@@ -403,9 +403,9 @@ var B=$('drB');if(!B)return;
 var D=[
  {n:'Czat w przeglądarce',m:'W chmurze dostawcy',t:'Tylko tego, co wkleisz, załączysz albo podłączysz konektorem',p:'Abonament miesięczny albo plan darmowy',w:'Każdy. Pierwsze drzwi dla większości ludzi'},
  {n:'Aplikacja na komputer',m:'W chmurze dostawcy',t:'Plików i programów na komputerze, jeśli na to pozwolisz',p:'Ten sam abonament co czat',w:'Praca z własnymi plikami bez ich ręcznego wklejania'},
- {n:'Program przez API',m:'W chmurze dostawcy',t:'Tego, co poda mu program. Nic poza tym',p:'Za każdy token. Rachunek rośnie z użyciem',w:'Ktoś, kto buduje automat albo łączy AI z firmowym systemem'},
+ {n:'Program przez API',m:'W chmurze dostawcy',t:'Tego, co poda mu program. Nic poza tym',p:'Za każdy token, czyli kawałek tekstu. Rachunek rośnie z użyciem',w:'Ktoś, kto buduje automat albo łączy AI z firmowym systemem'},
  {n:'Agent w terminalu',m:'W chmurze. Agent działa na Twoim komputerze',t:'Plików w folderze. Może uruchamiać programy',p:'Płatny plan albo tokeny przez API',w:'Programiści, coraz częściej analitycy i osoby budujące narzędzia'},
- {n:'AI wbudowane w program',m:'W chmurze dostawcy programu',t:'Danych tego programu i wszystkiego, do czego firma dała dostęp',p:'Licencja firmowa',w:'Pracownik w Office, Gmailu, CRM. Ustawienia decyduje dział IT'}
+ {n:'AI wbudowane w program',m:'W chmurze dostawcy programu',t:'Danych tego programu i wszystkiego, do czego firma dała dostęp',p:'Licencja firmowa',w:'Pracownik w Office, Gmailu, systemie obsługi klientów. O ustawieniach decyduje dział IT'}
 ];
 var cur=0;
 function draw(){
@@ -567,9 +567,9 @@ var Q=[
  {t:'Repo należy do producenta systemu albo znanej organizacji, nie do przypadkowego konta',w:3},
  {t:'Ma plik licencji',w:1},
  {t:'Ostatnia zmiana w kodzie jest z ostatnich kilku miesięcy',w:1},
- {t:'Zgłoszenia (issues) dostają odpowiedzi od opiekunów',w:1},
+ {t:'Zgłoszenia, czyli issues, dostają odpowiedzi od opiekunów',w:1},
  {t:'README mówi wprost, do jakich danych narzędzie ma dostęp',w:2},
- {t:'Instalujesz konkretną wersję z zakładki Release, nie „najnowszą z głównej gałęzi”',w:1},
+ {t:'Instalujesz konkretną wersję z zakładki Release, nie bieżący kod w trakcie prac',w:1},
  {t:'Ktoś w firmie, kto zna się na rzeczy, potwierdził, że to narzędzie jest w porządku',w:3}
 ];
 var st=Q.map(function(){return false;});
