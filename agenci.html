@@ -109,17 +109,10 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · AGENCI</div>
   <h1>Od zadania do agenta</h1>
   <p class="lead">Model odpowiada. Agent działa. Agent to ten sam model, uruchamiany w pętli, z narzędziami i warunkiem stopu. Narzędzie to funkcja, którą program uruchamia na prośbę modelu. Do tego dochodzi notatnik, czyli to, co agent zapisuje, żeby nie zapomnieć. I uprawnienia: co wolno mu zrobić bez pytania człowieka. Ta strona pokazuje każdą z tych części osobno. Na końcu: gdzie taki układ się psuje i jak rozpoznać zadanie, które warto oddać agentowi.</p>
-  <div class="chain">
-    <a href="#p1"><b>I</b>Pętla<br>czym agent różni się od czatu</a>
-    <a href="#p2"><b>II</b>Anatomia<br>narzędzia · notatnik · uprawnienia</a>
-    <a href="#p3"><b>III</b>Rodzaje<br>autonomia · workflow · zespół</a>
-    <a href="#p4"><b>IV</b>Co potrafi<br>zadania i granice</a>
-    <a href="#p5"><b>V</b>Gdzie się psuje<br>błąd · wstrzyknięcie · decyzja</a>
-  </div>
 </header>
 
 <nav class="parts" aria-label="Części">
-  <a href="/">← Tokeny</a><a href="#p1">I Pętla</a><a href="#p2">II Anatomia</a><a href="#p3">III Rodzaje</a><a href="#p4">IV Co potrafi</a><a href="#p5">V Gdzie się psuje</a><a href="#status">Status</a><a href="/warsztat" style="color:var(--purple)">Warsztat →</a>
+  <a href="#p1">I Pętla</a><a href="#p2">II Anatomia</a><a href="#p3">III Rodzaje</a><a href="#p4">IV Co potrafi</a><a href="#p5">V Gdzie się psuje</a><a href="#status">Status</a>
 </nav>
 
 <!-- ===================== I ===================== -->
@@ -293,7 +286,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <p>Rozsądny podział pracy wygląda tak samo w każdym z tych przypadków. Agent szuka i pisze wersję roboczą. Człowiek decyduje i odpowiada za wynik.</p>
 <div class="tbl"><table>
   <tr><th>Zastosowanie</th><th>Co agent robi dobrze</th><th>Co zostaje człowiekowi</th></tr>
-  <tr><td>Kod</td><td>Czyta repozytorium, pisze zmianę, uruchamia testy, poprawia po błędzie</td><td>Czy w ogóle tak to projektujemy. Przegląd zmiany</td></tr>
+  <tr><td>Kod</td><td>Czyta repozytorium, pisze zmianę, uruchamia testy, poprawia po błędzie</td><td>Decyzja, czy tak to projektować. Przegląd zmiany</td></tr>
   <tr><td>Przegląd źródeł (research)</td><td>Czyta dziesiątki źródeł naraz, zestawia sprzeczności</td><td>Dobór pytania i ocena wiarygodności źródeł</td></tr>
   <tr><td>Dokumenty i dane</td><td>Wyciąga dane z setek plików, ujednolica format</td><td>Reguła, co jest poprawne. Kontrola próbki</td></tr>
   <tr><td>Operacje i raporty</td><td>Zbiera dane z kilku systemów, pisze wersję roboczą raportu</td><td>Interpretacja i wnioski. Rozmowa z ludźmi</td></tr>

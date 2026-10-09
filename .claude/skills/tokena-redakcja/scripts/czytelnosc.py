@@ -77,7 +77,10 @@ def metryki(t):
     tr = 100 * trudne / len(slowa)
     nisko = t.lower()
     ang = sorted({z for z in ZARGON if re.search(r"(?<![\w-])%s(?![\w-])" % re.escape(z.lower()), nisko)})
+    RZECZ = {"systemy","problemy","programy","schematy","tematy","modele","dylematy","formaty","algorytmy","aromaty","klimaty"}
+    my = sorted({w for w in re.findall(r"\b[a-ząćęłńóśźż]{3,}(?:amy|emy|imy|ymy)\b", t.lower()) if w not in RZECZ})
     return {
+        "my": my,
         "slow": len(slowa), "zdan": len(dl), "zd_sr": round(zd_sr, 1),
         "zd_dl%": round(100 * sum(1 for d in dl if d > 25) / len(dl), 1),
         "trudne%": round(tr, 1), "fog": round(0.4 * (zd_sr + tr), 1),
@@ -111,6 +114,7 @@ if __name__ == "__main__":
     calosc = metryki(" ".join(t for _, t in sek))
     print("-" * 90); drukuj("CALOSC", calosc)
     print("zargon na stronie:", ", ".join(calosc["ang"]))
+    print("forma my (sprawdź ręcznie):", ", ".join(calosc["my"]) or "brak")
     print("najdluzsze zdania:")
     for z in calosc["najdluzsze"]:
         print(" -", len(z.split()), "slow:", z[:160])

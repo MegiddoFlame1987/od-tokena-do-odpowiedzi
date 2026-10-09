@@ -46,6 +46,7 @@ Ograniczenie metryki: komórka tabeli liczy się jak zdanie, więc sekcje z tabe
 5. **Angielski tylko, gdy czytelnik go spotka na ekranie.** „API", „MCP", „README" zostają, bo tak je zobaczy w produkcie. Obok polskie objaśnienie. Angielskie słowo, którego nie zobaczy, zamieniasz na polskie.
 6. **Status po ludzku.** Etykiety tylko z tego zestawu: Sprawdzone, Uproszczone, Logiczne, Praktyczne, Niesprawdzone, Następny krok. „Sprawdzone" znaczy: mechanizm albo konsensus inżynierski, z dokumentacji lub pomiaru. Nigdy nie podnoś „Logiczne" do „Sprawdzone" przy redakcji.
 7. **Liczby zostają liczbami.** „Trzy na cztery" zamiast „większość". Bez zaokrąglania w górę dla efektu.
+8. **Osoba tylko tam, gdzie jest potrzebna.** Bez formy „my": nie „co sprawdzamy", „jak wybieramy", „nie używamy", tylko „co jest sprawdzane", „jak powstaje lista", „nie używa się". Tekst opisowy (nagłówki, statusy, tabele, opis mechanizmu) pisany bez osoby: „Model czyta okno", „Wynik wraca do okna". Zwrot do czytelnika („Ty", tryb rozkazujący: „kliknij", „sprawdź", „nie wklejaj") tylko tam, gdzie czytelnik coś robi: polecenie w demie, zasada do zastosowania w pracy, pytanie do niego samego. Nie mieszać osób w jednym akapicie. Skrypt wypisuje kandydatów na formę „my" w linii `forma my`; każdy sprawdzasz ręcznie, bo końcówka -emy łapie też rzeczowniki (systemy, problemy).
 
 ## Słownik stały
 

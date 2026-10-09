@@ -67,3 +67,8 @@ h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-ch
   h1.fx-tok .fx-t{transition:none}
   .chain a:hover{transform:none}
 }
+
+/* podmenu części: bez paska przewijania; na szerokim ekranie zawija się, na telefonie przesuwa palcem */
+nav.parts{scrollbar-width:none;-ms-overflow-style:none}
+nav.parts::-webkit-scrollbar{display:none}
+@media (min-width:700px){nav.parts{flex-wrap:wrap;overflow:visible;justify-content:flex-start}}
