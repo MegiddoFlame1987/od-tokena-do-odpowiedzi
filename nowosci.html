@@ -108,6 +108,8 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .news .src{font-size:14px;color:var(--muted)}
 details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(--purple);margin:6px 0 10px}
 </style>
+<link rel="stylesheet" href="/fx.css">
+</head>
 <body>
 <div class="wrap">
 <header class="hero">
@@ -331,5 +333,6 @@ if(!D.archiwum.length){A.appendChild(hel('p','note','Pusto. To pierwsze wydanie.
 else{var det=hel('details');det.appendChild(hel('summary',null,'Pokaż '+D.archiwum.length+' starszych pozycji'));D.archiwum.forEach(function(it){det.appendChild(card(it));});A.appendChild(det);}
 })();
 </script>
+<script src="/fx.js" defer></script>
 </body>
 </html>

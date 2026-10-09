@@ -1,0 +1,69 @@
+/* fx.css — wspólna warstwa wizualna dla wszystkich zakładek.
+   Strony działają bez tego pliku; fx dokłada ruch i panele rozdziałów. */
+:root{--fx-ink:#1A1538;--fx-ink-2:#251E52;--fx-on:#ECEAF7;--fx-on-muted:#B5B0D6;--fx-a1:#AFA9EC;--fx-a2:#5DCAA5;--fx-a3:#EF9F27;--fx-a4:#F0997B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fx-ink:#211A48;--fx-ink-2:#2E2563}}
+:root[data-theme="dark"]{--fx-ink:#211A48;--fx-ink-2:#2E2563}
+html,body{overflow-x:clip}
+
+/* tło: pole tokenów */
+#fx-field{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
+
+/* pasek postępu */
+#fx-bar{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(var(--fx-prog,0));z-index:50;
+  background:linear-gradient(90deg,var(--fx-a1),var(--fx-a2) 45%,var(--fx-a3) 75%,var(--fx-a4));pointer-events:none}
+
+/* tytuł składany z tokenów */
+h1.fx-tok{position:relative}
+h1.fx-tok .fx-w{display:inline-block;white-space:nowrap}
+h1.fx-tok .fx-t{display:inline-block;border-radius:.14em;padding:0 .02em;
+  transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .6s ease,background-color .8s ease,box-shadow .8s ease;
+  transform:translate(var(--fx-sx,0),var(--fx-sy,0)) rotate(var(--fx-sr,0deg));opacity:0;
+  background-color:var(--fx-chip,transparent);box-shadow:0 0 0 .04em var(--fx-chip-line,transparent)}
+h1.fx-tok.fx-in .fx-t{transform:none;opacity:1}
+h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+1){--fx-chip:var(--purple-bg);--fx-chip-line:var(--purple)}
+h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+2){--fx-chip:var(--teal-bg);--fx-chip-line:var(--teal)}
+h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+3){--fx-chip:var(--amber-bg);--fx-chip-line:var(--amber)}
+h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-chip-line:var(--coral)}
+.fx-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* rozdziały: pełna szerokość, ciemny panel, kształt kręcony scrollem */
+.part>header.fx-ch{position:relative;isolation:isolate;overflow:hidden;
+  margin:0 calc(50% - 50vw) 36px;padding:clamp(72px,16vh,150px) max(20px,calc(50vw - 380px)) clamp(56px,11vh,110px);
+  background:radial-gradient(120% 90% at 85% 10%,var(--fx-ink-2),var(--fx-ink) 60%);color:var(--fx-on)}
+.part>header.fx-ch h2{color:var(--fx-on);font-size:clamp(40px,9vw,88px);letter-spacing:-.03em;line-height:.95;margin-bottom:18px;
+  transform:translateX(calc((0.5 - var(--fx-p,0.5)) * 40px))}
+.part>header.fx-ch p{color:var(--fx-on-muted);font-size:18px;max-width:46ch;position:relative}
+.part>header.fx-ch .k{color:var(--fx-a2);position:relative}
+.part>header.fx-ch .fx-num{position:absolute;z-index:-1;right:max(12px,calc(50vw - 420px));bottom:-.18em;
+  font-family:var(--display);font-weight:700;font-size:clamp(160px,38vw,420px);line-height:1;letter-spacing:-.04em;
+  color:transparent;-webkit-text-stroke:1.5px rgba(175,169,236,.32);
+  transform:translateY(calc((0.5 - var(--fx-p,0.5)) * 120px));pointer-events:none;user-select:none}
+.part>header.fx-ch svg.fx-orb{position:absolute;z-index:-1;top:50%;right:calc(-1 * min(18vw,160px));width:min(78vmin,620px);height:auto;
+  transform:translateY(-50%) rotate(calc(var(--fx-p,0.5) * 140deg)) scale(calc(.85 + var(--fx-p,0.5) * .3));pointer-events:none;opacity:.95}
+.part>header.fx-ch svg.fx-orb .fx-ring2{transform-origin:300px 300px;transform:rotate(calc(var(--fx-p,0.5) * -260deg))}
+@media (max-width:640px){.part>header.fx-ch svg.fx-orb{right:-38vw;width:105vw;opacity:.6}.part>header.fx-ch .fx-num{right:8px}}
+
+/* panele wjeżdżające przy przewijaniu (sterowane --fx-r: 0 poza ekranem, 1 na miejscu) */
+.fx-slide{--fx-r:1;--fx-dir:1;will-change:transform;
+  transform:perspective(900px) translateX(calc((1 - var(--fx-r)) * var(--fx-dir) * 70px)) rotateY(calc((1 - var(--fx-r)) * var(--fx-dir) * -9deg));
+  opacity:calc(.12 + .88 * var(--fx-r))}
+.fx-slide.fx-soft{transform:translateX(calc((1 - var(--fx-r)) * var(--fx-dir) * 28px));opacity:calc(.25 + .75 * var(--fx-r))}
+
+/* dema: światło za kursorem */
+.demo.fx-glow{position:relative;isolation:isolate}
+.demo.fx-glow::before{content:"";position:absolute;inset:-1px;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s ease;
+  background:radial-gradient(360px circle at var(--fx-mx,50%) var(--fx-my,50%),color-mix(in srgb,var(--purple) 22%,transparent),transparent 65%)}
+.demo.fx-glow:hover::before{opacity:1}
+.demo.fx-glow{border-color:color-mix(in srgb,var(--purple) 18%,var(--line))}
+
+/* karty łańcucha w hero: przechylają się za kursorem */
+.chain a{transition:transform .25s ease,border-color .2s ease}
+.chain a:hover{transform:translateY(-3px) rotate(-1deg)}
+
+@media (prefers-reduced-motion:reduce){
+  .fx-slide,.fx-slide.fx-soft{transform:none;opacity:1}
+  .part>header.fx-ch h2,.part>header.fx-ch .fx-num,.part>header.fx-ch svg.fx-orb,.part>header.fx-ch svg.fx-orb .fx-ring2{transform:none}
+  .part>header.fx-ch svg.fx-orb{transform:translateY(-50%)}
+  h1.fx-tok .fx-t{transition:none}
+  .chain a:hover{transform:none}
+}
