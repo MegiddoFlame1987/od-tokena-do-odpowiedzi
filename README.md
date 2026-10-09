@@ -12,7 +12,7 @@ Mała encyklopedia AI pod materiały szkoleniowe. Strony statyczne, zero zależn
 | `/wykrywanie` | `wykrywanie.html` | 4. Czy to zrobiła AI? Znak wodny, metryczka C2PA, metadane, detektory tekstu, drzewko decyzyjne. 12 sekcji, 6 dem. Stan na 2026-10-08. |
 | `/nowosci` | `nowosci.html` | 5. Nowości. Dane w bloku `<script type="application/json" id="dane">`, strona renderuje się z niego. |
 
-Każda sekcja: nagłówek, jedno zdanie, jedno demo, jedna linia „sprawdzone / uproszczone". Każda strona kończy się tabelą zbiorczą tego, co można cytować dalej. Każda strona ma u góry pasek zakładek `nav.tabs`.
+Każda sekcja: nagłówek, jedno zdanie, jedno demo, jedna linia „sprawdzone / uproszczone". Każda strona kończy się tabelą zbiorczą tego, co można cytować dalej. Każda strona ma u góry pasek zakładek `nav.tabs` i wpina wspólną warstwę wizualną `fx.css` + `fx.js` (tytuł składany z tokenów, pole tokenów w tle, panele rozdziałów kręcone scrollem, dema wjeżdżające przy przewijaniu). Strony działają też bez niej, a przy włączonym ograniczeniu ruchu w systemie ruch się wyłącza.
 
 ## Umiejętności dla Claude (`.claude/skills/`)
 
@@ -36,14 +36,14 @@ GitHub → Vercel, framework: Other. Push na `main` idzie od razu na żywo. Zmia
 
 1. Skopiuj `warsztat.html` jako szablon (style i helpery JS są w środku, bez wspólnego pliku CSS).
 2. Zmień tytuł, hero, łańcuch części i sekcje.
-3. Dodaj zakładkę w `nav.tabs` na wszystkich stronach i wiersz w tej tabeli.
+3. Wepnij `<link rel="stylesheet" href="/fx.css">` w head i `<script src="/fx.js" defer></script>` przed `</body>`.
+4. Dodaj zakładkę w `nav.tabs` na wszystkich stronach i wiersz w tej tabeli.
 
 ## Backlog
 
 Najwyżej 7 pozycji. Prowadzi go umiejętność `tokena-pm`.
 
 - [S] Sprawdzić cennik GPT-6 w API i podmienić modele OpenAI w kalkulatorze `/warsztat#s7`. Zrobione, gdy: kalkulator ma ceny z datą sprawdzenia.
-- [M] Redakcja `/` sekcje 6, 10, 12 (najwyższy FOG) i objaśnienie terminów fine-tuning, embedding, RAG przy pierwszym użyciu. Zrobione, gdy: skrypt pokazuje FOG sekcji ≤ 10,5 i zero terminów bez objaśnienia.
 - [S] Drugie wydanie Nowości. Zrobione, gdy: wydanie 2 na `main`.
 - [S] Pilotaż: jedna osoba spoza czatu przechodzi zakładkę 3. Zrobione, gdy: zapisane trzy miejsca, w których się zgubiła.
 
@@ -57,3 +57,4 @@ Może kiedyś: zakładka o bezpiecznym użyciu AI w firmie (polityka, dane, zgod
 - v3: osobna strona `/agenci`, część druga materiału. Link z hero, nawigacji i sekcji 18.
 - v4: zakładki na każdej stronie, `/warsztat` (część trzecia), `/nowosci` (wydanie 1), umiejętności redakcji i PM w `.claude/skills`.
 - v5: zakładka `/wykrywanie` (część czwarta), umiejętność `sprawdz-pochodzenie` ze skryptem czytającym metadane. Nowości przesunięte na 5.
+- v6: redakcja pięciu stron pod szerszą publiczność (wszystkie sekcje FOG ≤ 10,5), wspólna warstwa wizualna `fx.css` + `fx.js`, naprawiony zdublowany nagłówek na `/wykrywanie`.

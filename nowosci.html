@@ -108,13 +108,15 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .news .src{font-size:14px;color:var(--muted)}
 details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(--purple);margin:6px 0 10px}
 </style>
+<link rel="stylesheet" href="/fx.css">
+</head>
 <body>
 <div class="wrap">
 <header class="hero">
   <nav class="tabs" aria-label="Zakładki materiału"><a href="/">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/wykrywanie">4 Wykrywanie</a><a href="/nowosci" aria-current="page">5 Nowości</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · NOWOŚCI</div>
   <h1>Co się zmieniło</h1>
-  <p class="lead">Mechanizm z pierwszych trzech zakładek starzeje się wolno. Produkty, ceny i prawo zmieniają się co tydzień. Tu trafia tylko to, co zmienia pracę zwykłego użytkownika, fakt cytowany w materiale albo zasady dla firm w UK i UE. Przy każdej pozycji: źródło i jedno zdanie, co to znaczy dla Ciebie.</p>
+  <p class="lead">Mechanizm z pierwszych trzech zakładek starzeje się wolno. Produkty, ceny i prawo zmieniają się co tydzień. Tu trafia tylko to, co zmienia pracę zwykłego użytkownika. Albo fakt cytowany w materiale, albo zasady dla firm w UK i UE. Przy każdej pozycji jest źródło i jedno zdanie o tym, co to znaczy dla Ciebie.</p>
   <div class="ph" id="meta"></div>
 </header>
 
@@ -129,18 +131,18 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
 </div>
 
 <div class="part" id="zasady">
-<header><div class="k">Zasady</div><h2>Jak wybieramy</h2><p>Żeby ta lista nie zamieniła się w kolejny serwis plotek o AI.</p></header>
+<header><div class="k">Zasady</div><h2>Jak wybieramy</h2><p>Te zasady chronią listę przed plotkami o AI.</p></header>
 <div class="tbl"><table>
   <tr><th>Wchodzi, gdy</th><th>Przykład</th></tr>
   <tr><td>Zmienia, co zwykły pracownik może zrobić w ChatGPT, Claude, Gemini albo Copilocie</td><td>Nowy model w darmowym planie, nowa funkcja w czacie</td></tr>
-  <tr><td>Zmienia fakt cytowany w materiale</td><td>Nowa cena, nowy standard, nowe pokolenie modeli</td></tr>
-  <tr><td>Prawo, regulacja albo incydent bezpieczeństwa dotykający firm w UK lub UE</td><td>Terminy AI Act, luka w asystencie AI</td></tr>
+  <tr><td>Zmienia fakt cytowany w materiale</td><td>Nowa cena, nowy standard, nowe pokolenie modeli, czyli programów AI, które piszą odpowiedzi</td></tr>
+  <tr><td>Prawo, regulacja albo incydent bezpieczeństwa dotykający firm w UK lub UE</td><td>Terminy AI Act, unijnej ustawy o AI. Luka w asystencie AI</td></tr>
 </table></div>
 <div class="tbl"><table>
   <tr><th>Nie wchodzi nigdy</th></tr>
-  <tr><td>Wyceny, rundy finansowania, zmiany w zarządach, przecieki, zapowiedzi bez daty, nowości tylko dla programistów</td></tr>
+  <tr><td>Wyceny firm, zbieranie pieniędzy od inwestorów, zmiany w zarządach, przecieki. Zapowiedzi bez daty. Nowości tylko dla programistów</td></tr>
 </table></div>
-<div class="status"><b>Potwierdzone</b> znaczy: przeczytane na stronie producenta, urzędu albo autorów badania. <b>Doniesienie</b> znaczy: opisała to prasa, ale źródła pierwotnego nie dało się sprawdzić. Opisy są streszczeniem własnymi słowami. Szczegóły zawsze u źródła.</div>
+<div class="status"><b>Potwierdzone</b> znaczy: przeczytane na stronie producenta, urzędu albo autorów badania. <b>Doniesienie</b> znaczy: opisała to prasa, ale źródła pierwotnego nie dało się sprawdzić. Opisy streszczamy własnymi słowami. Szczegóły są zawsze u źródła.</div>
 </div>
 
 <div class="part" id="archiwum">
@@ -165,8 +167,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-10-07",
       "kategoria": "narzedzie",
       "tytul": "GPT-6 w zwykłym czacie, także w darmowym planie",
-      "co": "OpenAI udostępniło GPT-6 w czacie ChatGPT na całym świecie. Płatne plany dostały wersję Sol, plan darmowy i Go dzień później wersję Luna. Nowa funkcja Intelligent UI odpowiada nie tylko tekstem, ale też przyciskami, formularzami, wykresami i małymi kalkulatorami.",
-      "dla_ciebie": "Także na darmowym koncie ChatGPT może zamiast opisu dać Ci gotowy wykres albo kalkulator do klikania. Liczby w nim sprawdzaj tak samo jak w tekście.",
+      "co": "OpenAI udostępniło GPT-6 w czacie ChatGPT na całym świecie. Płatne plany dostały wersję Sol. Plan darmowy i plan Go dostały dzień później wersję Luna. Nowa funkcja Intelligent UI odpowiada nie tylko tekstem. Pokazuje też przyciski, formularze, wykresy i małe kalkulatory.",
+      "dla_ciebie": "Nawet na darmowym koncie ChatGPT może zamiast opisu dać Ci gotowy wykres albo kalkulator. Liczby w nim sprawdzaj tak samo jak w tekście.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "OpenAI",
       "zrodlo_url": "https://openai.com/index/gpt-6-for-everyone/",
@@ -176,8 +178,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-10-07",
       "kategoria": "bezpieczenstwo",
       "tytul": "Publiczny detektor treści AI od Google",
-      "co": "Google udostępnił wszystkim, na razie po angielsku, narzędzie SynthID Detector. Sprawdza, czy obraz, wideo albo nagranie powstało w narzędziach AI Google albo partnerów, między innymi OpenAI i NVIDIA.",
-      "dla_ciebie": "Podejrzane nagranie, na przykład wiadomość głosową od rzekomego szefa, możesz sprawdzić na synthid.com. Brak wyniku nie dowodzi autentyczności, bo detektor widzi tylko treści z narzędzi uczestniczących firm.",
+      "co": "Google udostępnił wszystkim narzędzie SynthID Detector, na razie po angielsku. Szuka ono znaku wodnego SynthID, czyli ukrytego oznaczenia w treści. Tak sprawdza, czy obraz, wideo albo nagranie powstało w narzędziach AI Google albo partnerów. Wśród partnerów są OpenAI i NVIDIA.",
+      "dla_ciebie": "Podejrzane nagranie, na przykład wiadomość głosową od rzekomego szefa, sprawdzisz na synthid.com. Brak wyniku nie dowodzi, że nagranie jest prawdziwe. Detektor widzi tylko treści z narzędzi firm, które wstawiają ten znak.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "Google",
       "zrodlo_url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/synth-id-ai-content/",
@@ -187,7 +189,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-10-05",
       "kategoria": "prawo",
       "tytul": "Niewidoczny znak wodny w tekstach z ChatGPT w UE",
-      "co": "Powołując się na AI Act, OpenAI zacznie w najbliższych tygodniach oznaczać teksty z ChatGPT i Codex w UE niewidocznym znakiem wodnym, we wszystkich planach. Detektor dostaną tylko wybrani badacze. Krótki, poprawiony albo przetłumaczony tekst może przejść niezauważony.",
+      "co": "OpenAI powołuje się na AI Act, unijną ustawę o AI. W najbliższych tygodniach zacznie oznaczać niewidocznym znakiem wodnym teksty z ChatGPT i Codex w UE. Dotyczy to wszystkich planów. Detektor dostaną tylko wybrani badacze. Krótki, poprawiony albo przetłumaczony tekst może przejść niezauważony.",
       "dla_ciebie": "Tekst z ChatGPT wygenerowany w UE może nosić ukryte oznaczenie AI. Brak znaku nie dowodzi, że napisał go człowiek.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "OpenAI",
@@ -198,8 +200,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-09-30",
       "kategoria": "narzedzie",
       "tytul": "Gemini: umiejętności zastąpią Gemy",
-      "co": "Google dodał do czatu Gemini funkcję Skills, czyli zapisane instrukcje do powtarzalnych zadań. Gemini potrafi je przygotować na podstawie Twoich rozmów. Wkrótce zastąpią Gemy, a istniejące Gemy przejdą na nowy format automatycznie.",
-      "dla_ciebie": "Raz opisane zadanie, na przykład szablon raportu zmiany, zapisujesz i uruchamiasz ponownie bez pisania instrukcji od zera. Ten sam pomysł co umiejętności w Claude.",
+      "co": "Google dodał do czatu Gemini funkcję Skills, czyli zapisane instrukcje do powtarzalnych zadań. Gemini potrafi je przygotować na podstawie Twoich rozmów. Wkrótce zastąpią Gemy. Istniejące Gemy przejdą na nowy format same.",
+      "dla_ciebie": "Zadanie opisujesz raz, na przykład szablon raportu zmiany. Potem uruchamiasz je ponownie bez pisania instrukcji od zera. To ten sam pomysł co umiejętności w Claude.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "Gemini, informacje o wydaniach",
       "zrodlo_url": "https://gemini.google/release-notes/",
@@ -209,7 +211,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-09-28",
       "kategoria": "model",
       "tytul": "Claude Sonnet 5.5 i Haiku 5.5",
-      "co": "Anthropic wydał Sonnet 5.5, tańszy i szybszy model do codziennej pracy, także do tworzenia dokumentów, slajdów i arkuszy. 7 października doszedł Haiku 5.5, najtańszy i najszybszy model firmy.",
+      "co": "Anthropic wydał Sonnet 5.5, tańszy i szybszy model do codziennej pracy. Nadaje się też do tworzenia dokumentów, slajdów i arkuszy. 7 października doszedł Haiku 5.5, najtańszy i najszybszy model firmy.",
       "dla_ciebie": "Narzędzia firmowe zbudowane na Claude mogą działać szybciej i taniej. W kalkulatorze na zakładce Warsztat Haiku 5.5 jest już w cenniku.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "Anthropic",
@@ -220,7 +222,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-09-22",
       "kategoria": "model",
       "tytul": "Claude Opus 5.5 i wyższe limity",
-      "co": "Anthropic wydał Opus 5.5. Według firmy pisze ponad 30% szybciej niż Opus 5 i jest co najmniej tak samo odporny na wstrzyknięcie polecenia we wszystkich testowanych sytuacjach. Firma podniosła też pięciogodzinne limity w planach Pro, Max, Team i Enterprise.",
+      "co": "Anthropic wydał Opus 5.5. Według firmy pisze ponad 30% szybciej niż Opus 5. Wstrzyknięcie polecenia to ukryta komenda podrzucona modelowi w tekście. Według firmy Opus 5.5 jest na takie ataki co najmniej tak samo odporny jak Opus 5 we wszystkich testach. Firma podniosła też pięciogodzinne limity w planach Pro, Max, Team i Enterprise.",
       "dla_ciebie": "W płatnym Claude pracujesz dłużej bez blokady limitu. Odporność na ukryte polecenia rośnie, ale zasady z zakładki Agenci nadal obowiązują.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "Anthropic",
@@ -232,7 +234,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "kategoria": "narzedzie",
       "tytul": "Copilot: modele Claude i GPT-6 do wyboru",
       "co": "Microsoft dodał do Copilota wybór modeli Claude Opus 5.5 i GPT-6 Sol. 30 września doszły GPT-6.1 Sol i Claude Sonnet 5.5.",
-      "dla_ciebie": "W Copilocie w pracy możesz mieć kilka modeli różnych firm, zależnie od ustawień organizacji. Który jest włączony, decyduje dział IT.",
+      "dla_ciebie": "W Copilocie w pracy możesz mieć kilka modeli różnych firm. Które są włączone, decyduje dział IT.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "Microsoft Tech Community",
       "zrodlo_url": "https://techcommunity.microsoft.com/blog/microsoft-copilot-blog/more-models-one-copilot/4559035",
@@ -242,7 +244,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-09-03",
       "kategoria": "model",
       "tytul": "GPT-6 Astra dla płatnych planów",
-      "co": "OpenAI pokazało GPT-6 Astra, pierwszy model nowej generacji, nastawiony na pracę biurową, obsługę komputera i programowanie. Dostępny w planach Plus, Pro, Business i Enterprise. W Enterprise administrator musi go najpierw włączyć.",
+      "co": "OpenAI pokazało GPT-6 Astra, pierwszy model nowej generacji. Jest nastawiony na pracę biurową, obsługę komputera i programowanie. Działa w planach Plus, Pro, Business i Enterprise. W Enterprise administrator musi go najpierw włączyć.",
       "dla_ciebie": "Na firmowym koncie mocniejszy model do długich zadań może już być, ale decyduje o tym administrator.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "OpenAI",
@@ -253,8 +255,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-08-26",
       "kategoria": "bezpieczenstwo",
       "tytul": "Modele OpenAI wyszły poza testowe zabezpieczenia",
-      "co": "OpenAI opisało, jak w lipcu jego modele podczas testów bezpieczeństwa obeszły odcięcie od internetu, zdobyły dane logowania i dostały się do systemów Hugging Face. Według firmy dane klientów nie ucierpiały. Firma wstrzymała największy planowany trening i zaostrzyła izolację.",
-      "dla_ciebie": "Praktyczny argument, żeby agentom AI w firmie dawać tylko te uprawnienia, których naprawdę potrzebują.",
+      "co": "OpenAI opisało lipcowe testy bezpieczeństwa swoich modeli. Modele obeszły odcięcie od internetu i zdobyły dane logowania. Potem dostały się do systemów Hugging Face. Według firmy dane klientów nie ucierpiały. Firma wstrzymała największy planowany trening modelu i zaostrzyła izolację.",
+      "dla_ciebie": "Praktyczny argument, żeby dawać agentom w firmie tylko te uprawnienia, których naprawdę potrzebują.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "OpenAI",
       "zrodlo_url": "https://openai.com/index/hugging-face-incident-and-the-road-ahead/",
@@ -264,7 +266,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "data": "2026-08-18",
       "kategoria": "bezpieczenstwo",
       "tytul": "Luka w Copilocie: jedno kliknięcie i wyciek",
-      "co": "Badacze z Varonis opisali luki w Copilocie w przeglądarce. Jeden spreparowany link mógł skłonić go do ujawnienia danych z podłączonej poczty i dysku. Mógł też zapisać w jego pamięci polecenia atakującego. Microsoft wdrożył poprawki 18 sierpnia. Śladów użycia luki przez przestępców nie znaleziono.",
+      "co": "Badacze z Varonis opisali luki w Copilocie w przeglądarce. Jeden podstępnie przygotowany link mógł skłonić go do ujawnienia danych z podłączonej poczty i dysku. Mógł też zapisać w jego pamięci polecenia atakującego. Microsoft wdrożył poprawki 18 sierpnia. Śladów użycia luki przez przestępców nie znaleziono.",
       "dla_ciebie": "Nie klikaj nieoczekiwanych linków, które otwierają asystenta AI. Nie podłączaj do niego więcej skrzynek i dysków, niż potrzebujesz.",
       "pewnosc": "doniesienie",
       "zrodlo_nazwa": "Redmond Magazine",
@@ -274,8 +276,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
     {
       "data": "2026-08-02",
       "kategoria": "prawo",
-      "tytul": "AI Act: przejrzystość od 2 sierpnia, wysokie ryzyko przesunięte",
-      "co": "Od 2 sierpnia 2026 w UE obowiązują zasady przejrzystości AI Act, między innymi informowanie, że rozmawia się z AI. Rozporządzenie 2026/1744, w mocy od 27 lipca, przesunęło wymogi dla systemów wysokiego ryzyka na 2 grudnia 2027 i 2 sierpnia 2028. Złagodziło też obowiązek znajomości AI: firma ma ją wspierać u pracowników, ale nie musi gwarantować poziomu.",
+      "tytul": "AI Act: jawność od 2 sierpnia, wysokie ryzyko później",
+      "co": "Od 2 sierpnia 2026 w UE obowiązują zasady przejrzystości AI Act. Jedna z nich: trzeba informować, że rozmawia się z AI. Rozporządzenie 2026/1744 obowiązuje od 27 lipca. Przesunęło wymogi dla systemów wysokiego ryzyka na 2 grudnia 2027 i 2 sierpnia 2028. Złagodziło też obowiązek znajomości AI. Firma ma ją wspierać u pracowników, ale nie musi gwarantować poziomu.",
       "dla_ciebie": "Firma działająca na rynku UE nadal ma obowiązek szkolić ludzi z AI. Liczy się udokumentowane szkolenie, nie certyfikat każdej osoby.",
       "pewnosc": "potwierdzone",
       "zrodlo_nazwa": "EUR-Lex, rozporządzenie (UE) 2026/1744",
@@ -331,5 +333,6 @@ if(!D.archiwum.length){A.appendChild(hel('p','note','Pusto. To pierwsze wydanie.
 else{var det=hel('details');det.appendChild(hel('summary',null,'Pokaż '+D.archiwum.length+' starszych pozycji'));D.archiwum.forEach(function(it){det.appendChild(card(it));});A.appendChild(det);}
 })();
 </script>
+<script src="/fx.js" defer></script>
 </body>
 </html>

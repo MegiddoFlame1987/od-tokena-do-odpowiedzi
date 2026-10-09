@@ -101,16 +101,15 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
 </style>
-<body>
-<div class="wrap">
-<header class="hero">
+<link rel="stylesheet" href="/fx.css">
+</head>
 <body>
 <div class="wrap">
 <header class="hero">
   <nav class="tabs" aria-label="Zakładki materiału"><a href="/">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/wykrywanie" aria-current="page">4 Wykrywanie</a><a href="/nowosci">5 Nowości</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · WYKRYWANIE</div>
   <h1>Czy to zrobiła AI?</h1>
-  <p class="lead">Pytanie pada coraz częściej, a odpowiedź brzmi inaczej, niż ludzie się spodziewają. Nie istnieje narzędzie, które patrzy na treść i mówi, kto ją zrobił. Istnieją trzy różne mechanizmy, które sprawdzają trzy różne rzeczy, każdy ma inną dziurę. Ta strona pokazuje, co z nich zostaje, zanim plik do ciebie dotrze, i jak odpowiadać, gdy nie da się ustalić.</p>
+  <p class="lead">To pytanie pada coraz częściej. Odpowiedź jest inna, niż ludzie się spodziewają. Nie ma narzędzia, które spojrzy na treść i powie, kto ją zrobił. Są trzy mechanizmy, każdy sprawdza co innego i każdy ma inną słabość. Ta strona pokazuje, co z nich zostaje, zanim plik do ciebie dotrze. I jak odpowiadać, gdy pochodzenia nie da się ustalić.</p>
   <div class="chain">
     <a href="#p1"><b>I</b>Trzy mechanizmy<br>znak · metryczka · zgadywanie</a>
     <a href="#p2"><b>II</b>Co przeżywa<br>podróż pliku</a>
@@ -126,7 +125,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <!-- ===================== I ===================== -->
 <div class="part" id="p1">
-<header><div class="k">Część I</div><h2>Trzy mechanizmy</h2><p>Pod hasłem „detektor AI” kryją się trzy zupełnie różne rzeczy. Mylenie ich jest źródłem większości błędnych wniosków.</p></header>
+<header><div class="k">Część I</div><h2>Trzy mechanizmy</h2><p>Detektor AI to program, który ma rozpoznać treść zrobioną przez AI. Pod tą nazwą kryją się trzy różne rzeczy. Większość błędnych wniosków bierze się z ich mylenia.</p></header>
 
 <section class="s" id="s1">
 <div class="k">1 / 12</div><h3>Co właściwie sprawdzamy</h3>
@@ -137,12 +136,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <p class="note" id="mcO" style="margin-top:2px"></p>
   <div class="ph" id="mcP"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> to trzy osobne technologie, nie trzy wersje tej samej. Pierwsze dwie dają odpowiedź tak albo nic. Trzecia zawsze daje jakiś procent, także wtedy, gdy nie ma pojęcia.</div>
+<div class="status"><b>Sprawdzone:</b> to trzy osobne technologie, nie trzy wersje tej samej. Pierwsze dwie dają odpowiedź tak albo nic. Trzecia zawsze daje jakiś procent, także wtedy, gdy nic nie wie.</div>
 </section>
 
 <section class="s" id="s2">
 <div class="k">2 / 12</div><h3>Znak wodny siedzi w treści</h3>
-<p>Znak wodny to drobna zmiana w samych pikselach albo w dźwięku, niewidoczna dla człowieka, czytelna dla programu, który wie, czego szukać. Nie jest doklejony z boku pliku, więc nie znika przy zapisie do innego formatu.</p>
+<p>Znak wodny siedzi w samych pikselach albo w dźwięku. Metadane to opis doklejony z boku pliku, na przykład data i nazwa programu. Znak wodny nie jest doklejony, więc nie znika przy zapisie do innego formatu.</p>
 <div class="demo">
   <div class="scroll"><svg viewBox="0 0 680 230" role="img" aria-label="Porównanie: metadane doklejone z boku pliku, znak wodny rozsiany w treści">
     <text x="40" y="34" class="m">metryczka i metadane</text>
@@ -166,12 +165,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <tr><td>Mocne kadrowanie, przerysowanie</td><td>Znikają</td><td>Może zniknąć</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> znak wodny przetrwa kompresję i zapis w innym formacie, metadane nie. <b>Uproszczone:</b> rysunek to metafora, znak nie jest rzędem kropek, tylko rozłożoną zmianą wartości w całym pliku.</div>
+<div class="status"><b>Sprawdzone:</b> znak wodny przetrwa kompresję i zapis w innym formacie, metadane nie. <b>Uproszczone:</b> kropki na rysunku to tylko obraz. Prawdziwy znak to drobna zmiana wartości rozłożona po całym pliku.</div>
 </section>
 
 <section class="s" id="s3">
 <div class="k">3 / 12</div><h3>Metryczka: Content Credentials</h3>
-<p>Drugi mechanizm to podpisana metryczka doklejona do pliku. Zapisuje, czym plik powstał i co się z nim potem działo. Standard nazywa się C2PA, w narzędziach bywa opisany jako Content Credentials.</p>
+<p>Drugi mechanizm to podpisana metryczka doklejona do pliku. Zapisuje, czym plik powstał i co się z nim potem działo. Standard nazywa się C2PA. W programach widnieje zwykle jako Content Credentials.</p>
 <div class="demo">
   <ul class="log">
     <li><b class="s">1</b>Wygenerowany w narzędziu AI. Metryczka zapisuje nazwę narzędzia i datę, całość podpisana.</li>
@@ -181,7 +180,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   </ul>
   <p class="note">Mocna strona: podpis da się sprawdzić, więc trudno metryczkę podrobić. Słaba strona: tak samo łatwo ją usunąć, jak skasować plik tekstowy. Brak metryczki nie znaczy nic.</p>
 </div>
-<div class="status"><b>Sprawdzone:</b> C2PA to otwarty standard, podpisany kryptograficznie, wspierany przez część aparatów i edytorów. <b>Praktyka:</b> większość plików krążących w sieci nie ma metryczki, bo platformy ją wycinają.</div>
+<div class="status"><b>Sprawdzone:</b> C2PA to otwarty standard z podpisem cyfrowym. Obsługuje go część aparatów i edytorów. <b>Praktyka:</b> większość plików w sieci nie ma metryczki, bo platformy ją wycinają.</div>
 </section>
 </div>
 
@@ -191,7 +190,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s4">
 <div class="k">4 / 12</div><h3>Podróż pliku</h3>
-<p>Ten sam obraz na czterech etapach. Kliknij etap, zobaczysz, co jeszcze da się z niego odczytać.</p>
+<p>Ten sam obraz na czterech etapach. EXIF i XMP to dwa najczęstsze rodzaje metadanych. Kliknij etap i zobacz, co jeszcze da się odczytać.</p>
 <div class="demo">
   <div class="pick" id="jrB"></div>
   <div class="scroll"><table>
@@ -201,85 +200,85 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="verdict" id="jrN"></div>
   <p class="note" id="jrO" style="margin-top:2px"></p>
 </div>
-<div class="status"><b>Sprawdzone:</b> serwisy społecznościowe i komunikatory czyszczą metadane przy wysyłce, zrzut ekranu tworzy plik bez historii. <b>Uproszczone:</b> „może zniknąć” w etapie 4 zależy od tego, jak mocno plik przerobiono.</div>
+<div class="status"><b>Sprawdzone:</b> serwisy społecznościowe i komunikatory usuwają metadane przy wysyłce. Zrzut ekranu tworzy nowy plik bez historii. <b>Uproszczone:</b> czy znak zniknie na etapie 4, zależy od tego, jak mocno plik przerobiono.</div>
 </section>
 
 <section class="s" id="s5">
 <div class="k">5 / 12</div><h3>Dlaczego brak śladu nic nie znaczy</h3>
-<p>Cztery pliki, cztery razy ten sam wynik: nic nie znaleziono. Cztery różne prawdy. Kliknij, żeby odsłonić.</p>
+<p>Cztery pliki i cztery razy ten sam wynik: nic nie znaleziono. Za każdym razem kryje się za nim co innego. Kliknij plik.</p>
 <div class="demo">
   <div class="pick" id="nvB"></div>
   <div class="ph" id="nvP"></div>
   <p class="note" id="nvO"></p>
 </div>
-<div class="status"><b>To jest najważniejsze zdanie na tej stronie:</b> wynik negatywny mówi tylko tyle, że nie znaleziono śladu. Nie mówi, że śladu nie było, i nie mówi, kto zrobił plik.</div>
+<div class="status"><b>Najważniejsze zdanie tej strony:</b> wynik negatywny mówi tylko tyle, że nie znaleziono śladu. Nie mówi, że śladu nie było, i nie mówi, kto zrobił plik.</div>
 </section>
 </div>
 
 <!-- ===================== III ===================== -->
 <div class="part" id="p3">
-<header><div class="k">Część III</div><h2>Narzędzia, które naprawdę działają</h2><p>Dwa, na obrazie, wideo i dźwięku. Oba z wąskim zakresem, oba warte użycia, żadne nie daje pewności.</p></header>
+<header><div class="k">Część III</div><h2>Narzędzia, które naprawdę działają</h2><p>Są dwa i działają na obrazie, wideo i dźwięku. Oba mają wąski zakres. Oba warto stosować, ale żadne nie daje pewności.</p></header>
 
 <section class="s" id="s6">
 <div class="k">6 / 12</div><h3>SynthID Detector</h3>
-<p>Narzędzie Google, od października 2026 dostępne publicznie pod adresem <a href="https://synthid.com/">synthid.com</a>. Czyta znak wodny wstawiany przez narzędzia Google i partnerów. Obraz, wideo, dźwięk. Tekstu nie sprawdza.</p>
+<p>SynthID to znak wodny, który wstawiają narzędzia AI Google i jego partnerów. SynthID Detector to narzędzie Google, które ten znak czyta. Od października 2026 każdy może go użyć pod adresem <a href="https://synthid.com/">synthid.com</a>. Sprawdza obraz, wideo i dźwięk, tekstu nie.</p>
 <div class="demo">
   <div class="tbl"><table>
     <tr><th>Pytanie</th><th>Odpowiedź</th></tr>
-    <tr><td>Co czyta</td><td>Znak wodny SynthID w obrazie, wideo i audio</td></tr>
+    <tr><td>Co czyta</td><td>Znak wodny SynthID w obrazie, wideo i dźwięku</td></tr>
     <tr><td>Czyje znaki</td><td>Google oraz partnerzy, między innymi OpenAI, NVIDIA, Kakao</td></tr>
     <tr><td>Czy czyta tekst</td><td>Nie. Nawet tekstu z aplikacji Gemini, choć bywa znakowany</td></tr>
     <tr><td>Ile sprawdzeń</td><td>Około 10 dziennie na osobę</td></tr>
-    <tr><td>Czy jest API</td><td>Nie ma publicznego. Plik wgrywa się ręcznie</td></tr>
-    <tr><td>Czy mówi, ile jest AI</td><td>Nie. Nie odróżnia pliku wygenerowanego w całości od poprawionego tła</td></tr>
+    <tr><td>Czy jest API</td><td>Nie ma publicznego API, czyli dostępu dla innych programów. Plik wgrywa się ręcznie</td></tr>
+    <tr><td>Czy mówi, ile jest AI</td><td>Nie. Nie odróżni pliku wygenerowanego w całości od zdjęcia, w którym AI poprawiła tło</td></tr>
   </table></div>
   <div class="legend"><span><i style="background:var(--teal)"></i>Wynik mówi coś pewnego</span><span><i style="background:var(--coral)"></i>Wynik nie mówi nic</span></div>
   <div class="tbl"><table>
     <tr><th>Wynik</th><th>Co z tego wynika</th><th>Czego nadal nie wiesz</th></tr>
-    <tr><td><span class="chip c-teal">znaleziono</span></td><td>Objęte systemem narzędzie brało w tym udział</td><td>Czy zrobiło całość, czy poprawiło fragment. Kto je uruchomił</td></tr>
-    <tr><td><span class="chip c-coral">nie znaleziono</span></td><td>Nic</td><td>Czy generator był poza systemem, czy znak zdjęto, czy plik jest prawdziwy</td></tr>
+    <tr><td><span class="chip c-teal">znaleziono</span></td><td>Brało w tym udział narzędzie, które wstawia ten znak</td><td>Czy zrobiło całość, czy poprawiło fragment. Kto je uruchomił</td></tr>
+    <tr><td><span class="chip c-coral">nie znaleziono</span></td><td>Nic</td><td>Czy generator nie wstawia znaku, czy znak zdjęto, czy plik jest prawdziwy</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Sprawdzone, stan na 8 października 2026:</b> publiczna dostępność, zakres plików, limit dzienny i brak obsługi tekstu, według zapowiedzi Google i opisów narzędzia. <b>Do odświeżenia:</b> lista partnerów rośnie.</div>
+<div class="status"><b>Sprawdzone, stan na 8 października 2026:</b> dostęp dla wszystkich, rodzaje plików, limit dzienny i brak obsługi tekstu. Źródło: zapowiedź Google i opis narzędzia. <b>Do odświeżenia:</b> lista partnerów rośnie.</div>
 </section>
 
 <section class="s" id="s7">
 <div class="k">7 / 12</div><h3>Czytanie metadanych u siebie</h3>
-<p>Zanim poślesz plik do cudzego narzędzia, przeczytaj to, co jest w nim zapisane. To działa lokalnie, bez limitu i bez wysyłania pliku na zewnątrz. Cztery możliwe wyniki.</p>
+<p>Zanim wyślesz plik do cudzego narzędzia, przeczytaj jego metadane. Robisz to lokalnie, czyli na własnym komputerze, bez limitu i bez wysyłania pliku. Są cztery możliwe wyniki.</p>
 <div class="demo">
   <div class="pick" id="mdB"></div>
   <div class="code" id="mdC"></div>
   <p class="note" id="mdO"></p>
 </div>
-<div class="status"><b>Sprawdzone:</b> te pola istnieją i dają się czytać lokalnie: metryczka C2PA, znacznik IPTC w XMP, bloki tekstowe w PNG, pole Software w EXIF. <b>Uwaga:</b> każde z nich da się dopisać ręcznie, więc wynik B jest poszlaką, nie dowodem.</div>
+<div class="status"><b>Sprawdzone:</b> te pola istnieją i da się je odczytać lokalnie. To metryczka C2PA, znacznik źródła IPTC w XMP, bloki tekstowe w PNG i pole Software w EXIF, czyli nazwa programu. <b>Uwaga:</b> każde z nich da się dopisać ręcznie, więc wynik B jest poszlaką, nie dowodem.</div>
 </section>
 </div>
 
 <!-- ===================== IV ===================== -->
 <div class="part" id="p4">
-<header><div class="k">Część IV</div><h2>Tekst</h2><p>Tu nie ma dobrej wiadomości. Tekstu nie da się sprawdzić, a narzędzia, które twierdzą inaczej, robią realną krzywdę.</p></header>
+<header><div class="k">Część IV</div><h2>Tekst</h2><p>Tu nie ma dobrej wiadomości. Tekstu nie da się sprawdzić. Narzędzia, które twierdzą inaczej, robią realną krzywdę.</p></header>
 
 <section class="s" id="s8">
 <div class="k">8 / 12</div><h3>Dlaczego detektory tekstu zawodzą</h3>
-<p>Detektor tekstu mierzy, jak przewidywalne są słowa. Problem w tym, że wiele ludzkiego pisania jest bardzo przewidywalne, a poprawiony tekst z modelu przestaje być. Kliknij próbkę.</p>
+<p>Detektor tekstu mierzy, jak łatwo przewidzieć kolejne słowa. Kłopot w tym, że ludzie często piszą bardzo przewidywalnie, a tekst z modelu, choćby z ChatGPT, po kilku poprawkach przestaje taki być. Kliknij próbkę.</p>
 <div class="demo">
   <div class="pick" id="txB"></div>
   <div class="verdict" id="txV"></div>
   <div class="bar" style="margin:6px 0 10px"><div id="txBar" style="background:var(--coral)"></div></div>
   <div class="ph" id="txP"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> detektory tekstu dają fałszywe alarmy, a najczęściej obrywają osoby piszące w języku obcym oraz teksty szablonowe. <b>Uproszczone:</b> procenty w tym demie są ilustracją wzorca, nie pomiarem konkretnego narzędzia.</div>
+<div class="status"><b>Sprawdzone:</b> detektory tekstu dają fałszywe alarmy. Najczęściej trafiają w teksty szablonowe i w ludzi piszących w obcym języku. <b>Uproszczone:</b> procenty w demie to przykład wzorca, nie pomiar konkretnego narzędzia.</div>
 </section>
 
 <section class="s" id="s9">
 <div class="k">9 / 12</div><h3>Co robić zamiast</h3>
-<p>Jeśli naprawdę chodzi o to, czy ktoś napisał coś sam, pytanie o narzędzie jest pytaniem o złą rzecz. Działa jedno: rozmowa o treści.</p>
+<p>Gdy chodzi o to, czy ktoś napisał coś sam, pytanie o narzędzie prowadzi donikąd. Działa jedno: rozmowa o treści.</p>
 <div class="tbl"><table>
   <tr><th>Zamiast</th><th>Zrób</th><th>Dlaczego działa</th></tr>
-  <tr><td>Wrzucić tekst do detektora</td><td>Poproś o wersje robocze i historię pliku</td><td>Proces zostawia ślady, których nie da się dorobić wstecz</td></tr>
+  <tr><td>Wrzucić tekst do detektora</td><td>Poproś o wersje robocze i historię pliku</td><td>Praca nad tekstem zostawia ślady, których nie da się dorobić po fakcie</td></tr>
   <tr><td>Szukać dowodu w tekście</td><td>Zapytaj autora o treść: skąd ta liczba, co znaczy ten akapit</td><td>Autor własnego tekstu odpowiada od razu</td></tr>
   <tr><td>Rozstrzygać po fakcie</td><td>Ustal zasadę na przyszłość</td><td>Jasna zasada rozwiązuje następne dwadzieścia przypadków</td></tr>
-  <tr><td>Pytać „czy użyłeś AI”</td><td>Pytaj „co jest twoje w tym dokumencie”</td><td>Drugie pytanie da się uczciwie odpowiedzieć, pierwsze zmusza do obrony</td></tr>
+  <tr><td>Pytać „czy użyłeś AI”</td><td>Pytaj „co jest twoje w tym dokumencie”</td><td>Na drugie da się uczciwie odpowiedzieć. Pierwsze zmusza do obrony</td></tr>
 </table></div>
 <div class="status"><b>Opinia, nie pomiar:</b> to wniosek z tego, jak działa mechanizm, nie wynik badania. Progi i zasady w firmie trzeba ustalić samemu.</div>
 </section>
@@ -287,11 +286,11 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <!-- ===================== V ===================== -->
 <div class="part" id="p5">
-<header><div class="k">Część V</div><h2>Procedura</h2><p>Co zrobić, gdy pytanie naprawdę padnie, i jak zapisać odpowiedź, żeby nikt nie wyczytał z niej więcej, niż w niej jest.</p></header>
+<header><div class="k">Część V</div><h2>Procedura</h2><p>Co zrobić, gdy pytanie naprawdę padnie. I jak zapisać odpowiedź, żeby nikt nie wyczytał z niej więcej, niż w niej jest.</p></header>
 
 <section class="s" id="s10">
 <div class="k">10 / 12</div><h3>Drzewko</h3>
-<p>Odpowiedz na pytania, dostaniesz krok, nie werdykt.</p>
+<p>Odpowiedz na pytania. Na końcu dostaniesz następny krok, nie werdykt.</p>
 <div class="demo">
   <div class="verdict" id="dtQ"></div>
   <div class="pick" id="dtB" style="margin-top:10px"></div>
@@ -312,13 +311,13 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <tr><td>Zdjęcie jest autentyczne</td><td>Zdjęcie ma metadane aparatu, zgodne z deklarowaną datą</td></tr>
     <tr><td>On użył AI</td><td>Plik zawiera metadane narzędzia X. Nie wiem, kto je dodał</td></tr>
   </table></div>
-  <p class="note">Szablon raportu, cztery wiersze, ostatni obowiązkowy także wtedy, gdy wynik jest pewny:</p>
+  <p class="note">Szablon raportu ma cztery wiersze. Ostatni wypełniasz zawsze, także gdy wynik jest pewny.</p>
   <div class="code">Plik:        <span class="kk">nazwa</span>
 Werdykt:     <span class="kk">litera i jedno zdanie</span>
 Sprawdzone:  <span class="vv">metadane tak/nie, SynthID tak/nie</span>
 Czego nie wiem: <span class="vv">...</span></div>
 </div>
-<div class="status"><b>Praktyka:</b> ostatni wiersz jest tym, co odróżnia notatkę użyteczną od notatki, która za pół roku posłuży za dowód czegoś, czego nie stwierdzała.</div>
+<div class="status"><b>Praktyka:</b> bez ostatniego wiersza notatka za pół roku może posłużyć za dowód. Dowód czegoś, czego wcale nie stwierdzała.</div>
 </section>
 
 <section class="s" id="s12">
@@ -326,12 +325,12 @@ Czego nie wiem: <span class="vv">...</span></div>
 <p>Wynik dotyczy pliku. Decyzja dotyczy osoby. Między jednym a drugim jest luka, której żadne narzędzie nie zamyka.</p>
 <div class="tbl"><table>
   <tr><th>Wynik</th><th>Co wolno powiedzieć o pliku</th><th>Czego nie wolno powiedzieć o osobie</th></tr>
-  <tr><td>Znak wodny znaleziony</td><td>W powstaniu brało udział narzędzie objęte systemem</td><td>Że ta osoba go użyła ani że wiedziała, czym jest plik</td></tr>
+  <tr><td>Znak wodny znaleziony</td><td>W powstaniu brało udział narzędzie, które wstawia ten znak</td><td>Że ta osoba go użyła ani że wiedziała, czym jest plik</td></tr>
   <tr><td>Metadane wskazują generator</td><td>W pliku jest taki zapis</td><td>Że zapis jest prawdziwy. Da się go dopisać w minutę</td></tr>
   <tr><td>Nic nie znaleziono</td><td>Nie znaleziono śladów</td><td>Nic. W żadną stronę</td></tr>
   <tr><td>Detektor tekstu</td><td>Nic</td><td>Nic. Tego wyniku nie używamy wobec ludzi</td></tr>
 </table></div>
-<div class="status"><b>Opinia wprost:</b> fałszywe oskarżenie na podstawie narzędzia, które brzmi pewniej, niż jest, kosztuje firmę więcej niż niewykryte użycie AI. Pierwsze niszczy zaufanie i bywa sprawą prawną, drugie zwykle da się naprawić zasadą na przyszłość.</div>
+<div class="status"><b>Opinia wprost:</b> fałszywe oskarżenie kosztuje firmę więcej niż niewykryte użycie AI. Zwłaszcza gdy opiera się na narzędziu, które brzmi pewniej, niż jest. Oskarżenie niszczy zaufanie i bywa sprawą prawną. Niewykryte użycie zwykle naprawi zasada na przyszłość.</div>
 </section>
 </div>
 
@@ -340,13 +339,13 @@ Czego nie wiem: <span class="vv">...</span></div>
 <div class="tbl"><table>
   <tr><th>Sprawdzone</th><th>Uproszczone albo opinia</th></tr>
   <tr><td>Trzy mechanizmy: znak wodny w treści, podpisana metryczka obok treści, zgadywanie z treści</td><td>Rysunek znaku wodnego jako rzędu kropek</td></tr>
-  <tr><td>Metadane giną przy wysyłce komunikatorem i przy zrzucie ekranu, znak wodny przetrwa kompresję</td><td>Gdzie dokładnie leży próg przeróbki, po którym znak znika</td></tr>
-  <tr><td>SynthID Detector: publiczny od października 2026, obraz, wideo, audio, bez tekstu, około 10 sprawdzeń dziennie, bez publicznego API</td><td>Lista partnerów rośnie, trzeba odświeżać</td></tr>
+  <tr><td>Metadane giną przy wysyłce komunikatorem i przy zrzucie ekranu. Znak wodny przetrwa kompresję</td><td>Gdzie dokładnie leży próg przeróbki, po którym znak znika</td></tr>
+  <tr><td>SynthID Detector: publiczny od października 2026, obraz, wideo, dźwięk, bez tekstu, około 10 sprawdzeń dziennie, bez publicznego API</td><td>Lista partnerów rośnie, trzeba odświeżać</td></tr>
   <tr><td>C2PA jest podpisany, więc trudny do podrobienia i łatwy do usunięcia</td><td>Jak często spotkasz plik z metryczką w praktyce</td></tr>
-  <tr><td>Detektory tekstu dają fałszywe alarmy, najczęściej na tekstach szablonowych i pisanych w języku obcym</td><td>Procenty w demie, to ilustracja wzorca, nie pomiar</td></tr>
-  <tr><td>Wynik negatywny nie jest dowodem na brak AI</td><td>Reguły postępowania wobec pracownika, to wniosek, nie przepis</td></tr>
+  <tr><td>Detektory tekstu dają fałszywe alarmy, najczęściej na tekstach szablonowych i pisanych w języku obcym</td><td>Procenty w demie: przykład wzorca, nie pomiar</td></tr>
+  <tr><td>Wynik negatywny nie jest dowodem na brak AI</td><td>Reguły postępowania wobec pracownika: wniosek, nie przepis</td></tr>
 </table></div>
-<p class="note">Dla Claude w tym repozytorium jest umiejętność <code>sprawdz-pochodzenie</code>: czyta metadane lokalnie, prowadzi przez SynthID i trzyma szablon raportu z ostatniego wiersza.</p>
+<p class="note">W repozytorium tej strony, czyli folderze z jej plikami, jest umiejętność dla Claude o nazwie <code>sprawdz-pochodzenie</code>. Umiejętność to folder z instrukcją, który Claude wczytuje, gdy zadanie pasuje. Ta czyta metadane lokalnie, prowadzi przez SynthID i pilnuje szablonu raportu z obowiązkowym ostatnim wierszem.</p>
 </div>
 
 <footer>Część czwarta materiału. Pierwsza: <a href="/">Od tokena do odpowiedzi</a>, mechanizm modelu. Druga: <a href="/agenci">Od zadania do agenta</a>, pętla i uprawnienia. Trzecia: <a href="/warsztat">Od czatu do warsztatu</a>, narzędzia. Ta: co da się ustalić o gotowym pliku. Co się zmienia na bieżąco: <a href="/nowosci">Nowości</a>.</footer>
@@ -368,10 +367,10 @@ function picker(box,etykiety,cb){var B=etykiety.map(function(t,i){var b=hel('but
 (function(){
 var B=$('mcB');if(!B)return;
 var M=[
- {n:'Znak wodny',o:'Drobna zmiana w pikselach albo w dźwięku, wstawiona przez generator. Niewidoczna, czytelna dla programu, który zna wzór.',
-  p:[['Sprawdza','Czy generator zostawił swój znak w treści'],['Odpowiedź','Znaleziono albo nic'],['Mocna strona','Przeżywa kompresję, zapis w innym formacie i zwykle zrzut ekranu'],['Dziura','Działa tylko na narzędziach, które w tym uczestniczą'],['Przykład','SynthID Detector']]},
+ {n:'Znak wodny',o:'Drobna zmiana w pikselach albo w dźwięku. Wstawia ją generator, czyli narzędzie AI, które tworzy obraz, wideo albo dźwięk. Człowiek jej nie widzi, program znający wzór ją odczyta.',
+  p:[['Sprawdza','Czy generator zostawił swój znak w treści'],['Odpowiedź','Znaleziono albo nic'],['Mocna strona','Przeżywa kompresję, czyli zmniejszanie pliku, zapis w innym formacie i zwykle zrzut ekranu'],['Dziura','Działa tylko z narzędziami, które wstawiają znak'],['Przykład','SynthID Detector od Google']]},
  {n:'Metryczka',o:'Podpisany zapis doklejony do pliku. Mówi, czym plik powstał i co się z nim działo.',
-  p:[['Sprawdza','Czy do pliku dołączono podpisaną historię'],['Odpowiedź','Jest i podpis się zgadza, albo nic'],['Mocna strona','Podpis utrudnia podrobienie'],['Dziura','Usuwa się równie łatwo jak każdy plik. Platformy wycinają ją same'],['Przykład','C2PA, Content Credentials']]},
+  p:[['Sprawdza','Czy do pliku dołączono podpisaną historię'],['Odpowiedź','Jest i podpis się zgadza, albo nic'],['Mocna strona','Podpis utrudnia podrobienie'],['Dziura','Usuwa się ją równie łatwo jak każdy plik. Platformy wycinają ją same'],['Przykład','C2PA, Content Credentials']]},
  {n:'Zgadywanie z treści',o:'Program ocenia samą treść i szacuje, czy wygląda na maszynową. Nic w pliku nie musi być zapisane.',
   p:[['Sprawdza','Jak przewidywalna jest treść'],['Odpowiedź','Zawsze jakiś procent, także gdy nie wie'],['Mocna strona','Żadna, której dałoby się zaufać przy decyzji'],['Dziura','Myli się w obie strony i brzmi tak samo pewnie w obu'],['Przykład','Detektory tekstu']]}
 ];
@@ -396,8 +395,8 @@ var ST=[
  ['może nie być','nie ma','nie ma']
 ];
 var OP=[
- ['Prosto z generatora','Komplet. Taki plik trafia do ciebie tylko wtedy, gdy ktoś przesłał ci go jako plik, bez pośrednictwa serwisu.'],
- ['Po komunikatorze albo serwisie','Platforma przepuszcza obraz przez własne przetwarzanie i wycina wszystko, co doklejone. Zostaje sama treść, a w niej znak wodny.'],
+ ['Prosto z generatora','Komplet. Taki plik dostajesz tylko wtedy, gdy ktoś wyśle go jako plik, bez serwisu po drodze.'],
+ ['Po komunikatorze albo serwisie','Platforma przerabia obraz po swojemu i wycina wszystko, co doklejone. Zostaje sama treść, a w niej znak wodny.'],
  ['Zrzut ekranu','Powstaje zupełnie nowy plik. Nie ma żadnej historii, bo nigdy jej nie miał. To najczęstszy przypadek w praktyce.'],
  ['Mocno przerobiony','Kadrowanie, przerysowanie, filtr. Znak wodny bywa odporny, ale nie na wszystko. Tu kończą się narzędzia.']
 ];
@@ -424,7 +423,7 @@ picker(B,['1. Z generatora','2. Po komunikatorze','3. Zrzut ekranu','4. Przerobi
 var B=$('nvB');if(!B)return;
 var N=[
  {n:'Plik A',p:[['Prawda','Zdjęcie z telefonu, wysłane przez WhatsApp'],['Wynik','Nic nie znaleziono'],['Dlaczego','Nigdy nie było śladu AI, a metadane wyciął komunikator']],o:'Tu wynik negatywny jest zgodny z prawdą, ale przypadkiem. Nie dlatego, że narzędzie to ustaliło.'},
- {n:'Plik B',p:[['Prawda','Wygenerowany modelem open source na własnym komputerze'],['Wynik','Nic nie znaleziono'],['Dlaczego','Ten model nie wstawia znaku wodnego']],o:'Wynik negatywny, treść w całości maszynowa. Narzędzie nie ma tu żadnej przewagi nad rzutem monetą.'},
+ {n:'Plik B',p:[['Prawda','Wygenerowany na własnym komputerze modelem open source, który każdy może pobrać'],['Wynik','Nic nie znaleziono'],['Dlaczego','Ten model nie wstawia znaku wodnego']],o:'Wynik negatywny, a całą treść zrobiła maszyna. Narzędzie nie ma tu żadnej przewagi nad rzutem monetą.'},
  {n:'Plik C',p:[['Prawda','Wygenerowany w narzędziu ze znakiem, potem mocno przerobiony'],['Wynik','Nic nie znaleziono'],['Dlaczego','Przeróbka zdjęła znak']],o:'Znak był, nie ma go. Narzędzie mówi prawdę o sobie: nie znalazłem. To nie to samo co: nie było.'},
  {n:'Plik D',p:[['Prawda','Zrzut ekranu z obrazu wygenerowanego w narzędziu ze znakiem'],['Wynik','Czasem znajduje, czasem nie'],['Dlaczego','Znak zwykle przeżywa zrzut, ale skalowanie i kompresja mogą go osłabić']],o:'Ten sam plik potrafi dać różny wynik w zależności od tego, jak powstał zrzut.'}
 ];
@@ -436,13 +435,13 @@ picker(B,N.map(function(x){return x.n}),function(i){ph($('nvP'),N[i].p);$('nvO')
 var B=$('mdB');if(!B)return;
 var W=[
  {n:'A',c:'Werdykt A: podpisana metryczka wskazuje narzędzie AI\n\n  [MOCNY ] metryczka C2PA w pliku (struktura pliku)\n           — Adobe Firefly',
-  o:'Najmocniejszy wynik, jaki da się dostać lokalnie. Podpis trzeba jeszcze potwierdzić, skrypt go nie sprawdza.'},
+  o:'Najmocniejszy wynik, jaki da się dostać lokalnie. Podpis trzeba jeszcze potwierdzić, bo ten program go nie sprawdza.'},
  {n:'B',c:'Werdykt B: ślady AI w metadanych, bez podpisu\n\n  [ŚREDNI] blok tekstowy PNG „parameters” (PNG tEXt)\n           — Automatic1111: pełny prompt i ustawienia',
   o:'Poszlaka. Taki wpis da się dopisać ręcznie w minutę, więc nie nadaje się na dowód wobec osoby.'},
  {n:'C',c:'Werdykt C: metadane wskazują aparat, brak śladów AI\n\n  [PRZECIW] EXIF aparatu (marka i model)\n            — Canon EOS R6',
-  o:'Plik ma historię. To nie wyklucza przeróbki ani wpisania EXIF ręcznie, ale jest czymś więcej niż pustką.'},
+  o:'Plik ma historię. Nie wyklucza to przeróbki ani ręcznie wpisanego EXIF, ale to więcej niż pustka.'},
  {n:'D',c:'Werdykt D: brak jakichkolwiek śladów\n\n  Ślady: żadnych.\n\n  NIE znaczy „zrobił to człowiek”.',
-  o:'Najczęstszy wynik i jedyny, przy którym ludzie wyciągają błędny wniosek. Tu kończy się czytanie pliku, zaczyna rozmowa.'}
+  o:'Najczęstszy wynik i jedyny, przy którym ludzie wyciągają błędny wniosek. Tu kończy się czytanie pliku i zaczyna rozmowa.'}
 ];
 picker(B,W.map(function(x){return 'Werdykt '+x.n}),function(i){$('mdC').textContent=W[i].c;$('mdO').textContent=W[i].o;});
 })();
@@ -453,12 +452,12 @@ var B=$('txB');if(!B)return;
 var T=[
  {n:'Instrukcja BHP',w:94,v:'Napisał człowiek',
   p:[['Tekst','Procedura napisana przez specjalistę BHP, język szablonowy i powtarzalny'],['Wynik detektora','94% AI'],['Co się stało','Przewidywalność to nie jest cecha maszyny. To cecha dokumentu formalnego']]},
- {n:'Raport po polsku',w:88,v:'Napisał człowiek',
-  p:[['Tekst','Raport zmianowy napisany po angielsku przez osobę, dla której to drugi język'],['Wynik detektora','88% AI'],['Co się stało','Prostsze słownictwo i prostsza składnia podnoszą wynik. To systematyczny błąd, nie przypadek']]},
+ {n:'Raport w drugim języku',w:88,v:'Napisał człowiek',
+  p:[['Tekst','Raport zmianowy napisany po angielsku przez osobę, dla której to drugi język'],['Wynik detektora','88% AI'],['Co się stało','Prostsze słownictwo i prostsza składnia podnoszą wynik. To stały błąd metody, nie przypadek']]},
  {n:'Tekst sprzed stu lat',w:91,v:'Napisał człowiek',
   p:[['Tekst','Fragment znanego dokumentu historycznego'],['Wynik detektora','91% AI'],['Co się stało','Model zna ten tekst i uznaje go za bardzo przewidywalny. Rok powstania nie ma znaczenia dla metody']]},
  {n:'Przerobiony z modelu',w:14,v:'Napisał model, potem człowiek poprawił',
-  p:[['Tekst','Wygenerowany, potem przeredagowany: inne zdania, kilka literówek zostawionych'],['Wynik detektora','14% AI'],['Co się stało','Wystarczy zaburzyć przewidywalność. Metoda mierzy gładkość, nie pochodzenie']]}
+  p:[['Tekst','Wygenerowany, potem przerobiony: inne zdania, zostawione literówki'],['Wynik detektora','14% AI'],['Co się stało','Wystarczy zaburzyć przewidywalność. Metoda mierzy gładkość, nie pochodzenie']]}
 ];
 picker(B,T.map(function(x){return x.n}),function(i){
   $('txV').textContent=T[i].v;
@@ -483,9 +482,9 @@ var W={
  b:{koniec:1,q:'Werdykt B. Poszlaka, nie dowód.',
    p:[['Co wolno powiedzieć','W pliku jest taki zapis'],['Słabość','Metadane da się dopisać ręcznie w minutę i tak samo łatwo usunąć'],['Jeśli stawka jest wysoka','Sprawdź jeszcze znak wodny na synthid.com']]},
  pusto:{q:'Czy stawka jest wysoka? Decyzja wobec osoby, pieniądze, sprawa prawna?',a:[['Nie, zwykła ciekawość','koniecD'],['Tak','synth']]},
- synth:{q:'Sprawdź znak wodny: synthid.com, wgraj plik.',a:[['Znaleziono znak','znak'],['Nie znaleziono','koniecD']]},
+ synth:{q:'Sprawdź znak wodny: wgraj plik na synthid.com.',a:[['Znaleziono znak','znak'],['Nie znaleziono','koniecD']]},
  znak:{koniec:1,q:'Znak wodny znaleziony. Mocny dowód o pliku.',
-   p:[['Co wolno powiedzieć','W powstaniu brało udział narzędzie objęte systemem'],['Czego nie wiesz','Czy zrobiło całość, czy poprawiło fragment, i kto je uruchomił'],['Zapisz tak','Znaleziono znak wodny. To mówi o pliku, nie o osobie']]},
+   p:[['Co wolno powiedzieć','W powstaniu pliku brało udział narzędzie, które wstawia ten znak'],['Czego nie wiesz','Czy zrobiło całość, czy poprawiło fragment, i kto je uruchomił'],['Zapisz tak','Znaleziono znak wodny. To mówi o pliku, nie o osobie']]},
  koniecD:{koniec:1,q:'Werdykt D. Nie da się ustalić i tak zostaje.',
    p:[['Co wolno powiedzieć','Nie znaleziono śladów. To nie rozstrzyga pochodzenia'],['Czego NIE wolno','Wyciągać wniosku w którąkolwiek stronę, także tego, że zrobił to człowiek'],['Jeśli ktoś naciska','Odpowiedź brzmi: nie wiem. Dostępne narzędzia nie dają więcej']]}
 };
@@ -500,5 +499,6 @@ idz('start');
 })();
 })();
 </script>
+<script src="/fx.js" defer></script>
 </body>
 </html>

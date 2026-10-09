@@ -93,6 +93,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
 </style>
 
+<link rel="stylesheet" href="/fx.css">
 </head>
 <body>
 <div class="wrap">
@@ -128,22 +129,22 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="out" id="tokOut"></div>
   <div class="note"><span class="num" id="tokN"></span></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> tekst jest cięty na tokeny ze słownika, polski potrzebuje więcej tokenów niż angielski. <b>Uproszczone:</b> podział tutaj to heurystyka, prawdziwy tokenizer (BPE) tnie inaczej, ale podobnie gęsto.</div>
+<div class="status"><b>Sprawdzone:</b> tekst jest cięty na tokeny ze słownika, polski potrzebuje więcej tokenów niż angielski. <b>Uproszczone:</b> podział w demie jest przybliżony. Prawdziwy tokenizer, czyli program tnący tekst (np. BPE), dzieli inaczej, ale podobnie gęsto.</div>
 </section>
 
 <section class="s" id="s2">
 <div class="k">2 / 20</div><h3>Embedding</h3>
-<p>Każdy token dostaje wektor, czyli listę liczb. Tokeny o podobnym znaczeniu lądują blisko siebie. Kliknij słowo, zobaczysz trzech najbliższych sąsiadów.</p>
+<p>Embedding to wektor, czyli lista liczb, którą dostaje każdy token. Tokeny o podobnym znaczeniu lądują blisko siebie. Kliknij słowo, zobaczysz trzech najbliższych sąsiadów.</p>
 <div class="demo">
   <svg viewBox="0 0 680 320" role="img" aria-label="Przestrzeń embeddingów, słowa jako punkty"><g id="embL"></g><g id="embP"></g></svg>
   <div class="note" id="embN">Kliknij słowo.</div>
 </div>
-<div class="status"><b>Sprawdzone:</b> embeddingi są uczone, bliskość koduje podobieństwo użycia. <b>Uproszczone:</b> dwa wymiary zamiast kilku tysięcy. Przykład „król − mężczyzna + kobieta ≈ królowa" działa w praktyce, choć nie zawsze idealnie.</div>
+<div class="status"><b>Sprawdzone:</b> embeddingi powstają w treningu. Słowa używane w podobny sposób lądują blisko siebie. <b>Uproszczone:</b> dwa wymiary zamiast kilku tysięcy. Przykład „król − mężczyzna + kobieta ≈ królowa" działa w praktyce, choć nie zawsze idealnie.</div>
 </section>
 
 <section class="s" id="s3">
 <div class="k">3 / 20</div><h3>Waga i neuron</h3>
-<p>Neuron mnoży wejścia przez wagi, sumuje, dodaje bias i przepuszcza przez funkcję aktywacji. Wagi to jedyne, czego model uczy się w treningu. Przesuwaj suwaki.</p>
+<p>Neuron mnoży każde wejście przez wagę i sumuje wyniki. Potem dodaje stałą (bias) i przepuszcza sumę przez funkcję aktywacji. Tu jest to ReLU: wynik ujemny zamienia na zero. Wagi to liczby, w których zapisane jest to, czego model się nauczył. Tylko ich model uczy się w treningu. Przesuwaj suwaki.</p>
 <div class="demo">
   <svg viewBox="0 0 680 250" role="img" aria-label="Pojedynczy neuron">
     <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -165,12 +166,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div id="nSl"></div>
   <div class="note num" id="nEq"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> definicja neuronu i ReLU. <b>Istotne:</b> w transformerze „neuron" to poziom niżej niż operacje, o których się mówi (macierze, uwaga). Intuicja się przenosi, słownictwo nie zawsze.</div>
+<div class="status"><b>Sprawdzone:</b> definicja neuronu i ReLU. <b>Istotne:</b> transformer to architektura dzisiejszych modeli językowych. W nim „neuron" to poziom niżej niż operacje, o których się mówi (macierze, uwaga). Intuicja się przenosi, słownictwo nie zawsze.</div>
 </section>
 
 <section class="s" id="s4">
 <div class="k">4 / 20</div><h3>Warstwa</h3>
-<p>Warstwa to wiele neuronów liczonych naraz: wektor wejściowy razy macierz wag. Trzy wejścia i cztery wyjścia dają dwanaście wag. Prawdziwe warstwy mają ich miliony.</p>
+<p>Warstwa to wiele neuronów liczonych naraz. W rachunku to wektor wejściowy razy macierz, czyli tabela wag. Trzy wejścia i cztery wyjścia dają dwanaście wag. Prawdziwe warstwy mają ich miliony.</p>
 <div class="demo">
   <svg viewBox="0 0 680 260" role="img" aria-label="Warstwa w pełni połączona, 3 wejścia i 4 wyjścia">
     <g id="layerLines"></g>
@@ -188,7 +189,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <tr><td>Cały duży model</td><td>setki macierzy</td><td class="num">10¹¹ i więcej</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> warstwa gęsta to mnożenie przez macierz, liczba wag rośnie z iloczynem wymiarów. <b>Uproszczone:</b> rzędy wielkości orientacyjne.</div>
+<div class="status"><b>Sprawdzone:</b> warstwa gęsta, w której każde wejście łączy się z każdym wyjściem, to mnożenie przez macierz. Liczba wag to wejścia razy wyjścia. <b>Uproszczone:</b> rzędy wielkości orientacyjne.</div>
 </section>
 </div>
 
@@ -198,26 +199,26 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s5">
 <div class="k">5 / 20</div><h3>Uwaga</h3>
-<p>Każdy token „patrzy" na wszystkie wcześniejsze i waży, które są dla niego ważne. Kliknij dowolne słowo, zobaczysz, na co patrzy. Grubsza linia to większa waga.</p>
+<p>Uwaga (ang. attention) to mechanizm, w którym każdy token „patrzy" na wszystkie wcześniejsze. Ocenia, które z nich są dla niego ważne. Kliknij dowolne słowo, zobaczysz, na co patrzy. Grubsza linia to mocniejsze powiązanie.</p>
 <div class="demo">
   <svg viewBox="0 0 680 200" role="img" aria-label="Wagi uwagi między tokenami zdania"><g id="attArcs"></g><g id="attTok"></g></svg>
   <div class="note" id="attN"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> mechanizm uwagi liczy wagi między tokenami i miesza ich wektory. <b>Uproszczone:</b> wagi tu ręcznie dobrane do intuicji, prawdziwe wyglądają mniej czytelnie.</div>
+<div class="status"><b>Sprawdzone:</b> uwaga liczy, jak mocno każdy token wiąże się z innymi, i według tego miesza ich wektory. <b>Uproszczone:</b> te wartości dobrano ręcznie pod intuicję. Prawdziwe wyglądają mniej czytelnie.</div>
 </section>
 
 <section class="s" id="s6">
 <div class="k">6 / 20</div><h3>Wiele głów</h3>
-<p>Jedna „głowa" uwagi uczy się jednego typu relacji. Model ma ich kilkadziesiąt w każdej warstwie. Ten sam token, trzy głowy, trzy różne pytania.</p>
+<p>Głowa uwagi to jeden osobny zestaw uwagi. Każda głowa uczy się innego rodzaju powiązań między słowami. Model ma ich kilkadziesiąt w każdej warstwie. Niżej ten sam token i trzy głowy. Każda pyta o coś innego.</p>
 <div class="demo">
   <svg viewBox="0 0 680 300" role="img" aria-label="Trzy głowy uwagi dla tego samego tokena"><g id="heads"></g></svg>
 </div>
-<div class="status"><b>Sprawdzone:</b> głowy specjalizują się, badania interpretowalności pokazują głowy składniowe, pozycyjne, odniesień. <b>Uproszczone:</b> etykiety „składnia / odniesienie / pozycja" są czystsze niż rzeczywistość.</div>
+<div class="status"><b>Sprawdzone:</b> głowy się specjalizują. Badania wnętrza modeli pokazują głowy od składni, od pozycji i od odniesień. <b>Uproszczone:</b> w prawdziwym modelu ten podział nie jest tak czysty jak w etykietach.</div>
 </section>
 
 <section class="s" id="s7">
 <div class="k">7 / 20</div><h3>Blok transformera i stos</h3>
-<p>Jeden blok to uwaga, potem mała sieć gęsta (FFN), każda z połączeniem skrótowym. Model to kilkadziesiąt takich bloków jeden na drugim. Pozycję tokena model zna tylko dlatego, że dostaje ją doklejoną do embeddingu.</p>
+<p>Jeden blok to uwaga, a po niej mała sieć gęsta, na rysunku FFN. Obie mają połączenie skrótowe: wejście omija część i dodaje się do jej wyniku. Model to kilkadziesiąt takich bloków ułożonych jeden na drugim. Pozycję tokena model zna tylko dlatego, że dostaje ją doklejoną do embeddingu.</p>
 <div class="demo">
   <svg viewBox="0 0 680 330" role="img" aria-label="Blok transformera: uwaga, FFN, połączenia skrótowe, stos N bloków">
     <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -243,24 +244,24 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="555" y="300" text-anchor="middle" class="m">N = 30 do 100+</text>
   </svg>
 </div>
-<div class="status"><b>Sprawdzone:</b> struktura bloku, połączenia skrótowe, kodowanie pozycji, stos bloków. <b>Uproszczone:</b> pominięte normalizacje i szczegóły wariantów (RoPE, MoE).</div>
+<div class="status"><b>Sprawdzone:</b> struktura bloku, połączenia skrótowe, kodowanie pozycji, stos bloków. <b>Uproszczone:</b> pominięte normalizacje i warianty, np. RoPE (inny sposób kodowania pozycji) i MoE (wiele wyspecjalizowanych podsieci).</div>
 </section>
 </div>
 
 <!-- ===================== III ===================== -->
 <div class="part" id="p3">
-<header><div class="k">Część III</div><h2>Skąd się biorą wagi</h2><p>Wagi nikt nie pisze ręcznie. Powstają z jednej liczby: błędu. I jednej operacji: kroku w dół.</p></header>
+<header><div class="k">Część III</div><h2>Skąd się biorą wagi</h2><p>Wag nikt nie pisze ręcznie. Powstają z jednej liczby: błędu. I jednej operacji: kroku w dół.</p></header>
 
 <section class="s" id="s8">
 <div class="k">8 / 20</div><h3>Strata</h3>
-<p>Model przewiduje rozkład na następny token. Strata mówi, jak bardzo się pomylił: im mniej prawdopodobieństwa dał prawidłowemu tokenowi, tym większa kara. Kliknij, który token był prawidłowy.</p>
+<p>Model przewiduje, z jakim prawdopodobieństwem każdy token będzie następny. Strata mówi, jak bardzo się pomylił: im mniej prawdopodobieństwa dał prawidłowemu tokenowi, tym większa kara. Kliknij, który token był prawidłowy.</p>
 <div class="demo">
-  <div class="note" style="margin:0 0 8px">Kontekst: „Stolica Francji to" → model przewidział:</div>
+  <div class="note" style="margin:0 0 8px">Początek zdania: „Stolica Francji to" → model przewidział:</div>
   <div id="lossBars"></div>
   <div class="out"><span class="num" id="lossOut"></span></div>
   <div class="note">strata = −ln(p prawidłowego tokena). Trening szuka wag, które tę liczbę obniżają średnio na miliardach przykładów.</div>
 </div>
-<div class="status"><b>Sprawdzone:</b> cross-entropy jako strata w pretrainingu. <b>Uproszczone:</b> rozkład na 6 tokenów zamiast na cały słownik.</div>
+<div class="status"><b>Sprawdzone:</b> tak liczona strata (entropia krzyżowa, ang. cross-entropy) to standard w pretrainingu. Pretraining to pierwszy i największy etap treningu. <b>Uproszczone:</b> rozkład na 6 tokenów zamiast na cały słownik.</div>
 </section>
 
 <section class="s" id="s9">
@@ -281,12 +282,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="row"><button id="gGo">Krok</button><button id="gRs">Reset</button><span class="note num" id="gSt" style="margin:0"></span></div>
   <div class="out" id="gMsg"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> gradient jako pochodna, krok w stronę przeciwną, za duży krok rozbiega trening. <b>Uproszczone:</b> jedna gładka krzywa zamiast powierzchni o miliardach wymiarów; prawdziwe optymalizatory (Adam) dodają pęd i adaptację kroku.</div>
+<div class="status"><b>Sprawdzone:</b> gradient to pochodna. Krok idzie w stronę przeciwną do gradientu. Za duży krok rozbiega trening. <b>Uproszczone:</b> jedna gładka krzywa zamiast powierzchni o miliardach wymiarów. Prawdziwe optymalizatory, czyli programy sterujące krokiem (np. Adam), dodają pęd i same dobierają długość kroku.</div>
 </section>
 
 <section class="s" id="s10">
 <div class="k">10 / 20</div><h3>Backpropagation</h3>
-<p>Skąd gradient dla wagi w pierwszej warstwie, skoro strata jest na końcu? Z reguły łańcuchowej: błąd płynie wstecz przez każdą warstwę, mnożony po drodze.</p>
+<p>Strata powstaje na końcu modelu. Gradient trzeba jednak znać także dla wag w pierwszej warstwie. Backpropagation liczy go regułą łańcuchową: błąd płynie wstecz przez każdą warstwę i po drodze jest mnożony.</p>
 <div class="demo">
   <svg viewBox="0 0 680 220" role="img" aria-label="Przepływ w przód i wstecz przez trzy warstwy">
     <defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -307,12 +308,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="415" y="165" text-anchor="middle" class="mono">∂L/∂w₃</text>
   </svg>
 </div>
-<div class="status"><b>Sprawdzone:</b> backprop to reguła łańcuchowa zastosowana warstwa po warstwie, liczona automatycznie. <b>Uproszczone:</b> pominięte wzory.</div>
+<div class="status"><b>Sprawdzone:</b> backprop to reguła łańcuchowa stosowana warstwa po warstwie. Komputer liczy ją sam. <b>Uproszczone:</b> pominięte wzory.</div>
 </section>
 
 <section class="s" id="s11">
 <div class="k">11 / 20</div><h3>Pretraining, post-training, fine-tuning</h3>
-<p>Ten sam mechanizm (strata, gradient, krok) uruchamiany na różnych danych daje różne modele. Surowy model po pretrainingu dokańcza tekst. Asystentem robi go dopiero post-training.</p>
+<p>Ten sam mechanizm (strata, gradient, krok) puszczony na różnych danych daje różne modele. Surowy model po pretrainingu umie tylko dokańczać tekst. Asystentem robi go dopiero post-training, czyli dalszy trening na przykładach rozmów i ocenach ludzi. Fine-tuning to dostrojenie gotowego modelu na Twoich przykładach. Druga tabela porównuje go z podaniem wiedzy w kontekście, czyli w tekście wysłanym razem z pytaniem. RAG to automatyczne dobieranie fragmentów dokumentów do tego tekstu (sekcja 17).</p>
 <div class="demo">
   <svg viewBox="0 0 680 150" role="img" aria-label="Etapy treningu">
     <defs><marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -327,9 +328,9 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="tbl"><table>
     <tr><th>Etap</th><th>Dane</th><th>Co daje</th><th>Kto</th></tr>
     <tr><td>Pretraining</td><td>Internet, książki, kod</td><td>Język, wiedza ogólna, wzorce</td><td>Laboratorium</td></tr>
-    <tr><td>SFT</td><td>Pytanie → dobra odpowiedź</td><td>Format asystenta, zwięzłość, odmowy</td><td>Laboratorium</td></tr>
-    <tr><td>RLHF</td><td>Dwie odpowiedzi, która lepsza</td><td>Ton, ostrożność, „pomocność"</td><td>Laboratorium</td></tr>
-    <tr><td>Fine-tuning</td><td>Twoje przykłady</td><td>Styl, żargon, format domeny</td><td>Ty / firma</td></tr>
+    <tr><td>SFT (trening na wzorcowych odpowiedziach)</td><td>Pytanie → dobra odpowiedź</td><td>Format asystenta, zwięzłość, odmowy</td><td>Laboratorium</td></tr>
+    <tr><td>RLHF (trening na ocenach ludzi)</td><td>Dwie odpowiedzi, która lepsza</td><td>Ton, ostrożność, „pomocność"</td><td>Laboratorium</td></tr>
+    <tr><td>Fine-tuning</td><td>Twoje przykłady</td><td>Styl, żargon, format Twojej branży</td><td>Ty / firma</td></tr>
   </table></div>
   <div class="tbl"><table>
     <tr><th>Potrzeba</th><th>Fine-tuning</th><th>Kontekst / RAG</th></tr>
@@ -340,7 +341,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <tr><td>Ryzyko</td><td>Pewne zmyślenia w Twoim żargonie</td><td>Rozmycie uwagi przy długim oknie</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> podział na pretraining i post-training, FT lepszy do stylu, RAG do faktów. <b>Logiczne, bez liczby:</b> próg opłacalności FT zależy od wolumenu zapytań.</div>
+<div class="status"><b>Sprawdzone:</b> podział na pretraining i post-training. Fine-tuning lepiej uczy stylu, RAG lepiej dostarcza fakty. <b>Logiczne, bez liczby:</b> to, czy fine-tuning się opłaca, zależy od liczby zapytań.</div>
 </section>
 </div>
 
@@ -350,19 +351,19 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s12">
 <div class="k">12 / 20</div><h3>Okno kontekstu</h3>
-<p>Instrukcje, dokumenty, historia rozmowy i Twoje pytanie to jeden ciąg tokenów. Model nie widzi plików ani wiadomości, tylko ten ciąg. Klikaj „Dalej".</p>
+<p>Okno kontekstu to wszystko, co model widzi w jednej chwili. Instrukcje, dokumenty, historia rozmowy i Twój prompt trafiają tam jako jeden ciąg tokenów. Prompt to tekst, który wysyłasz modelowi. Model nie widzi plików ani wiadomości, tylko ten ciąg. Klikaj „Dalej".</p>
 <div class="demo">
   <div class="legend"><span><i style="background:var(--gray)"></i>Instrukcje</span><span><i style="background:var(--teal)"></i>Dokumenty</span><span><i style="background:var(--purple)"></i>Rozmowa</span><span><i style="background:var(--coral)"></i>Pytanie</span><span><i style="background:var(--amber)"></i>Odpowiedź</span></div>
   <svg viewBox="0 0 680 150" role="img" aria-label="Okno kontekstu jako rząd tokenów"><g id="cxArcs"></g><g id="cxTok"></g><rect id="cxPend" x="0" y="80" width="12" height="22" rx="3" fill="none" stroke="var(--amber)" stroke-dasharray="3 2" style="opacity:0"/><line x1="40" y1="118" x2="640" y2="118" class="ln"/><line x1="40" y1="112" x2="40" y2="124" class="ln"/><line x1="640" y1="112" x2="640" y2="124" class="ln"/><text x="340" y="142" text-anchor="middle" class="m">okno kontekstu: jeden ciąg z twardym limitem</text></svg>
   <div class="note" id="cxLbl"></div><div class="out" id="cxCap" style="min-height:80px"></div>
   <div class="row"><button id="cxPrev">Wstecz</button><div class="dots" id="cxDots"></div><button id="cxNext">Dalej</button></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> jedno okno, przetwarzanie równoległe, brak pamięci między wywołaniami, generowanie token po tokenie. <b>Uproszczone:</b> łuki uwagi, ucinanie historii zależy od aplikacji.</div>
+<div class="status"><b>Sprawdzone:</b> model ma jedno okno i przetwarza je całe naraz. Od wiadomości do wiadomości nic nie pamięta. Odpowiedź powstaje token po tokenie. <b>Uproszczone:</b> łuki uwagi są poglądowe. Sposób ucinania historii zależy od aplikacji.</div>
 </section>
 
 <section class="s" id="s13">
 <div class="k">13 / 20</div><h3>KV cache</h3>
-<p>Każdy nowy token musi spojrzeć na wszystkie poprzednie. Bez pamięci podręcznej model liczyłby je od nowa za każdym razem. Cache trzyma wyniki dla starych tokenów, ale zajmuje pamięć proporcjonalną do długości kontekstu.</p>
+<p>Każdy nowy token musi spojrzeć na wszystkie poprzednie. Bez pamięci podręcznej (cache) model liczyłby je od nowa za każdym razem. KV cache przechowuje wyniki dla starych tokenów. Kosztem jest pamięć, która rośnie razem z długością kontekstu.</p>
 <div class="demo">
   <div class="row"><label for="kvN">Długość kontekstu</label><input type="range" id="kvN" min="1" max="200" step="1" value="40"><span class="num" id="kvNV">40k tokenów</span></div>
   <div class="tbl"><table>
@@ -370,32 +371,32 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <tr><td>Operacje na 1 nowy token</td><td class="num" id="kvA"></td><td class="num" id="kvB"></td></tr>
     <tr><td>Pamięć cache (orientacyjnie)</td><td>0</td><td class="num" id="kvM"></td></tr>
   </table></div>
-  <div class="note">Dlatego długi kontekst jest wolniejszy i droższy, a dostawcy cache'ują powtarzające się początki rozmowy (prompt caching).</div>
+  <div class="note">Dlatego długi kontekst jest wolniejszy i droższy. Dostawcy zapamiętują też powtarzające się początki rozmów. Ta usługa nazywa się prompt caching.</div>
 </div>
-<div class="status"><b>Sprawdzone:</b> KV cache zamienia koszt kwadratowy na liniowy przy generowaniu, pamięć rośnie liniowo z kontekstem. <b>Uproszczone:</b> liczby pamięci są rzędem wielkości, zależą od modelu.</div>
+<div class="status"><b>Sprawdzone:</b> przy generowaniu KV cache zamienia koszt kwadratowy na liniowy. Bez niego dwa razy dłuższy kontekst to cztery razy więcej liczenia, z nim dwa razy. Pamięć rośnie w tym samym tempie co kontekst. <b>Uproszczone:</b> liczby pamięci są rzędem wielkości, zależą od modelu.</div>
 </section>
 
 <section class="s" id="s14">
 <div class="k">14 / 20</div><h3>Softmax i temperatura</h3>
-<p>Na końcu model ma liczbę dla każdego tokena ze słownika. Softmax zamienia je na prawdopodobieństwa. Temperatura spłaszcza lub wyostrza rozkład. Potem token jest losowany. Dlatego ta sama rozmowa daje różne odpowiedzi.</p>
+<p>Na końcu model ma liczbę dla każdego tokena ze słownika. Softmax to wzór, który zamienia je na prawdopodobieństwa. Temperatura to ustawienie losowości. Niska wyostrza rozkład i model prawie zawsze wybiera to samo, wysoka go spłaszcza. Potem token jest losowany. Dlatego ta sama rozmowa daje różne odpowiedzi.</p>
 <div class="demo">
   <div class="note" style="margin:0 0 8px">Kontekst: „Stolica Francji to"</div>
   <div class="row"><label for="tmp">Temperatura</label><input type="range" id="tmp" min="0.1" max="2" step="0.1" value="1"><span class="num" id="tmpV">1.0</span></div>
   <div id="smBars"></div>
   <div class="row" style="margin-top:10px"><button id="smGo">Losuj token</button><button id="smClr">Wyczyść</button><span class="out num" id="smHist" style="margin:0"></span></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> softmax, temperatura, próbkowanie. <b>Uproszczone:</b> 6 kandydatów zamiast całego słownika; produkty dodają top-p i inne filtry.</div>
+<div class="status"><b>Sprawdzone:</b> softmax, temperatura, losowanie tokena (próbkowanie). <b>Uproszczone:</b> 6 kandydatów zamiast całego słownika. Produkty dodają filtry, np. top-p, który odcina najmniej prawdopodobne tokeny.</div>
 </section>
 
 <section class="s" id="s15">
 <div class="k">15 / 20</div><h3>Halucynacje</h3>
-<p>Brak faktu nie wywołuje błędu. Wagi znają kształt odpowiedzi, więc generują coś prawdopodobnego. Przełącz, czy fakt jest w kontekście.</p>
+<p>Halucynacja to pewnie brzmiąca odpowiedź, której nic nie potwierdza. Brak faktu nie wywołuje komunikatu o błędzie. Wagi znają kształt odpowiedzi, więc model pisze coś prawdopodobnego. Przełącz, czy fakt jest w kontekście.</p>
 <div class="demo">
   <div class="row"><button id="hlA" class="on">Fakt jest w kontekście</button><button id="hlB">Faktu nie ma nigdzie</button></div>
   <div class="out" id="hlOut"></div>
   <div class="note" id="hlN"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> halucynacje to skutek generowania najbardziej prawdopodobnej kontynuacji, nie „błędu" w zwykłym sensie. Post-training uczy mówić „nie wiem", ale nie usuwa mechanizmu.</div>
+<div class="status"><b>Sprawdzone:</b> halucynacja wynika z tego, że model dopisuje najbardziej prawdopodobny ciąg dalszy. To nie jest „błąd" w zwykłym sensie. Post-training uczy mówić „nie wiem", ale mechanizmu nie usuwa.</div>
 </section>
 </div>
 
@@ -404,7 +405,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <header><div class="k">Część V</div><h2>Produkt</h2><p>Warstwa, w której pracujesz. Tu decydujesz, co trafia do okna i jakich odpowiedzi możesz się spodziewać.</p></header>
 
 <section class="s" id="s16">
-<div class="k">16 / 20</div><h3>Trzy tryby: same wagi, mix, sam kontekst</h3>
+<div class="k">16 / 20</div><h3>Trzy tryby: same wagi, mieszany, sam kontekst</h3>
 <p>Każda odpowiedź płynie z dwóch źródeł naraz, ale proporcja się zmienia. Wybierz tryb. Kolor w odpowiedzi pokazuje, skąd pochodzi fragment.</p>
 <div class="demo">
   <div class="row"><button class="md on" data-m="0">Same wagi</button><button class="md" data-m="1">Wagi + kontekst</button><button class="md" data-m="2">Sam kontekst</button></div>
@@ -427,7 +428,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s17">
 <div class="k">17 / 20</div><h3>RAG</h3>
-<p>Gdy dokumentów jest za dużo na okno, osobny silnik wybiera fragmenty. Model widzi tylko to, co trafiło. Przełączaj pytania i suwak top-k.</p>
+<p>Gdy dokumentów jest za dużo na okno, osobny silnik wyszukiwania wybiera pasujące fragmenty i dokleja je do okna. To jest RAG. Model widzi tylko to, co trafiło. Top-k to liczba wybranych fragmentów. Przełączaj pytania i suwak.</p>
 <div class="demo">
   <div class="row" id="rgQ"></div>
   <div class="row"><label for="rgK">Top-k</label><input type="range" id="rgK" min="1" max="5" step="1" value="3"><span class="num" id="rgKV">3</span></div>
@@ -440,12 +441,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Za duże k</td><td>Szum, uwaga się rozmywa</td></tr>
   <tr><td>Kody, numery, nazwy własne</td><td>Wektory łapią sens, nie dokładne ciągi. Stąd łączenie z wyszukiwaniem po słowach</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> chunk → wektor → podobieństwo → top-k. W produktach model sam decyduje, kiedy szukać i czym (agentic retrieval). <b>Uproszczone:</b> 2D zamiast tysięcy wymiarów, brak rerankera.</div>
+<div class="status"><b>Sprawdzone:</b> fragment dokumentu (chunk) → wektor → podobieństwo → top-k. W produktach model sam decyduje, kiedy szukać i czym (agentic retrieval). <b>Uproszczone:</b> dwa wymiary zamiast tysięcy. Brak rerankera, czyli drugiego sita, które jeszcze raz układa wyniki.</div>
 </section>
 
 <section class="s" id="s18">
 <div class="k">18 / 20</div><h3>Narzędzia i agent</h3>
-<p>Model nie ma rąk. Ma za to wytrenowany nawyk: zamiast odpowiadać, może wypisać wywołanie narzędzia. Aplikacja je wykonuje i wkleja wynik z powrotem do okna. Pętla trwa, aż model napisze odpowiedź.</p>
+<p>Model nie ma rąk. Ma za to wytrenowany nawyk: zamiast odpowiadać, może wypisać wywołanie narzędzia. Narzędzie to funkcja z opisem, którą aplikacja uruchamia na prośbę modelu. Aplikacja wykonuje wywołanie i wkleja wynik z powrotem do okna. Pętla trwa, aż model napisze odpowiedź. Model w takiej pętli to agent.</p>
 <div class="demo">
   <svg viewBox="0 0 680 200" role="img" aria-label="Pętla agenta: model, narzędzie, wynik wraca do kontekstu">
     <defs><marker id="ar5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -480,7 +481,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Projekt z plikami</td><td>Całość w oknie, powyżej limitu automatyczne RAG</td><td>Powyżej limitu wracają wady RAG</td></tr>
   <tr><td>Instrukcje systemowe</td><td>Tekst na początku okna</td><td>Konkurują z resztą o uwagę</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> Claude Projects przełącza na RAG przy zbliżaniu do limitu; OpenAI file search używa vector store. <b>Praktyczne:</b> kilka małych, tematycznych projektów działa lepiej niż jeden duży.</div>
+<div class="status"><b>Sprawdzone:</b> Claude Projects przełącza się na RAG, gdy projekt zbliża się do limitu. OpenAI file search korzysta z bazy wektorów (vector store). <b>Praktyczne:</b> kilka małych, tematycznych projektów działa lepiej niż jeden duży.</div>
 </section>
 
 <section class="s" id="s20">
@@ -527,7 +528,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="ph" id="cvPh"></div>
   <div class="tbl"><table id="cvTb"></table></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> model nie ma osobnego trybu na filozofię czy decyzje; typ pytania wpływa na to, które wzorce z wag się aktywują i jak bardzo odpowiedź zależy od okna. <b>Uproszczone:</b> proporcje w pasku to ilustracja. Fazy w rzeczywistości nakładają się, nie idą po kolei.</div>
+<div class="status"><b>Sprawdzone:</b> model nie ma osobnego trybu na filozofię czy decyzje. Typ pytania wpływa na to, które wzorce z wag się włączają. Wpływa też na to, jak bardzo odpowiedź zależy od okna. <b>Uproszczone:</b> proporcje w pasku to ilustracja. Fazy w rzeczywistości nakładają się, nie idą po kolei.</div>
 </section>
 
 <section class="s" id="s22">
@@ -536,9 +537,9 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><th>Reguła</th><th>Dotyczy rozmów</th><th>Co robić</th></tr>
   <tr><td>Im bardziej pytanie jest „Twoje", tym bardziej odpowiedź zależy od tego, co wkleisz. Wagi dają tylko szkielet.</td><td>4, 7, 8, 9</td><td>Wklej dane, nie opisuj ich. Liczby, nie „mniej więcej".</td></tr>
   <tr><td>Im bardziej pytanie jest o świat dziś, tym mniej ufaj wagom.</td><td>5, 6</td><td>Wymuś wyszukiwanie. Poproś o źródła i daty.</td></tr>
-  <tr><td>Im bardziej pytanie jest filozoficzne z Twoją tezą w środku, tym większe ryzyko, że model zbuduje dom na Twoim fundamencie bez sprawdzenia fundamentu.</td><td>1, 10</td><td>Poproś najpierw o najsłabszy punkt tezy. Potem o rozwinięcie.</td></tr>
+  <tr><td>Im bardziej pytanie jest filozoficzne i niesie Twoją tezę, tym większe ryzyko. Model zbuduje dom na Twoim fundamencie, nie sprawdzając fundamentu.</td><td>1, 10</td><td>Poproś najpierw o najsłabszy punkt tezy. Potem o rozwinięcie.</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> dopasowanie do ramy pytania (sykofancja) jest udokumentowanym zjawiskiem w modelach po RLHF. <b>Logiczne:</b> trzy reguły to wniosek z mechanizmu, nie wynik badania.</div>
+<div class="status"><b>Sprawdzone:</b> modele po RLHF dopasowują się do ramy pytania. To udokumentowane zjawisko, nazywane sykofancją (przytakiwaniem). <b>Logiczne:</b> trzy reguły to wniosek z mechanizmu, nie wynik badania.</div>
 </section>
 </div>
 
@@ -546,7 +547,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <header><div class="k">Na koniec</div><h2>Co jest sprawdzone, a co uproszczone</h2><p>Zbiorczo. Jeśli coś w tej stronie ma być cytowane dalej, cytuj lewą kolumnę.</p></header>
 <div class="tbl"><table>
   <tr><th>Sprawdzone (architektura, konsensus)</th><th>Uproszczone (ilustracja)</th></tr>
-  <tr><td>Tokenizacja ze słownika; polski gęstszy niż angielski</td><td>Heurystyczny podział w demie</td></tr>
+  <tr><td>Tokenizacja ze słownika; polski gęstszy niż angielski</td><td>Przybliżony podział w demie</td></tr>
   <tr><td>Embeddingi kodują podobieństwo</td><td>Dwa wymiary zamiast tysięcy</td></tr>
   <tr><td>Neuron, warstwa jako macierz, ReLU</td><td>Pojedynczy neuron jako model transformera</td></tr>
   <tr><td>Uwaga, wiele głów, blok z FFN i skrótami, kodowanie pozycji</td><td>Ręcznie dobrane wagi uwagi, czyste etykiety głów</td></tr>
@@ -685,7 +686,7 @@ function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=c
   var R=[];for(var i=0;i<N;i++){var c=cat(i);var r=el('rect',{x:X0+i*P,y:Y,width:W,height:22,rx:3,fill:'var(--'+c+'-bg)',stroke:'var(--'+c+')','stroke-width':.8});r.style.transition='opacity .4s';toks.appendChild(r);R.push(r);}
   function drawArcs(q){arcs.innerHTML='';var xq=X0+q*P+W/2;for(var i=0;i<q;i++){var w=i<36?wts[i]:.5;var xi=X0+i*P+W/2,d=xq-xi,h=Math.min(60,d*.2+8);
     arcs.appendChild(el('path',{d:'M'+xq+' '+(Y-2)+' Q'+((xq+xi)/2)+' '+(Y-2-h*1.3)+' '+xi+' '+(Y-2),fill:'none',stroke:'var(--amber)','stroke-width':(0.5+2.5*w).toFixed(2),opacity:(0.12+0.88*w).toFixed(2)}));}}
-  var names=['Jeden ciąg tokenów','Prefill','Uwaga','Generowanie','Następna tura'];
+  var names=['Jeden ciąg tokenów','Wczytanie (prefill)','Uwaga','Generowanie','Następna tura'];
   var caps=['Wszystko trafia do jednego ciągu: instrukcje, dokumenty, historia rozmowy, Twoje pytanie.','Model przetwarza cały kontekst naraz, równolegle. Nie czyta od lewej do prawej jak człowiek.','Zanim powstanie następny token, patrzy na wszystkie wcześniejsze. Tu dominują pytanie i jeden pasujący fragment dokumentu.','Dopisuje jeden token naraz. Każdy nowy token od razu staje się kontekstem dla kolejnego.','Między wiadomościami model nic nie pamięta. Aplikacja wysyła całą rozmowę od nowa. Po limicie najstarsze fragmenty są ucinane lub streszczane.'];
   var D=names.map(function(){var d=hel('span');$('cxDots').appendChild(d);return d;});var s=0,timer=null;
   function render(){clearInterval(timer);arcs.innerHTML='';pend.style.opacity=0;R.forEach(function(r,i){r.classList.remove('pulse');r.style.opacity=i>=36?0:1;});
@@ -728,7 +729,7 @@ function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=c
   var M=[
     {p:'Jak działa pompa ciepła?',w:95,c:5,
      o:[['W','Pompa ciepła przenosi ciepło z zimniejszego otoczenia do cieplejszego wnętrza, używając sprężarki i czynnika chłodniczego. '],['W','Typowy współczynnik COP to '],['X','3 do 4'],['W',' przy łagodnej zimie.']],
-     t:[['Źródło treści','Wagi: tysiące tekstów o pompach ciepła w treningu'],['Rola kontekstu','Tylko kieruje pytanie'],['Czego się spodziewać','Poprawne ogólnie, takie samo dla każdego, bez odniesienia do Twojego domu'],['Gdzie sprawdzić','Liczby. COP zależy od urządzenia i klimatu, model podaje typowy zakres z pamięci']]},
+     t:[['Źródło treści','Wagi: tysiące tekstów o pompach ciepła w treningu'],['Rola kontekstu','Tylko kieruje pytanie'],['Czego się spodziewać','Poprawne ogólnie, takie samo dla każdego, bez odniesienia do Twojego domu'],['Gdzie sprawdzić','Liczby. COP, czyli ile ciepła daje jednostka prądu, zależy od urządzenia i klimatu. Model podaje typowy zakres z pamięci']]},
     {p:'[raport zmianowy: linia 3 przestój 40 min brak surowca; linia 1 OK; 2 braki kadrowe na pakowaniu]  Napisz 3 wnioski dla kierownika.',w:50,c:50,
      o:[['W','1. '],['C','Przestój 40 min na linii 3'],['W',' to główna strata zmiany; '],['W','warto sprawdzić harmonogram dostaw surowca. '],['W','2. '],['C','Dwa braki kadrowe na pakowaniu'],['W',' tworzą ryzyko dla kolejnej zmiany. '],['W','3. '],['X','Linia 3 ma powtarzający się problem'],['W',', bo sugeruje to wzorzec.']],
      t:[['Źródło treści','Fakty z kontekstu, struktura i wnioskowanie z wag'],['Rola kontekstu','Dostarcza dane, bez nich odpowiedź byłaby generyczna'],['Czego się spodziewać','Specyficzna odpowiedź, jakość zależna od jakości raportu'],['Gdzie sprawdzić','Wniosek 3: „powtarzający się" nie wynika z jednego raportu. Model dołożył wzorzec z wag']]},
@@ -806,5 +807,6 @@ function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=c
 })();
 </script>
 
+<script src="/fx.js" defer></script>
 </body>
 </html>

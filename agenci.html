@@ -99,6 +99,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
 </style>
+<link rel="stylesheet" href="/fx.css">
 </head>
 <body>
 <div class="wrap">
@@ -107,7 +108,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <a class="back" href="/">← OD TOKENA DO ODPOWIEDZI</a>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MATERIAŁ TRENINGOWY · AGENCI</div>
   <h1>Od zadania do agenta</h1>
-  <p class="lead">Model odpowiada. Agent działa. Między jednym a drugim dochodzi kilka konkretnych rzeczy: pętla, narzędzia, notatnik i uprawnienia. Ta strona pokazuje każdą z nich osobno, a na końcu to, gdzie taki układ się psuje i jak rozpoznać zadanie, które w ogóle warto oddać agentowi.</p>
+  <p class="lead">Model odpowiada. Agent działa. Agent to ten sam model, uruchamiany w pętli, z narzędziami i warunkiem stopu. Narzędzie to funkcja, którą program uruchamia na prośbę modelu. Do tego dochodzi notatnik, czyli to, co agent zapisuje, żeby nie zapomnieć. I uprawnienia: co wolno mu zrobić bez pytania człowieka. Ta strona pokazuje każdą z tych części osobno. Na końcu: gdzie taki układ się psuje i jak rozpoznać zadanie, które warto oddać agentowi.</p>
   <div class="chain">
     <a href="#p1"><b>I</b>Pętla<br>czym agent różni się od czatu</a>
     <a href="#p2"><b>II</b>Anatomia<br>narzędzia · notatnik · uprawnienia</a>
@@ -123,7 +124,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <!-- ===================== I ===================== -->
 <div class="part" id="p1">
-<header><div class="k">Część I</div><h2>Pętla</h2><p>Jedna różnica tłumaczy całą resztę. Model wywołany raz pisze tekst. Model wywołany w pętli, z narzędziami i warunkiem stopu, wykonuje zadanie.</p></header>
+<header><div class="k">Część I</div><h2>Pętla</h2><p>Jedna różnica tłumaczy całą resztę. Model wywołany raz pisze tekst. Model wywołany w pętli wykonuje zadanie.</p></header>
 
 <section class="s" id="s1">
 <div class="k">1 / 15</div><h3>Model, asystent, agent</h3>
@@ -134,7 +135,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <ul class="log" id="mdL"></ul>
   <div class="note" id="mdR"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> pod spodem we wszystkich trzech przypadkach pracuje ten sam model. Różnicę robi obudowa: czy dostał narzędzia i czy jest wywoływany wielokrotnie. <b>Uproszczone:</b> podział na trzy kategorie jest umowny, produkty płynnie przechodzą jeden w drugi.</div>
+<div class="status"><b>Sprawdzone:</b> pod spodem we wszystkich trzech przypadkach pracuje ten sam model. Różnicę robi obudowa: czy dostał narzędzia i czy jest uruchamiany wiele razy z rzędu. <b>Uproszczone:</b> podział na trzy kategorie jest umowny, produkty płynnie przechodzą jeden w drugi.</div>
 </section>
 
 <section class="s" id="s2">
@@ -146,7 +147,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="ph" id="lpPh"></div>
   <div class="note"><b style="color:var(--fg)">Notatnik:</b> <span id="lpMem"></span></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> wszystkie dzisiejsze systemy agentowe sprowadzają się do tej pętli, niezależnie od producenta. Model nie wykonuje działania sam, tylko pisze żądanie, które wykonuje program obok. <b>Uproszczone:</b> plan i ocena często dzieją się w tym samym wywołaniu, nie jako osobne etapy.</div>
+<div class="status"><b>Sprawdzone:</b> wszystkie dzisiejsze systemy agentowe sprowadzają się do tej pętli, niezależnie od producenta. Model nie wykonuje działania sam, tylko pisze żądanie, które wykonuje program obok. <b>Uproszczone:</b> plan i ocena często dzieją się w jednym wywołaniu modelu, nie jako osobne etapy.</div>
 </section>
 
 <section class="s" id="s3">
@@ -156,10 +157,10 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><th>Hamulec</th><th>Co znaczy</th><th>Co się dzieje, gdy go brakuje</th></tr>
   <tr><td>Warunek sukcesu</td><td>Da się sprawdzić, że cel jest osiągnięty</td><td>Agent kręci się wokół zadania, dopisując kolejne poprawki</td></tr>
   <tr><td>Budżet kroków</td><td>Maksymalna liczba obrotów pętli</td><td>Zapętlenie na jednym błędzie, powtarzane w kółko</td></tr>
-  <tr><td>Budżet tokenów lub czasu</td><td>Limit kosztu jednego zadania</td><td>Rachunek rośnie bez rezultatu</td></tr>
+  <tr><td>Budżet tokenów lub czasu</td><td>Limit kosztu jednego zadania. Token to kawałek tekstu, na który model tnie zdanie. Od tokenów liczy się koszt</td><td>Rachunek rośnie bez rezultatu</td></tr>
   <tr><td>Pytanie do człowieka</td><td>Agent zatrzymuje się i pyta, zamiast zgadywać</td><td>Zgaduje i idzie dalej na błędnym założeniu</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> limity kroków i budżetu są standardem w każdym poważnym frameworku agentowym. <b>Praktyczne:</b> najtrudniejszy jest warunek sukcesu. Jeśli nie umiesz go napisać w jednym zdaniu, zadanie nie nadaje się jeszcze dla agenta.</div>
+<div class="status"><b>Sprawdzone:</b> limity kroków i budżetu są standardem w każdym poważnym oprogramowaniu do budowy agentów. <b>Praktyczne:</b> najtrudniejszy jest warunek sukcesu. Jeśli nie umiesz go napisać w jednym zdaniu, zadanie nie nadaje się jeszcze dla agenta.</div>
 </section>
 </div>
 
@@ -181,27 +182,27 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Notatnik</td><td>Co agent wie po dziesiątym kroku</td><td>Zapomina ustalenia z początku, powtarza zrobioną pracę</td></tr>
   <tr><td>Pętla i limity</td><td>Ile razy i jak długo</td><td>Kończy za wcześnie albo nie kończy wcale</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> ten podział odpowiada temu, co faktycznie konfiguruje się w API i frameworkach agentowych. <b>Uproszczone:</b> w produktach kilka z tych części bywa zaszytych na stałe i niewidocznych dla użytkownika.</div>
+<div class="status"><b>Sprawdzone:</b> ten podział odpowiada temu, co faktycznie ustawia się w API i w oprogramowaniu do budowy agentów. API to sposób, w jaki program rozmawia z modelem bez okna czatu. <b>Uproszczone:</b> w produktach kilka z tych części bywa zaszytych na stałe i niewidocznych dla użytkownika.</div>
 </section>
 
 <section class="s" id="s5">
 <div class="k">5 / 15</div><h3>Narzędzie</h3>
-<p>Moment, w którym model przestaje tylko pisać. Narzędzie to funkcja z opisem. Model pisze żądanie jej wywołania, program ją uruchamia, a wynik wraca do okna jako kolejny tekst.</p>
+<p>Moment, w którym model przestaje tylko pisać. Każde narzędzie ma nazwę i opis. Model pisze żądanie, program je wykonuje. Wynik wraca jako tekst do okna kontekstu, czyli do wszystkiego, co model widzi w danej chwili.</p>
 <div class="demo">
   <div class="row"><button id="tlGo">Następny etap</button><button id="tlRst">Od nowa</button></div>
   <div id="tlOut"></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> model nigdy nie wykonuje kodu ani zapytania sam. Generuje ustrukturyzowane żądanie, wykonuje je środowisko, a wynik trafia z powrotem do okna kontekstu. <b>Uproszczone:</b> format żądania różni się między dostawcami, pokazany tutaj jest skrótem.</div>
+<div class="status"><b>Sprawdzone:</b> model nigdy sam nie uruchamia kodu ani zapytania. Pisze żądanie w stałym formacie. Wykonuje je program obok, a wynik wraca do okna. <b>Uproszczone:</b> każdy dostawca modelu ma trochę inny format żądania. Tutaj pokazany jest skrót.</div>
 </section>
 
 <section class="s" id="s6">
 <div class="k">6 / 15</div><h3>Notatnik, czyli pamięć agenta</h3>
-<p>Agent po trzydziestu krokach nie pamięta pierwszego, chyba że ktoś to zapisał. Pamięć agenta to nie magia, to zarządzanie tym, co wchodzi do okna.</p>
+<p>Agent po trzydziestu krokach nie pamięta pierwszego, chyba że ktoś to zapisał. Pamięć agenta to nie magia. To decyzja, co trafia do okna.</p>
 <div class="tbl"><table>
   <tr><th>Rodzaj</th><th>Gdzie żyje</th><th>Co przeżywa</th><th>Koszt</th></tr>
   <tr><td>Historia kroków</td><td>Okno kontekstu</td><td>Do końca zadania, dopóki mieści się w oknie</td><td>Rośnie z każdym krokiem</td></tr>
   <tr><td>Streszczenie</td><td>Okno, po skróceniu historii</td><td>Przeżywa, ale traci szczegóły</td><td>Niski, kosztem dokładności</td></tr>
-  <tr><td>Plik roboczy</td><td>Dysk lub repozytorium</td><td>Przeżywa koniec zadania</td><td>Trzeba go świadomie czytać i pisać</td></tr>
+  <tr><td>Plik roboczy</td><td>Dysk lub repozytorium, czyli folder projektu z historią zmian</td><td>Przeżywa koniec zadania</td><td>Trzeba go świadomie czytać i pisać</td></tr>
   <tr><td>Pamięć długoterminowa</td><td>Osobna baza, dopisywana do okna</td><td>Przeżywa między zadaniami</td><td>Wymaga reguł, co zapisać</td></tr>
 </table></div>
 <div class="status"><b>Sprawdzone:</b> wagi modelu nie zmieniają się podczas pracy agenta. Wszystko, co agent „pamięta", jest tekstem wkładanym do okna przy każdym kroku. Mechanizm jest ten sam co w zwykłym czacie, opisany w <a href="/#s19">sekcji o pamięci</a>. <b>Praktyczne:</b> długie zadania psują się najczęściej na streszczeniu, nie na braku inteligencji.</div>
@@ -213,13 +214,13 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <div class="tbl"><table>
   <tr><th>Rodzaj działania</th><th>Odwracalne</th><th>Rozsądne domyślne ustawienie</th></tr>
   <tr><td>Czytanie: pliki, strony, baza</td><td>Tak</td><td>Bez pytania</td></tr>
-  <tr><td>Zapis roboczy: szkic, kopia, gałąź</td><td>Tak</td><td>Bez pytania</td></tr>
+  <tr><td>Zapis roboczy: szkic, kopia, osobna wersja pliku</td><td>Tak</td><td>Bez pytania</td></tr>
   <tr><td>Nadpisanie istniejących danych</td><td>Częściowo</td><td>Pytanie albo kopia zapasowa</td></tr>
   <tr><td>Wysłanie wiadomości na zewnątrz</td><td>Nie</td><td>Zawsze pytanie</td></tr>
   <tr><td>Płatność, zamówienie, umowa</td><td>Nie</td><td>Zawsze człowiek, nie agent</td></tr>
   <tr><td>Usunięcie, zmiana uprawnień</td><td>Nie</td><td>Zawsze człowiek, nie agent</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> podział po odwracalności jest standardową praktyką projektowania systemów agentowych i wprost odwzorowany w ustawieniach zgód u głównych dostawców. <b>Logiczne:</b> konkretne progi w tej tabeli to propozycja, nie norma branżowa.</div>
+<div class="status"><b>Sprawdzone:</b> podział według tego, czy działanie da się cofnąć, to standardowa praktyka przy projektowaniu agentów. Główni dostawcy modeli mają go wprost w ustawieniach zgód. <b>Logiczne:</b> konkretne progi w tej tabeli to propozycja, nie norma branżowa.</div>
 </section>
 </div>
 
@@ -237,12 +238,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="bar" style="margin-top:10px"><div id="auH" style="background:var(--teal)"></div><div id="auA" style="background:var(--purple)"></div></div>
   <div class="legend" style="margin-top:8px"><span><i style="background:var(--teal)"></i>Decyzje człowieka</span><span><i style="background:var(--purple)"></i>Decyzje modelu</span></div>
 </div>
-<div class="status"><b>Sprawdzone:</b> rosnąca autonomia zawsze wymienia nadzór na przepustowość. Im mniej punktów zatrzymania, tym szybciej i tym później wychodzi błąd. <b>Uproszczone:</b> skala pięciostopniowa jest konwencją dydaktyczną, nie standardem. Różni autorzy dzielą to inaczej.</div>
+<div class="status"><b>Sprawdzone:</b> więcej autonomii zawsze oznacza mniej nadzoru w zamian za szybszą pracę. Im mniej punktów zatrzymania, tym szybciej idzie zadanie i tym później wychodzi błąd. <b>Uproszczone:</b> skala pięciostopniowa to umowny podział do nauki, nie standard. Różni autorzy dzielą to inaczej.</div>
 </section>
 
 <section class="s" id="s9">
 <div class="k">9 / 15</div><h3>Workflow kontra agent</h3>
-<p>Najczęstszy błąd przy wdrożeniu: budowanie agenta tam, gdzie wystarczy sztywny scenariusz. Różnica jest jedna. Kto ustala kolejność kroków.</p>
+<p>Najczęstszy błąd przy wdrożeniu: budowanie agenta tam, gdzie wystarczy workflow, czyli sztywny scenariusz kroków. Różnica jest jedna. Kto ustala kolejność kroków.</p>
 <div class="tbl"><table>
   <tr><th></th><th>Workflow</th><th>Agent</th></tr>
   <tr><td>Kolejność kroków</td><td>Zapisana z góry przez człowieka</td><td>Wybierana przez model w trakcie</td></tr>
@@ -251,21 +252,21 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Koszt uruchomienia</td><td>Przewidywalny</td><td>Zmienny, zależny od liczby kroków</td></tr>
   <tr><td>Kiedy wybrać</td><td>Proces znany, powtarzalny, stabilny</td><td>Każdy przypadek wygląda inaczej, kroków nie da się wypisać z góry</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> rozróżnienie workflow kontra agent jest podstawowym podziałem w dokumentacji inżynierskiej dostawców modeli. <b>Praktyczne:</b> jeśli umiesz narysować proces jako schemat blokowy bez rozgałęzień zależnych od treści, zbuduj workflow. Taniej, szybciej, przewidywalnie.</div>
+<div class="status"><b>Sprawdzone:</b> rozróżnienie workflow kontra agent to podstawowy podział w dokumentacji technicznej dostawców modeli. <b>Praktyczne:</b> jeśli umiesz narysować proces jako schemat blokowy bez rozgałęzień zależnych od treści, zbuduj workflow. Taniej, szybciej, przewidywalnie.</div>
 </section>
 
 <section class="s" id="s10">
 <div class="k">10 / 15</div><h3>Jeden agent kontra zespół</h3>
-<p>Gdy zadanie jest szerokie, zamiast jednego długiego łańcucha uruchamia się kilku agentów równolegle. Każdy dostaje własne okno i wraca z wnioskiem, nie z surowym materiałem.</p>
+<p>Gdy zadanie jest szerokie, zamiast jednego długiego łańcucha uruchamia się kilku agentów naraz. Orkiestrator to agent, który dzieli zadanie i scala wyniki. Podagenci dostają po kawałku. Każdy ma własne okno i wraca z wnioskiem, nie z surowym materiałem.</p>
 <div class="demo">
   <div class="scroll"><svg viewBox="0 0 680 280" role="img" aria-label="Pojedynczy agent kontra orkiestrator z podagentami"><g id="orG"></g></svg></div>
 </div>
 <div class="tbl"><table>
   <tr><th>Układ</th><th>Mocna strona</th><th>Słaba strona</th></tr>
   <tr><td>Jeden agent</td><td>Pełny kontekst w jednym miejscu, spójna decyzja</td><td>Okno się zapycha, długi czas pracy</td></tr>
-  <tr><td>Orkiestrator i podagenci</td><td>Równoległość, każdy podagent ma czyste okno</td><td>Podagent nie widzi całości, wnioski trzeba scalić</td></tr>
+  <tr><td>Orkiestrator i podagenci</td><td>Praca równoległa, każdy podagent ma czyste okno</td><td>Podagent nie widzi całości, wnioski trzeba scalić</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> podagenci z osobnymi oknami to działający wzorzec przy zadaniach badawczych i przeglądzie dużej liczby plików. <b>Logiczne:</b> zysk z równoległości rośnie tylko tam, gdzie podzadania są naprawdę niezależne. Przy zadaniach, gdzie krok drugi zależy od pierwszego, zespół agentów nic nie daje.</div>
+<div class="status"><b>Sprawdzone:</b> podagenci z osobnymi oknami to działający układ przy przeglądzie wielu źródeł i dużej liczby plików. <b>Logiczne:</b> praca równoległa opłaca się tylko tam, gdzie podzadania są naprawdę niezależne. Gdy krok drugi zależy od pierwszego, zespół agentów nic nie daje.</div>
 </section>
 </div>
 
@@ -284,31 +285,31 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Liczba kroków</td><td>Od kilku do kilkudziesięciu</td><td>Setki kroków bez punktu kontrolnego</td></tr>
   <tr><td>Powtarzalność</td><td>Zadanie wraca, warto raz dobrze ustawić</td><td>Jednorazowe, szybciej zrobić ręcznie</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> możliwość automatycznego sprawdzenia wyniku jest najmocniejszym pojedynczym predyktorem tego, czy agent poradzi sobie z zadaniem. Stąd przewaga agentów w programowaniu, gdzie testy dają natychmiastową informację zwrotną. <b>Logiczne:</b> pozostałe cztery wiersze to wniosek z mechanizmu pętli, nie wynik pomiaru.</div>
+<div class="status"><b>Sprawdzone:</b> to, czy wynik da się sprawdzić automatycznie, najlepiej przewiduje, czy agent poradzi sobie z zadaniem. Stąd przewaga agentów w programowaniu. Testy od razu mówią, czy kod działa. <b>Logiczne:</b> pozostałe cztery wiersze to wniosek z mechanizmu pętli, nie wynik pomiaru.</div>
 </section>
 
 <section class="s" id="s12">
 <div class="k">12 / 15</div><h3>Pięć zastosowań i co w nich zostaje człowiekowi</h3>
-<p>Rozsądny podział pracy wygląda tak samo w każdym z tych przypadków. Agent robi przeszukiwanie i wersję roboczą, człowiek robi decyzję i odpowiedzialność.</p>
+<p>Rozsądny podział pracy wygląda tak samo w każdym z tych przypadków. Agent szuka i pisze wersję roboczą. Człowiek decyduje i odpowiada za wynik.</p>
 <div class="tbl"><table>
   <tr><th>Zastosowanie</th><th>Co agent robi dobrze</th><th>Co zostaje człowiekowi</th></tr>
   <tr><td>Kod</td><td>Czyta repozytorium, pisze zmianę, uruchamia testy, poprawia po błędzie</td><td>Czy w ogóle tak to projektujemy. Przegląd zmiany</td></tr>
-  <tr><td>Research</td><td>Dziesiątki źródeł równolegle, zestawienie sprzeczności</td><td>Dobór pytania i ocena wiarygodności źródeł</td></tr>
-  <tr><td>Dokumenty i dane</td><td>Wyciąganie pól z setek plików, ujednolicanie formatu</td><td>Reguła, co jest poprawne. Kontrola próbki</td></tr>
-  <tr><td>Operacje i raporty</td><td>Zbieranie danych z kilku systemów, wersja robocza raportu</td><td>Interpretacja i wnioski. Rozmowa z ludźmi</td></tr>
-  <tr><td>Obsługa zgłoszeń</td><td>Klasyfikacja, odpowiedź na typowe, przygotowanie kontekstu</td><td>Przypadki nietypowe i wszystko, co dotyka pieniędzy</td></tr>
+  <tr><td>Przegląd źródeł (research)</td><td>Czyta dziesiątki źródeł naraz, zestawia sprzeczności</td><td>Dobór pytania i ocena wiarygodności źródeł</td></tr>
+  <tr><td>Dokumenty i dane</td><td>Wyciąga dane z setek plików, ujednolica format</td><td>Reguła, co jest poprawne. Kontrola próbki</td></tr>
+  <tr><td>Operacje i raporty</td><td>Zbiera dane z kilku systemów, pisze wersję roboczą raportu</td><td>Interpretacja i wnioski. Rozmowa z ludźmi</td></tr>
+  <tr><td>Obsługa zgłoszeń</td><td>Sortuje zgłoszenia, odpowiada na typowe, zbiera tło sprawy dla człowieka</td><td>Przypadki nietypowe i wszystko, co dotyka pieniędzy</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> te pięć obszarów to miejsca, gdzie wdrożenia agentowe są dziś najszersze. <b>Niesprawdzone:</b> wielkość oszczędności. Publikowane liczby pochodzą głównie od dostawców i nie są niezależnie zweryfikowane. Przed wdrożeniem zmierz własny punkt odniesienia.</div>
+<div class="status"><b>Sprawdzone:</b> w tych pięciu obszarach agentów wdraża się dziś najszerzej. <b>Niesprawdzone:</b> wielkość oszczędności. Publikowane liczby pochodzą głównie od dostawców i nikt ich niezależnie nie sprawdził. Przed wdrożeniem zmierz własny punkt odniesienia: ile zadanie zajmuje dziś.</div>
 </section>
 </div>
 
 <!-- ===================== V ===================== -->
 <div class="part" id="p5">
-<header><div class="k">Część V</div><h2>Gdzie się psuje</h2><p>Dwa mechanizmy odpowiadają za większość nieudanych wdrożeń. Oba wynikają wprost z budowy pętli, więc da się je przewidzieć zanim coś pójdzie nie tak.</p></header>
+<header><div class="k">Część V</div><h2>Gdzie się psuje</h2><p>Dwa mechanizmy odpowiadają za większość nieudanych wdrożeń. Oba wynikają wprost z budowy pętli, więc da się je przewidzieć, zanim coś pójdzie nie tak.</p></header>
 
 <section class="s" id="s13">
 <div class="k">13 / 15</div><h3>Błąd narasta w pętli</h3>
-<p>Krok, który wychodzi w 95 przypadkach na 100, brzmi świetnie. Przy dwudziestu krokach pod rząd to już nie brzmi świetnie. Przesuń suwaki.</p>
+<p>Krok, który wychodzi w 95 przypadkach na 100, brzmi dobrze. Dwadzieścia takich kroków pod rząd już nie. Przesuń suwaki.</p>
 <div class="demo">
   <div class="row"><label for="erP">Skuteczność kroku</label><input type="range" id="erP" min="80" max="99" step="1" value="95"><span class="num" id="erPv"></span></div>
   <div class="row"><label for="erN">Liczba kroków</label><input type="range" id="erN" min="1" max="40" step="1" value="20"><span class="num" id="erNv"></span></div>
@@ -322,7 +323,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s14">
 <div class="k">14 / 15</div><h3>Dane to nie polecenia</h3>
-<p>Agent czyta stronę, plik albo wiadomość. Dla modelu wszystko, co wpada do okna, jest tym samym rodzajem tekstu. Jeśli w czytanym dokumencie ktoś napisze polecenie, model może je potraktować jak Twoje.</p>
+<p>Agent czyta stronę, plik albo wiadomość. Dla modelu wszystko, co wpada do okna, to ten sam rodzaj tekstu. Jeśli ktoś napisze w dokumencie polecenie, model może je potraktować jak Twoje. To wstrzyknięcie polecenia, po angielsku prompt injection.</p>
 <div class="demo">
   <div class="row"><button id="inA" class="on">Zwykła strona</button><button id="inB">Strona z wstrzykniętym poleceniem</button></div>
   <div class="code" id="inSrc"></div>
@@ -330,12 +331,12 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </div>
 <div class="tbl"><table>
   <tr><th>Zabezpieczenie</th><th>Co daje</th></tr>
-  <tr><td>Oddzielenie danych od instrukcji w oknie</td><td>Model wie, która część jest poleceniem, a która materiałem. Zmniejsza ryzyko, nie usuwa go</td></tr>
-  <tr><td>Wąskie uprawnienia narzędzi</td><td>Nawet przejęty agent nie ma czym zrobić szkody</td></tr>
-  <tr><td>Zgoda człowieka przed działaniem nieodwracalnym</td><td>Najskuteczniejszy pojedynczy mechanizm</td></tr>
-  <tr><td>Rozdzielenie: agent czytający nie jest agentem działającym</td><td>Treść z zewnątrz nie dociera do narzędzi zapisujących</td></tr>
+  <tr><td>Wyraźne oznaczenie w oknie, co jest poleceniem, a co materiałem</td><td>Model widzi granicę. Ryzyko spada, ale nie znika</td></tr>
+  <tr><td>Narzędzia z wąskimi uprawnieniami</td><td>Nawet przejęty agent nie ma czym narobić szkód</td></tr>
+  <tr><td>Zgoda człowieka przed działaniem, którego nie da się cofnąć</td><td>Najskuteczniejsza pojedyncza ochrona</td></tr>
+  <tr><td>Podział ról: jeden agent czyta, drugi działa</td><td>Treść z zewnątrz nie dociera do narzędzi, które coś zmieniają</td></tr>
 </table></div>
-<div class="status"><b>Sprawdzone:</b> wstrzyknięcie polecenia przez czytaną treść jest udokumentowaną klasą podatności, bez pełnego rozwiązania na poziomie modelu. Dlatego kontrola przeniosła się na uprawnienia i zgody. <b>Praktyczne:</b> zasada do zapamiętania jest jedna. Treść, której nie napisał użytkownik, jest materiałem, nigdy poleceniem.</div>
+<div class="status"><b>Sprawdzone:</b> wstrzyknięcie polecenia to opisany i znany rodzaj luki w zabezpieczeniach. Sam model nie umie się przed nim w pełni obronić. Dlatego kontrola przeniosła się na uprawnienia i zgody. <b>Praktyczne:</b> zasada do zapamiętania jest jedna. Treść, której nie napisał użytkownik, jest materiałem, nigdy poleceniem.</div>
 </section>
 
 <section class="s" id="s15">
@@ -346,7 +347,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="verdict" id="dcV" style="margin-top:14px"></div>
   <div class="note" id="dcN"></div>
 </div>
-<div class="status"><b>Logiczne:</b> ta lista to wniosek z poprzednich czternastu sekcji, nie wynik badania. Traktuj ją jako filtr pierwszego przejścia, który odrzuca oczywiste pomyłki, a nie jako dowód, że wdrożenie się uda. <b>Następny krok:</b> jedno zadanie, dwa tygodnie, zmierzony punkt odniesienia przed i po.</div>
+<div class="status"><b>Logiczne:</b> ta lista to wniosek z poprzednich czternastu sekcji, nie wynik badania. Traktuj ją jak pierwsze sito. Odrzuca oczywiste pomyłki, ale nie dowodzi, że wdrożenie się uda. <b>Następny krok:</b> jedno zadanie, dwa tygodnie, pomiar przed i po.</div>
 </section>
 </div>
 
@@ -358,10 +359,10 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Model nie wykonuje działania sam, tylko generuje żądanie wywołania narzędzia</td><td>Format żądania pokazany skrótowo</td></tr>
   <tr><td>Wagi nie zmieniają się w trakcie pracy agenta, pamięć to tekst w oknie</td><td>Granice między rodzajami pamięci w produktach bywają zatarte</td></tr>
   <tr><td>Limity kroków, czasu i budżetu są standardem</td><td>Konkretne wartości zależą od zadania</td></tr>
-  <tr><td>Rozróżnienie workflow kontra agent, i przewaga workflow przy stabilnym procesie</td><td>Granica bywa płynna, produkty mieszają oba</td></tr>
-  <tr><td>Automatyczna weryfikacja wyniku jest najmocniejszym predyktorem powodzenia</td><td>Pozostałe kryteria doboru zadania to wniosek, nie pomiar</td></tr>
+  <tr><td>Rozróżnienie workflow kontra agent i przewaga workflow przy stabilnym procesie</td><td>Granica bywa płynna, produkty mieszają oba</td></tr>
+  <tr><td>Automatyczne sprawdzenie wyniku najlepiej przewiduje powodzenie</td><td>Pozostałe kryteria doboru zadania to wniosek, nie pomiar</td></tr>
   <tr><td>Rachunek narastania błędu dla kroków niezależnych</td><td>Kroki w agencie nie są niezależne, krzywa to mechanizm, nie prognoza</td></tr>
-  <tr><td>Wstrzyknięcie polecenia przez czytaną treść nie ma pełnego rozwiązania na poziomie modelu</td><td>Skuteczność poszczególnych zabezpieczeń trudna do zmierzenia</td></tr>
+  <tr><td>Na wstrzyknięcie polecenia nie ma pełnego rozwiązania w samym modelu</td><td>Trudno zmierzyć, ile daje każde zabezpieczenie z osobna</td></tr>
   <tr><td>Podagenci z osobnymi oknami działają przy zadaniach rozdzielnych</td><td>Skala zysku zależy od zadania</td></tr>
   <tr><td>Podział uprawnień po odwracalności działania</td><td>Progi w tabeli to propozycja, nie norma branżowa</td></tr>
   <tr><td></td><td>Wielkość oszczędności z wdrożeń agentowych. Dane pochodzą głównie od dostawców</td></tr>
@@ -386,7 +387,7 @@ var B=$('mdB'),Q=$('mdQ'),L=$('mdL'),R=$('mdR');
 if(!B)return;
 var TASK='Zadanie: sprawdź, czy dostawca ma aktualny certyfikat, i wpisz wynik do arkusza dyżurnego.';
 var M=[
- {n:'Model',d:['Czyta polecenie','Pisze odpowiedź z wag: ogólna procedura sprawdzania certyfikatu'],r:'Wynik: tekst. Nie wie nic o tym dostawcy ani o Twoim arkuszu. Całą robotę robisz Ty.'},
+ {n:'Model',d:['Czyta polecenie','Pisze odpowiedź z wag, czyli z tego, czego nauczył się wcześniej: ogólna procedura sprawdzania certyfikatu'],r:'Wynik: tekst. Nie wie nic o tym dostawcy ani o Twoim arkuszu. Całą robotę robisz Ty.'},
  {n:'Asystent z narzędziami',d:['Czyta polecenie','Wyszukuje w sieci numer i datę certyfikatu','Pisze odpowiedź z datą i linkiem'],r:'Wynik: odpowiedź oparta na źródle. Arkusz nadal otwierasz i wypełniasz Ty.'},
  {n:'Agent',d:['Czyta polecenie','Wyszukuje certyfikat','Sprawdza datę ważności','Otwiera arkusz','Znajduje wiersz dostawcy','Wpisuje wynik i datę sprawdzenia','Czyta arkusz ponownie, potwierdza zapis','Raportuje, co zrobił'],r:'Wynik: wykonane zadanie plus ślad. Tobie zostaje przegląd i zgoda na zapis.'}
 ];
@@ -536,7 +537,7 @@ var O=$('tlOut');if(!O)return;
 var ST=[
  {t:'Okno kontekstu',c:'Sprawdź stan magazynu dla pozycji SKU-4471.',k:'1. Model dostaje polecenie i opis dostępnych narzędzi.'},
  {t:'Model pisze żądanie',c:'{\n  "narzedzie": "magazyn_stan",\n  "argumenty": { "sku": "SKU-4471" }\n}',k:'2. To nadal tylko tekst. Model niczego nie wykonał.'},
- {t:'Program wykonuje',c:'GET /api/magazyn?sku=SKU-4471  →  200 OK',k:'3. Wywołanie robi środowisko, nie model. Tu działają uprawnienia.'},
+ {t:'Program wykonuje',c:'GET /api/magazyn?sku=SKU-4471  →  200 OK',k:'3. Wywołanie robi program, nie model. Tu działają uprawnienia.'},
  {t:'Wynik wraca do okna',c:'{ "sku": "SKU-4471", "stan": 18, "rezerwacje": 12, "wolne": 6 }',k:'4. Wynik jest doklejany do okna jako kolejny tekst.'},
  {t:'Model czyta i decyduje',c:'Wolne: 6 sztuk. To poniżej progu 10. Czy zgłosić zapotrzebowanie?',k:'5. Następny obrót pętli. Model widzi wynik tak samo jak Twoje polecenie.'}
 ];
@@ -564,10 +565,10 @@ draw();
 var R=$('auR');if(!R)return;
 var L=[
  {t:'0. Podpowiedź',h:100,a:0,who:'Człowiek robi wszystko, model sugeruje',ex:'Model proponuje treść maila, Ty piszesz i wysyłasz',risk:'Brak ryzyka po stronie agenta, cały czas Twój'},
- {t:'1. Wykonanie pojedynczego kroku',h:80,a:20,who:'Ty wybierasz krok, model go wykonuje',ex:'„Streść ten raport", „przepisz tę funkcję"',risk:'Błąd widoczny od razu, bo patrzysz na każdy wynik'},
- {t:'2. Pętla pod nadzorem',h:50,a:50,who:'Model wybiera kroki, Ty zatwierdzasz każde działanie',ex:'Agent proponuje zmianę w pliku, Ty klikasz zgodę',risk:'Zmęczenie zatwierdzaniem. Po dwudziestym oknie klikasz bez czytania'},
+ {t:'1. Wykonanie pojedynczego kroku',h:80,a:20,who:'Ty wybierasz krok, model go wykonuje',ex:'„Streść ten raport", „popraw ten akapit"',risk:'Błąd widoczny od razu, bo patrzysz na każdy wynik'},
+ {t:'2. Pętla pod nadzorem',h:50,a:50,who:'Model wybiera kroki, Ty zatwierdzasz każde działanie',ex:'Agent proponuje zmianę w pliku, Ty klikasz zgodę',risk:'Zmęczenie zatwierdzaniem. Po dwudziestej prośbie o zgodę klikasz bez czytania'},
  {t:'3. Pętla z punktami kontrolnymi',h:25,a:75,who:'Model pracuje sam, zatrzymuje się na działaniach nieodwracalnych',ex:'Agent zbiera dane i pisze raport, pyta przed wysłaniem',risk:'Błąd z początku pętli wychodzi dopiero przy kontroli'},
- {t:'4. Pełna autonomia',h:5,a:95,who:'Model robi wszystko, Ty oglądasz wynik',ex:'Zadanie uruchamiane harmonogramem, raport rano',risk:'Nie wiesz, że coś poszło źle, dopóki nie zobaczysz skutku'}
+ {t:'4. Pełna autonomia',h:5,a:95,who:'Model robi wszystko, Ty oglądasz wynik',ex:'Zadanie startuje samo o ustalonej porze, raport rano',risk:'Nie wiesz, że coś poszło źle, dopóki nie zobaczysz skutku'}
 ];
 function draw(){
   var v=+R.value,d=L[v];
@@ -719,5 +720,6 @@ draw();
 })();
 })();
 </script>
+<script src="/fx.js" defer></script>
 </body>
 </html>
