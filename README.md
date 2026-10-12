@@ -4,14 +4,16 @@ Mała encyklopedia AI pod materiały szkoleniowe. Strony statyczne, zero zależn
 
 ## Zakładki
 
-| Adres | Plik | Temat |
-|---|---|---|
-| `/szkolenie` | `szkolenie.html` | Program szkolenia MAZOR AI v1.0: 8 modułów w 4 kategoriach, formaty 2h, pół dnia, cały dzień, ćwiczenia z kluczem, handout do druku, plan pilotażu. 19 sekcji, 9 dem. |
-| `/` | `index.html` | 1. Jak działa model językowy, od tokena do produktu. 22 sekcje, 10 dem. |
-| `/agenci` | `agenci.html` | 2. Od zadania do agenta. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |
-| `/warsztat` | `warsztat.html` | 3. Od czatu do warsztatu. Umiejętności, API i koszt, MCP i routery, agenci w terminalu, modele lokalne, GitHub. 16 sekcji, 8 dem. Stan na 2026-10-08. |
-| `/wykrywanie` | `wykrywanie.html` | 4. Czy to zrobiła AI? Znak wodny, metryczka C2PA, metadane, detektory tekstu, drzewko decyzyjne. 12 sekcji, 6 dem. Stan na 2026-10-08. |
-| `/nowosci` | `nowosci.html` | 5. Nowości. Dane w bloku `<script type="application/json" id="dane">`, strona renderuje się z niego. |
+Dwie wersje językowe. Polska w katalogu głównym, angielska w `en/`. Przełącznik `PL` / `EN` stoi na końcu paska zakładek na każdej stronie i prowadzi do odpowiednika, nie na stronę główną.
+
+| Adres PL | Adres EN | Plik PL | Plik EN | Temat |
+|---|---|---|---|---|
+| `/szkolenie` | `/en/training` | `szkolenie.html` | `en/training.html` | Program szkolenia MAZOR AI v1.0: 8 modułów w 4 kategoriach, formaty 2h, pół dnia, cały dzień, ćwiczenia z kluczem, handout do druku, plan pilotażu. 19 sekcji, 9 dem. |
+| `/` | `/en/` | `index.html` | `en/index.html` | 1. Jak działa model językowy, od tokena do produktu. 22 sekcje, 10 dem. |
+| `/agenci` | `/en/agents` | `agenci.html` | `en/agents.html` | 2. Od zadania do agenta. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |
+| `/warsztat` | `/en/workshop` | `warsztat.html` | `en/workshop.html` | 3. Od czatu do warsztatu. Umiejętności, API i koszt, MCP i routery, agenci w terminalu, modele lokalne, GitHub. 16 sekcji, 8 dem. Stan na 2026-10-08. |
+| `/wykrywanie` | `/en/detection` | `wykrywanie.html` | `en/detection.html` | 4. Czy to zrobiła AI? Znak wodny, metryczka C2PA, metadane, detektory tekstu, drzewko decyzyjne. 12 sekcji, 6 dem. Stan na 2026-10-08. |
+| `/nowosci` | `/en/news` | `nowosci.html` | `en/news.html` | 5. Nowości. Dane w bloku `<script type="application/json" id="dane">`, strona renderuje się z niego. |
 
 Każda sekcja: nagłówek, jedno zdanie, jedno demo, jedna linia „sprawdzone / uproszczone". Każda strona kończy się tabelą zbiorczą tego, co można cytować dalej. Każda strona ma u góry pasek zakładek `nav.tabs` i wpina wspólną warstwę wizualną `fx.css` + `fx.js` (tytuł składany z tokenów, pole tokenów w tle, panele rozdziałów kręcone scrollem, dema wjeżdżające przy przewijaniu). Strony działają też bez niej, a przy włączonym ograniczeniu ruchu w systemie ruch się wyłącza.
 
@@ -62,3 +64,4 @@ Może kiedyś: osobny moduł szkolenia o polityce AI w firmie (dla zarządu).
 - v5: zakładka `/wykrywanie` (część czwarta), umiejętność `sprawdz-pochodzenie` ze skryptem czytającym metadane. Nowości przesunięte na 5.
 - v6: redakcja pięciu stron pod szerszą publiczność (wszystkie sekcje FOG ≤ 10,5), wspólna warstwa wizualna `fx.css` + `fx.js`, naprawiony zdublowany nagłówek na `/wykrywanie`.
 - v6.1: zakładka `/szkolenie` (program MAZOR AI 1.0), jedno menu u góry, podmenu bez paska przewijania, tekst bez formy „my”, reguła osoby w `tokena-redakcja`.
+- v6.2: wersja angielska wszystkich sześciu zakładek w `en/`, przełącznik PL/EN na pasku zakładek, `lang` w `<html>`, poprawiona numeracja zakładki w stopce Nowości.

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="How to check whether AI made a file: the SynthID watermark, the C2PA Content Credentials record, metadata, and why text detectors do not work. Training material with interactive demos.">
+<meta name="color-scheme" content="light dark">
+<title>Did AI Make This?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long column, max 760px, sticky part nav; every section = heading, one sentence, one demo, one "status" line */
+:root{
+  --bg:#F5F4F9;--fg:#1B1A26;--muted:#5F5D70;--line:#D9D7E4;--card:#FFFFFF;--soft:#ECEAF4;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--teal:#0F6E56;--teal-bg:#E1F5EE;--amber:#BA7517;--amber-bg:#FAEEDA;--coral:#993C1D;--coral-bg:#FAECE7;--gray:#5F5E5A;--gray-bg:#EDECE7;
+  --display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;--body:"Atkinson Hyperlegible",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,7vw,56px);letter-spacing:-.02em}
+h2{font-size:clamp(24px,4.5vw,32px);margin:0 0 6px}
+h3{font-size:21px;margin:0 0 4px}
+p{margin:0 0 14px;max-width:62ch}
+a{color:var(--purple)}
+.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+.hero p.lead{font-size:19px;color:var(--muted);margin-top:16px}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:28px}
+.chain a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:13px;line-height:1.3}
+.chain a b{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.chain a:hover{border-color:var(--purple)}
+@media (max-width:640px){.chain{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ph{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:15px;margin:12px 0}.ph b{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}@media (max-width:520px){.ph{grid-template-columns:1fr}}
+nav.parts{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line);z-index:5;display:flex;gap:4px;overflow-x:auto;padding:8px 0;margin:0 -20px;padding-inline:20px}
+nav.parts a{flex:0 0 auto;font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 10px;border-radius:999px;border:1px solid transparent}
+nav.parts a:hover{border-color:var(--line);color:var(--fg)}
+.part{padding-top:56px}
+.part>header{margin-bottom:24px}
+.part>header .k{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
+.part>header p{color:var(--muted)}
+section.s{padding:28px 0 8px;border-top:1px solid var(--line)}
+section.s .k{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0 16px}
+.demo svg{width:100%;height:auto;display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.row label{font-size:14px;color:var(--muted);min-width:110px}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--purple)}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--purple)}
+button.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+textarea{width:100%;font:inherit;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);resize:vertical;min-height:72px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:15px;color:var(--muted);margin:10px 0 0}
+.out{font-size:16px;line-height:1.7;margin:10px 0 0}
+.chip{display:inline-block;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-size:14px;margin:2px 2px 2px 0;border:1px solid transparent}
+.c-purple{background:var(--purple-bg);color:var(--purple)}.c-teal{background:var(--teal-bg);color:var(--teal)}.c-amber{background:var(--amber-bg);color:var(--amber)}.c-coral{background:var(--coral-bg);color:var(--coral)}.c-gray{background:var(--gray-bg);color:var(--gray)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.tbl{overflow-x:auto}
+.status{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding:4px 12px;margin:8px 0 12px}
+.status b{color:var(--fg);font-weight:700}
+.bar{height:10px;border-radius:5px;background:var(--soft);overflow:hidden;display:flex}
+.dots{display:flex;gap:6px}.dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots span.on{background:var(--fg)}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+svg text{font-family:var(--body);font-size:13px;fill:var(--fg)}
+svg text.m{fill:var(--muted);font-size:12px}
+svg text.mono{font-family:var(--mono);font-size:12px}
+svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:pl 1.2s ease-in-out infinite}}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+/* --- added for this page --- */
+.back{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--purple)}
+.code{font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--soft);border-radius:8px;padding:12px 14px;margin:10px 0;white-space:pre-wrap;overflow-x:auto}
+.code .kk{color:var(--purple)}.code .vv{color:var(--teal)}
+.log{font-size:15px;line-height:1.55;margin:0;padding:0;list-style:none}
+.log li{padding:7px 0 7px 26px;border-bottom:1px solid var(--line);position:relative}
+.log li:last-child{border-bottom:0}
+.log li b.s{position:absolute;left:0;top:7px;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.pick{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chk{display:block;font-size:15px;padding:6px 0;cursor:pointer}
+.chk input{margin-right:9px;accent-color:var(--purple)}
+.verdict{font-family:var(--display);font-size:20px;font-weight:700;margin:4px 0 2px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:640px){.scroll svg{min-width:620px}.scroll::after{content:"← scroll →";display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:6px}}
+.chain.six{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:640px){.chain.six{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tabs a:hover{color:var(--fg);border-color:var(--purple)}
+.tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
+.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
+.tabs a.lang:hover{background:var(--purple-bg)}
+</style>
+<link rel="stylesheet" href="/fx.css">
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection" aria-current="page">4 Detection</a><a href="/en/news">5 News</a><a href="/wykrywanie" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · DETECTION</div>
+  <h1>Did AI Make This?</h1>
+  <p class="lead">This question comes up more and more often. The answer is not the one people expect. There is no tool that looks at the content and says who made it. There are three mechanisms, each one checks something different and each one has a different weakness. This page shows what is left of them by the time a file reaches you. And how to answer when the origin cannot be established.</p>
+</header>
+
+<nav class="parts" aria-label="Parts">
+  <a href="#p1">I Mechanisms</a><a href="#p2">II What survives</a><a href="#p3">III Tools</a><a href="#p4">IV Text</a><a href="#p5">V Procedure</a><a href="#status">Status</a>
+</nav>
+
+<!-- ===================== I ===================== -->
+<div class="part" id="p1">
+<header><div class="k">Part I</div><h2>Three mechanisms</h2><p>An AI detector is a program meant to recognise content made by AI. Three different things hide behind that name. Most wrong conclusions come from mixing them up.</p></header>
+
+<section class="s" id="s1">
+<div class="k">1 / 12</div><h3>What is actually being checked</h3>
+<p>Two of these mechanisms read something that somebody deliberately left in the file. The third guesses from the content alone. Click to see the difference.</p>
+<div class="demo">
+  <div class="pick" id="mcB"></div>
+  <div class="verdict" id="mcN"></div>
+  <p class="note" id="mcO" style="margin-top:2px"></p>
+  <div class="ph" id="mcP"></div>
+</div>
+<div class="status"><b>Verified:</b> these are three separate technologies, not three versions of the same one. The first two answer yes or nothing. The third always gives some percentage, even when it knows nothing.</div>
+</section>
+
+<section class="s" id="s2">
+<div class="k">2 / 12</div><h3>The watermark sits in the content</h3>
+<p>A watermark sits in the pixels themselves or in the sound. Metadata is a description attached beside the file, for example a date and the name of a program. A watermark is not attached, so it does not vanish when the file is saved in another format.</p>
+<div class="demo">
+  <div class="scroll"><svg viewBox="0 0 680 230" role="img" aria-label="Comparison: metadata attached beside the file, a watermark spread through the content">
+    <text x="40" y="34" class="m">record and metadata</text>
+    <rect x="40" y="46" width="110" height="34" rx="6" fill="var(--amber-bg)" stroke="var(--amber)"/>
+    <text x="95" y="67" text-anchor="middle" style="font-size:12px">file description</text>
+    <rect x="40" y="84" width="250" height="110" rx="6" fill="var(--soft)" stroke="var(--line)"/>
+    <text x="165" y="145" text-anchor="middle" class="m">image content</text>
+    <text x="40" y="216" class="m">scissors cut off the description, the content stays</text>
+    <text x="390" y="34" class="m">watermark</text>
+    <rect x="390" y="46" width="110" height="34" rx="6" fill="var(--soft)" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <text x="445" y="67" text-anchor="middle" class="m" style="font-size:12px">empty</text>
+    <rect x="390" y="84" width="250" height="110" rx="6" fill="var(--teal-bg)" stroke="var(--teal)"/>
+    <g id="wmDots"></g>
+    <text x="515" y="216" class="m" text-anchor="middle">the mark is spread through the content</text>
+  </svg></div>
+  <div class="tbl"><table>
+    <tr><th>Operation</th><th>Metadata</th><th>Watermark</th></tr>
+    <tr><td>Sending through a messaging app</td><td>Gone</td><td>Survives</td></tr>
+    <tr><td>Screenshot</td><td>Gone</td><td>Usually survives</td></tr>
+    <tr><td>Compression, change of format</td><td>Usually gone</td><td>Survives</td></tr>
+    <tr><td>Heavy cropping, repainting</td><td>Gone</td><td>May be gone</td></tr>
+  </table></div>
+</div>
+<div class="status"><b>Verified:</b> a watermark survives compression and saving in another format, metadata does not. <b>Simplified:</b> the dots in the drawing are only a picture. A real watermark is a small change of values spread across the whole file.</div>
+</section>
+
+<section class="s" id="s3">
+<div class="k">3 / 12</div><h3>The record: Content Credentials</h3>
+<p>The second mechanism is a signed record attached to the file. It stores what made the file and what happened to it afterwards. The standard is called C2PA. In software it usually appears as Content Credentials.</p>
+<div class="demo">
+  <ul class="log">
+    <li><b class="s">1</b>Generated in an AI tool. The record stores the tool name and the date, the whole thing signed.</li>
+    <li><b class="s">2</b>Opened in an editor, colours adjusted. The editor adds another entry and signs it with its own key.</li>
+    <li><b class="s">3</b>Sent by email as an attachment. The record travels with the file.</li>
+    <li><b class="s">4</b>The recipient takes a screenshot. <b>The whole history is lost.</b> A new file appears with no past.</li>
+  </ul>
+  <p class="note">Strength: the signature can be checked, so the record is hard to forge. Weakness: it is as easy to remove as deleting a text file. A missing record means nothing.</p>
+</div>
+<div class="status"><b>Verified:</b> C2PA is an open standard with a digital signature. Some cameras and editors support it. <b>In practice:</b> most files online have no record, because platforms strip it.</div>
+</section>
+</div>
+
+<!-- ===================== II ===================== -->
+<div class="part" id="p2">
+<header><div class="k">Part II</div><h2>What survives the journey</h2><p>A file rarely reaches you straight from the generator. On the way it loses exactly the traces that are easiest to read.</p></header>
+
+<section class="s" id="s4">
+<div class="k">4 / 12</div><h3>The journey of a file</h3>
+<p>The same image at four stages. EXIF and XMP are the two most common kinds of metadata. Click a stage and see what can still be read.</p>
+<div class="demo">
+  <div class="pick" id="jrB"></div>
+  <div class="scroll"><table>
+    <tr><th>Trace</th><th>1. From the generator</th><th>2. After a messaging app</th><th>3. Screenshot</th><th>4. Edited</th></tr>
+    <tbody id="jrT"></tbody>
+  </table></div>
+  <div class="verdict" id="jrN"></div>
+  <p class="note" id="jrO" style="margin-top:2px"></p>
+</div>
+<div class="status"><b>Verified:</b> social media services and messaging apps strip metadata on sending. A screenshot creates a new file with no history. <b>Simplified:</b> whether the watermark disappears at stage 4 depends on how heavily the file was edited.</div>
+</section>
+
+<section class="s" id="s5">
+<div class="k">5 / 12</div><h3>Why no trace means nothing</h3>
+<p>Four files and the same result four times: nothing found. Something different sits behind it each time. Click a file.</p>
+<div class="demo">
+  <div class="pick" id="nvB"></div>
+  <div class="ph" id="nvP"></div>
+  <p class="note" id="nvO"></p>
+</div>
+<div class="status"><b>The most important sentence on this page:</b> a negative result says only that no trace was found. It does not say that there was no trace, and it does not say who made the file.</div>
+</section>
+</div>
+
+<!-- ===================== III ===================== -->
+<div class="part" id="p3">
+<header><div class="k">Part III</div><h2>Tools that really work</h2><p>There are two and they work on image, video and audio. Both have a narrow scope. Both are worth using, but neither gives certainty.</p></header>
+
+<section class="s" id="s6">
+<div class="k">6 / 12</div><h3>SynthID Detector</h3>
+<p>SynthID is a watermark inserted by AI tools from Google and its partners. SynthID Detector is the Google tool that reads that watermark. Since October 2026 anybody can use it at <a href="https://synthid.com/">synthid.com</a>. It checks image, video and audio, not text.</p>
+<div class="demo">
+  <div class="tbl"><table>
+    <tr><th>Question</th><th>Answer</th></tr>
+    <tr><td>What it reads</td><td>The SynthID watermark in image, video and audio</td></tr>
+    <tr><td>Whose watermarks</td><td>Google plus partners, among them OpenAI, NVIDIA, Kakao</td></tr>
+    <tr><td>Does it read text</td><td>No. Not even text from the Gemini app, although that is sometimes watermarked</td></tr>
+    <tr><td>How many checks</td><td>About 10 per day per person</td></tr>
+    <tr><td>Is there an API</td><td>There is no public API, that is, no access for other programs. You upload the file by hand</td></tr>
+    <tr><td>Does it say how much is AI</td><td>No. It will not tell a fully generated file apart from a photo where AI fixed the background</td></tr>
+  </table></div>
+  <div class="legend"><span><i style="background:var(--teal)"></i>The result says something certain</span><span><i style="background:var(--coral)"></i>The result says nothing</span></div>
+  <div class="tbl"><table>
+    <tr><th>Result</th><th>What follows from it</th><th>What you still do not know</th></tr>
+    <tr><td><span class="chip c-teal">found</span></td><td>A tool that inserts this watermark took part in it</td><td>Whether it made the whole thing or fixed one part. Who ran it</td></tr>
+    <tr><td><span class="chip c-coral">not found</span></td><td>Nothing</td><td>Whether the generator inserts no watermark, whether the watermark was stripped, whether the file is genuine</td></tr>
+  </table></div>
+</div>
+<div class="status"><b>Verified, state of play on 8 October 2026:</b> access for everybody, the file types, the daily limit and the lack of text support. Source: the Google announcement and the tool description. <b>Needs refreshing:</b> the partner list is growing.</div>
+</section>
+
+<section class="s" id="s7">
+<div class="k">7 / 12</div><h3>Reading metadata on your own machine</h3>
+<p>Before you send a file to somebody else's tool, read its metadata. You do this locally, that is, on your own computer, with no limit and without sending the file anywhere. There are four possible results.</p>
+<div class="demo">
+  <div class="pick" id="mdB"></div>
+  <div class="code" id="mdC"></div>
+  <p class="note" id="mdO"></p>
+</div>
+<div class="status"><b>Verified:</b> these fields exist and can be read locally. They are the C2PA Content Credentials record, the IPTC source marker in XMP, text blocks in PNG and the Software field in EXIF, that is, the name of the program. <b>Note:</b> each of them can be written in by hand, so result B is circumstantial evidence, not proof.</div>
+</section>
+</div>
+
+<!-- ===================== IV ===================== -->
+<div class="part" id="p4">
+<header><div class="k">Part IV</div><h2>Text</h2><p>There is no good news here. Text cannot be checked. Tools that claim otherwise do real harm.</p></header>
+
+<section class="s" id="s8">
+<div class="k">8 / 12</div><h3>Why text detectors fail</h3>
+<p>A text detector measures how easy the next words are to predict. The trouble is that people often write very predictably, and text from a model, from ChatGPT for example, stops being predictable after a few edits. Click a sample.</p>
+<div class="demo">
+  <div class="pick" id="txB"></div>
+  <div class="verdict" id="txV"></div>
+  <div class="bar" style="margin:6px 0 10px"><div id="txBar" style="background:var(--coral)"></div></div>
+  <div class="ph" id="txP"></div>
+</div>
+<div class="status"><b>Verified:</b> text detectors give false alarms. They hit boilerplate texts and people writing in a foreign language most often. <b>Simplified:</b> the percentages in the demo are an example of a pattern, not a measurement of any particular tool.</div>
+</section>
+
+<section class="s" id="s9">
+<div class="k">9 / 12</div><h3>What to do instead</h3>
+<p>When the question is whether somebody wrote something themselves, asking about the tool leads nowhere. One thing works: a conversation about the content.</p>
+<div class="tbl"><table>
+  <tr><th>Instead of</th><th>Do this</th><th>Why it works</th></tr>
+  <tr><td>Pasting the text into a detector</td><td>Ask for the drafts and the file history</td><td>Work on a text leaves traces that cannot be faked after the fact</td></tr>
+  <tr><td>Looking for proof in the text</td><td>Ask the author about the content: where this number came from, what this paragraph means</td><td>The author of their own text answers straight away</td></tr>
+  <tr><td>Settling it after the fact</td><td>Set a rule for the future</td><td>A clear rule settles the next twenty cases</td></tr>
+  <tr><td>Asking "did you use AI"</td><td>Ask "what in this document is yours"</td><td>The second can be answered honestly. The first forces a defence</td></tr>
+</table></div>
+<div class="status"><b>Opinion, not measurement:</b> this is a conclusion from how the mechanism works, not the result of a study. Thresholds and company rules have to be set by you.</div>
+</section>
+</div>
+
+<!-- ===================== V ===================== -->
+<div class="part" id="p5">
+<header><div class="k">Part V</div><h2>Procedure</h2><p>What to do when the question actually comes up. And how to write the answer down so that nobody reads more into it than it says.</p></header>
+
+<section class="s" id="s10">
+<div class="k">10 / 12</div><h3>Decision tree</h3>
+<p>Answer the questions. At the end you get a next step, not a verdict.</p>
+<div class="demo">
+  <div class="verdict" id="dtQ"></div>
+  <div class="pick" id="dtB" style="margin-top:10px"></div>
+  <div class="ph" id="dtP"></div>
+  <div class="row" style="margin-top:8px"><button id="dtR">Start over</button></div>
+</div>
+<div class="status"><b>Rule of the tree:</b> no branch ends with the sentence "a human made this". No available tool supports that conclusion.</div>
+</section>
+
+<section class="s" id="s11">
+<div class="k">11 / 12</div><h3>How to write down the result</h3>
+<p>The biggest risk is not in the tool. It is in the sentence you write after it. The same result can be written down honestly or dishonestly.</p>
+<div class="demo">
+  <div class="tbl"><table>
+    <tr><th>Do not write</th><th>Write</th></tr>
+    <tr><td>I checked, this is not AI</td><td>No watermark and no metadata were found. This does not settle the origin</td></tr>
+    <tr><td>The detector showed 87%, so it is AI</td><td>Text detectors do not give a result I base a decision on</td></tr>
+    <tr><td>The photo is authentic</td><td>The photo has camera metadata, consistent with the stated date</td></tr>
+    <tr><td>He used AI</td><td>The file contains metadata from tool X. I do not know who added it</td></tr>
+  </table></div>
+  <p class="note">The report template has four rows. You always fill in the last one, even when the result is certain.</p>
+  <div class="code">File:               <span class="kk">name</span>
+Verdict:            <span class="kk">letter and one sentence</span>
+Verified:           <span class="vv">metadata yes/no, SynthID yes/no</span>
+What I do not know: <span class="vv">...</span></div>
+</div>
+<div class="status"><b>In practice:</b> without the last row, in six months the note can serve as proof. Proof of something it never stated.</div>
+</section>
+
+<section class="s" id="s12">
+<div class="k">12 / 12</div><h3>When it is about a person</h3>
+<p>The result is about the file. The decision is about a person. Between the two there is a gap that no tool closes.</p>
+<div class="tbl"><table>
+  <tr><th>Result</th><th>What you may say about the file</th><th>What you may not say about the person</th></tr>
+  <tr><td>Watermark found</td><td>A tool that inserts this watermark took part in making it</td><td>That this person used it, or that they knew what the file was</td></tr>
+  <tr><td>Metadata points to a generator</td><td>The file contains such an entry</td><td>That the entry is true. It can be written in within a minute</td></tr>
+  <tr><td>Nothing found</td><td>No traces were found</td><td>Nothing. In either direction</td></tr>
+  <tr><td>Text detector</td><td>Nothing</td><td>Nothing. That result is not used against people</td></tr>
+</table></div>
+<div class="status"><b>Plain opinion:</b> a false accusation costs a company more than undetected use of AI. Especially when it rests on a tool that sounds more certain than it is. An accusation destroys trust and can become a legal case. Undetected use is usually fixed by a rule for the future.</div>
+</section>
+</div>
+
+<div class="part" id="status">
+<header><div class="k">Finally</div><h2>What is verified and what is simplified</h2><p>If something from this page is going into a training session, quote the left column.</p></header>
+<div class="tbl"><table>
+  <tr><th>Verified</th><th>Simplified or opinion</th></tr>
+  <tr><td>Three mechanisms: a watermark in the content, a signed record beside the content, guessing from the content</td><td>Drawing the watermark as rows of dots</td></tr>
+  <tr><td>Metadata is lost when a file is sent through a messaging app and when a screenshot is taken. A watermark survives compression</td><td>Exactly where the editing threshold lies, past which the watermark disappears</td></tr>
+  <tr><td>SynthID Detector: publicly available since October 2026, image, video, audio, no text, about 10 checks per day, no public API</td><td>The partner list is growing and needs refreshing</td></tr>
+  <tr><td>C2PA is signed, so it is hard to forge and easy to remove</td><td>How often you will meet a file with a record in practice</td></tr>
+  <tr><td>Text detectors give false alarms, most often on boilerplate texts and on texts written in a foreign language</td><td>The percentages in the demo: an example of a pattern, not a measurement</td></tr>
+  <tr><td>A negative result is not proof that there was no AI</td><td>Rules for how to deal with an employee: a conclusion, not a regulation</td></tr>
+</table></div>
+<p class="note">The repository of this page, that is, the folder with its files, holds a skill for Claude called <code>sprawdz-pochodzenie</code>. A skill is a folder with instructions that Claude loads when a task matches. This one reads metadata locally, walks you through SynthID and keeps the report template with its mandatory last row.</p>
+</div>
+
+<footer>Part four of the material. First: <a href="/en/">From Token to Answer</a>, how the model works. Second: <a href="/en/agents">From Task to Agent</a>, the loop and permissions. Third: <a href="/en/workshop">From Chat to Workshop</a>, tools. This one: what can be established about a finished file. What changes as it happens: <a href="/en/news">AI News</a>.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+function clear(n){while(n&&n.firstChild)n.removeChild(n.firstChild);}
+function ph(node,rows){clear(node);rows.forEach(function(r){node.appendChild(hel('b',null,r[0]));node.appendChild(hel('div',null,r[1]));});}
+function picker(box,etykiety,cb){var B=etykiety.map(function(t,i){var b=hel('button',null,t);b.addEventListener('click',function(){B.forEach(function(x,j){x.className=j===i?'on':''});cb(i);});box.appendChild(b);return b;});
+  B[0].className='on';cb(0);return B;}
+
+/* ---------- 1. three mechanisms ---------- */
+(function(){
+var B=$('mcB');if(!B)return;
+var M=[
+ {n:'Watermark',o:'A small change in the pixels or in the sound. It is inserted by the generator, that is, the AI tool that makes an image, a video or audio. A person does not see it, a program that knows the pattern reads it.',
+  p:[['Checks','Whether the generator left its mark in the content'],['Answer','Found, or nothing'],['Strength','Survives compression, that is, shrinking the file, saving in another format and usually a screenshot'],['Gap','Works only with tools that insert a mark'],['Example','SynthID Detector from Google']]},
+ {n:'Content Credentials',o:'A signed record attached to the file. It says what made the file and what happened to it.',
+  p:[['Checks','Whether a signed history is attached to the file'],['Answer','It is there and the signature matches, or nothing'],['Strength','The signature makes forgery hard'],['Gap','It is removed as easily as any file. Platforms strip it on their own'],['Example','C2PA, Content Credentials']]},
+ {n:'Guessing from content',o:'A program judges the content itself and estimates whether it looks machine made. Nothing has to be written in the file.',
+  p:[['Checks','How predictable the content is'],['Answer','Always some percentage, even when it knows nothing'],['Strength','None that could be trusted for a decision'],['Gap','It is wrong in both directions and sounds equally confident in both'],['Example','Text detectors']]}
+];
+picker(B,M.map(function(m){return m.n}),function(i){$('mcN').textContent=M[i].n;$('mcO').textContent=M[i].o;ph($('mcP'),M[i].p);});
+})();
+
+/* ---------- 2. watermark dots ---------- */
+(function(){
+var G=$('wmDots');if(!G)return;
+for(var r=0;r<5;r++)for(var c=0;c<11;c++){
+  G.appendChild(el('circle',{cx:404+c*23,cy:97+r*20,r:2.5,fill:'var(--teal)',opacity:(0.3+((r*7+c*3)%5)/7).toFixed(2)}));}
+})();
+
+/* ---------- 3. journey of a file ---------- */
+(function(){
+var B=$('jrB');if(!B)return;
+var SLAD=['Watermark','Content Credentials (C2PA)','EXIF and XMP metadata'];
+var ST=[
+ ['present','present','present'],
+ ['present','gone','gone'],
+ ['usually present','gone','gone'],
+ ['may be gone','gone','gone']
+];
+var OP=[
+ ['Straight from the generator','The full set. You get a file like this only when somebody sends it as a file, with no service in between.'],
+ ['After a messaging app or a service','The platform re-encodes the image its own way and cuts out everything attached. Only the content is left, and the watermark with it.'],
+ ['Screenshot','A completely new file appears. It has no history, because it never had one. This is the most common case in practice.'],
+ ['Heavily edited','Cropping, repainting, a filter. A watermark can be tough, but not against everything. This is where the tools end.']
+];
+var T=$('jrT'),akt=0;
+function rys(){clear(T);
+ SLAD.forEach(function(nazwa,r){
+  var tr=document.createElement('tr');
+  tr.appendChild(hel('td',null,nazwa));
+  for(var c=0;c<4;c++){
+    var td=document.createElement('td');
+    var v=ST[c][r];
+    var cls=v==='present'?'c-teal':(v==='gone'?'c-coral':'c-amber');
+    var sp=hel('span','chip '+cls,v);
+    td.appendChild(sp);
+    if(c===akt)td.style.background='var(--soft)';
+    tr.appendChild(td);}
+  T.appendChild(tr);});
+}
+picker(B,['1. From the generator','2. After a messaging app','3. Screenshot','4. Edited'],function(i){akt=i;rys();$('jrN').textContent=OP[i][0];$('jrO').textContent=OP[i][1];});
+})();
+
+/* ---------- 4. negative result ---------- */
+(function(){
+var B=$('nvB');if(!B)return;
+var N=[
+ {n:'File A',p:[['Truth','A phone photo, sent through WhatsApp'],['Result','Nothing found'],['Why','There was never an AI trace, and the messaging app cut out the metadata']],o:'Here the negative result matches the truth, but by accident. Not because the tool established it.'},
+ {n:'File B',p:[['Truth','Generated on a home computer with an open source model that anybody can download'],['Result','Nothing found'],['Why','That model inserts no watermark']],o:'A negative result, and a machine made the whole content. The tool has no advantage here over a coin toss.'},
+ {n:'File C',p:[['Truth','Generated in a tool with a watermark, then heavily edited'],['Result','Nothing found'],['Why','The editing stripped the watermark']],o:'The mark was there, now it is gone. The tool tells the truth about itself: I did not find it. That is not the same as: it was not there.'},
+ {n:'File D',p:[['Truth','A screenshot of an image generated in a tool with a watermark'],['Result','Sometimes found, sometimes not'],['Why','A mark usually survives a screenshot, but scaling and compression can weaken it']],o:'The same file can give a different result depending on how the screenshot was taken.'}
+];
+picker(B,N.map(function(x){return x.n}),function(i){ph($('nvP'),N[i].p);$('nvO').textContent=N[i].o;});
+})();
+
+/* ---------- 5. metadata reader ---------- */
+(function(){
+var B=$('mdB');if(!B)return;
+var W=[
+ {n:'A',c:'Verdict A: a signed record points to an AI tool\n\n  [STRONG] C2PA record in the file (file structure)\n           - Adobe Firefly',
+  o:'The strongest result you can get locally. The signature still has to be confirmed, because this program does not check it.'},
+ {n:'B',c:'Verdict B: AI traces in the metadata, no signature\n\n  [MEDIUM] PNG text block "parameters" (PNG tEXt)\n           - Automatic1111: full prompt and settings',
+  o:'Circumstantial evidence. An entry like this can be written in by hand within a minute, so it is not fit as proof against a person.'},
+ {n:'C',c:'Verdict C: metadata points to a camera, no AI traces\n\n  [AGAINST] camera EXIF (make and model)\n            - Canon EOS R6',
+  o:'The file has a history. That rules out neither editing nor a hand written EXIF, but it is more than emptiness.'},
+ {n:'D',c:'Verdict D: no traces at all\n\n  Traces: none.\n\n  This does NOT mean "a human made it".',
+  o:'The most common result and the only one where people draw the wrong conclusion. This is where reading the file ends and the conversation starts.'}
+];
+picker(B,W.map(function(x){return 'Verdict '+x.n}),function(i){$('mdC').textContent=W[i].c;$('mdO').textContent=W[i].o;});
+})();
+
+/* ---------- 6. text detector ---------- */
+(function(){
+var B=$('txB');if(!B)return;
+var T=[
+ {n:'Safety procedure',w:94,v:'Written by a human',
+  p:[['Text','A procedure written by a health and safety specialist, boilerplate and repetitive language'],['Detector result','94% AI'],['What happened','Predictability is not a trait of a machine. It is a trait of a formal document']]},
+ {n:'Report in a second language',w:88,v:'Written by a human',
+  p:[['Text','A shift report written in English by a person for whom English is a second language'],['Detector result','88% AI'],['What happened','Simpler vocabulary and simpler syntax push the score up. This is a standing flaw in the method, not an accident']]},
+ {n:'Text from a century ago',w:91,v:'Written by a human',
+  p:[['Text','A passage from a well known historical document'],['Detector result','91% AI'],['What happened','The model knows this text and finds it highly predictable. The year it was written makes no difference to the method']]},
+ {n:'Edited from a model',w:14,v:'Written by a model, then fixed by a human',
+  p:[['Text','Generated, then reworked: different sentences, typos left in'],['Detector result','14% AI'],['What happened','Disturbing the predictability is enough. The method measures smoothness, not origin']]}
+];
+picker(B,T.map(function(x){return x.n}),function(i){
+  $('txV').textContent=T[i].v;
+  $('txBar').style.width=T[i].w+'%';
+  $('txBar').style.background=T[i].w>50?'var(--coral)':'var(--teal)';
+  ph($('txP'),T[i].p);});
+})();
+
+/* ---------- 7. decision tree ---------- */
+(function(){
+var Q=$('dtQ');if(!Q)return;
+var W={
+ start:{q:'What are you checking?',a:[['Image, video or audio','meta'],['Text','tekst']]},
+ tekst:{koniec:1,q:'Stop. Text cannot be checked.',
+   p:[['Why','No text detector gives a result you can base a decision about a person on'],['Do this','Ask for the drafts and ask the author about the content'],['Write it like this','I do not use text detectors, because their result is not proof']]},
+ meta:{q:'Have you read the file metadata on your own machine?',a:[['Not yet','czytaj'],['Yes, I found something','jest'],['Yes, nothing there','pusto']]},
+ czytaj:{koniec:1,q:'Start there. Nothing leaves your machine.',
+   p:[['Command','python3 .claude/skills/sprawdz-pochodzenie/scripts/pochodzenie.py file'],['Why first','It works locally, with no limit, and with verdict A or B you have something concrete straight away'],['Then','Come back here with the result']]},
+ jest:{q:'What did you find?',a:[['A signed C2PA record','a'],['Just an entry in the metadata','b']]},
+ a:{koniec:1,q:'Verdict A. The strongest thing you have.',
+   p:[['What you may say','The file holds a signed record pointing to tool X'],['Also do this','Confirm the signature at contentcredentials.org/verify'],['What you do not know','Who ran the tool and whether the whole thing was generated']]},
+ b:{koniec:1,q:'Verdict B. Circumstantial evidence, not proof.',
+   p:[['What you may say','The file holds such an entry'],['Weakness','Metadata can be written in by hand within a minute and removed just as easily'],['If the stakes are high','Check the watermark at synthid.com as well']]},
+ pusto:{q:'Are the stakes high? A decision about a person, money, a legal case?',a:[['No, just curiosity','koniecD'],['Yes','synth']]},
+ synth:{q:'Check the watermark: upload the file to synthid.com.',a:[['Watermark found','znak'],['Not found','koniecD']]},
+ znak:{koniec:1,q:'Watermark found. Strong evidence about the file.',
+   p:[['What you may say','A tool that inserts this watermark took part in making the file'],['What you do not know','Whether it made the whole thing or fixed one part, and who ran it'],['Write it like this','A watermark was found. That says something about the file, not about the person']]},
+ koniecD:{koniec:1,q:'Verdict D. It cannot be established, and it stays that way.',
+   p:[['What you may say','No traces were found. This does not settle the origin'],['What you may NOT do','Draw a conclusion in either direction, including that a human made it'],['If somebody pushes','The answer is: I do not know. The available tools give no more']]}
+};
+var B=$('dtB'),P=$('dtP');
+function idz(k){
+  var w=W[k];Q.textContent=w.q;clear(B);clear(P);
+  if(w.koniec){ph(P,w.p);return;}
+  w.a.forEach(function(a){var b=hel('button',null,a[0]);b.addEventListener('click',function(){idz(a[1])});B.appendChild(b);});
+}
+$('dtR').addEventListener('click',function(){idz('start')});
+idz('start');
+})();
+})();
+</script>
+<script src="/fx.js" defer></script>
+</body>
+</html>

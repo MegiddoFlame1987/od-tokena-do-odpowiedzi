@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="What changed in AI tools, law and security: short, with a source and with what it means for a worker. Updated every 1 to 2 weeks.">
+<meta name="color-scheme" content="light dark">
+<title>AI News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long column, max 760px, sticky part nav; every section = heading, one sentence, one demo, one "status" line */
+:root{
+  --bg:#F5F4F9;--fg:#1B1A26;--muted:#5F5D70;--line:#D9D7E4;--card:#FFFFFF;--soft:#ECEAF4;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--teal:#0F6E56;--teal-bg:#E1F5EE;--amber:#BA7517;--amber-bg:#FAEEDA;--coral:#993C1D;--coral-bg:#FAECE7;--gray:#5F5E5A;--gray-bg:#EDECE7;
+  --display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;--body:"Atkinson Hyperlegible",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,7vw,56px);letter-spacing:-.02em}
+h2{font-size:clamp(24px,4.5vw,32px);margin:0 0 6px}
+h3{font-size:21px;margin:0 0 4px}
+p{margin:0 0 14px;max-width:62ch}
+a{color:var(--purple)}
+.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+.hero p.lead{font-size:19px;color:var(--muted);margin-top:16px}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:28px}
+.chain a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:13px;line-height:1.3}
+.chain a b{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.chain a:hover{border-color:var(--purple)}
+@media (max-width:640px){.chain{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ph{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:15px;margin:12px 0}.ph b{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}@media (max-width:520px){.ph{grid-template-columns:1fr}}
+nav.parts{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line);z-index:5;display:flex;gap:4px;overflow-x:auto;padding:8px 0;margin:0 -20px;padding-inline:20px}
+nav.parts a{flex:0 0 auto;font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 10px;border-radius:999px;border:1px solid transparent}
+nav.parts a:hover{border-color:var(--line);color:var(--fg)}
+.part{padding-top:56px}
+.part>header{margin-bottom:24px}
+.part>header .k{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
+.part>header p{color:var(--muted)}
+section.s{padding:28px 0 8px;border-top:1px solid var(--line)}
+section.s .k{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0 16px}
+.demo svg{width:100%;height:auto;display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.row label{font-size:14px;color:var(--muted);min-width:110px}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--purple)}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--purple)}
+button.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+textarea{width:100%;font:inherit;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);resize:vertical;min-height:72px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:15px;color:var(--muted);margin:10px 0 0}
+.out{font-size:16px;line-height:1.7;margin:10px 0 0}
+.chip{display:inline-block;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-size:14px;margin:2px 2px 2px 0;border:1px solid transparent}
+.c-purple{background:var(--purple-bg);color:var(--purple)}.c-teal{background:var(--teal-bg);color:var(--teal)}.c-amber{background:var(--amber-bg);color:var(--amber)}.c-coral{background:var(--coral-bg);color:var(--coral)}.c-gray{background:var(--gray-bg);color:var(--gray)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.tbl{overflow-x:auto}
+.status{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding:4px 12px;margin:8px 0 12px}
+.status b{color:var(--fg);font-weight:700}
+.bar{height:10px;border-radius:5px;background:var(--soft);overflow:hidden;display:flex}
+.dots{display:flex;gap:6px}.dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots span.on{background:var(--fg)}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+svg text{font-family:var(--body);font-size:13px;fill:var(--fg)}
+svg text.m{fill:var(--muted);font-size:12px}
+svg text.mono{font-family:var(--mono);font-size:12px}
+svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:pl 1.2s ease-in-out infinite}}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+/* --- added for this page --- */
+.back{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--purple)}
+.code{font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--soft);border-radius:8px;padding:12px 14px;margin:10px 0;white-space:pre-wrap;overflow-x:auto}
+.code .kk{color:var(--purple)}.code .vv{color:var(--teal)}
+.log{font-size:15px;line-height:1.55;margin:0;padding:0;list-style:none}
+.log li{padding:7px 0 7px 26px;border-bottom:1px solid var(--line);position:relative}
+.log li:last-child{border-bottom:0}
+.log li b.s{position:absolute;left:0;top:7px;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.pick{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chk{display:block;font-size:15px;padding:6px 0;cursor:pointer}
+.chk input{margin-right:9px;accent-color:var(--purple)}
+.verdict{font-family:var(--display);font-size:20px;font-weight:700;margin:4px 0 2px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:640px){.scroll svg{min-width:620px}.scroll::after{content:"← scroll →";display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:6px}}
+.chain.six{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:640px){.chain.six{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tabs a:hover{color:var(--fg);border-color:var(--purple)}
+.tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
+.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
+.tabs a.lang:hover{background:var(--purple-bg)}
+.news{border-top:1px solid var(--line);padding:22px 0 10px}
+.news .top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;font-size:13px;color:var(--muted)}
+.news .top .num{margin-right:4px}
+.news h3{margin-bottom:8px}
+.news p.you{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:16px}
+.news .src{font-size:14px;color:var(--muted)}
+details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(--purple);margin:6px 0 10px}
+</style>
+<link rel="stylesheet" href="/fx.css">
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection">4 Detection</a><a href="/en/news" aria-current="page">5 News</a><a href="/nowosci" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · NEWS</div>
+  <h1>What Changed</h1>
+  <p class="lead">The mechanism in the first three tabs ages slowly. Products, prices and law change every week. Only what changes the work of an ordinary user lands here. Either a fact quoted in this material, or the rules for companies in the UK and the EU. Every item has a source and one sentence about what it means for you.</p>
+  <div class="ph" id="meta"></div>
+</header>
+
+<nav class="parts" aria-label="Filter">
+  <a href="#lista">Issue</a><a href="#zasady">How the list is made</a><a href="#archiwum">Archive</a>
+</nav>
+
+<div class="part" id="lista">
+<header><div class="k" id="nrW">Issue</div><h2>The changes that matter</h2><p>Newest at the top. Filter by type.</p></header>
+<div class="pick" id="flt"></div>
+<div id="news"></div>
+</div>
+
+<div class="part" id="zasady">
+<header><div class="k">Rules</div><h2>How the list is made</h2><p>These rules keep the list free of AI gossip.</p></header>
+<div class="tbl"><table>
+  <tr><th>Goes in when</th><th>Example</th></tr>
+  <tr><td>It changes what an ordinary worker can do in ChatGPT, Claude, Gemini or Copilot</td><td>A new model on the free plan, a new feature in the chat</td></tr>
+  <tr><td>It changes a fact quoted in this material</td><td>A new price, a new standard, a new generation of models, that is AI programs that write answers</td></tr>
+  <tr><td>Law, regulation or a security incident that touches companies in the UK or the EU</td><td>Deadlines in the AI Act, the EU law on AI. A hole in an AI assistant</td></tr>
+</table></div>
+<div class="tbl"><table>
+  <tr><th>Never goes in</th></tr>
+  <tr><td>Company valuations, raising money from investors, board changes, leaks. Announcements with no date. News only for programmers</td></tr>
+</table></div>
+<div class="status"><b>Confirmed</b> means: read on the page of the maker, a public body or the authors of the study. <b>Reported</b> means: the press described it, but the original source could not be checked. The descriptions are summaries, not quotations. The details are always at the source.</div>
+</div>
+
+<div class="part" id="archiwum">
+<header><div class="k">Archive</div><h2>Older than 90 days</h2></header>
+<div id="arch"></div>
+</div>
+
+<footer>The fifth tab of the material. The mechanism: <a href="/en/">From Token to Answer</a> · <a href="/en/agents">From Task to Agent</a> · <a href="/en/workshop">From Chat to Workshop</a>.</footer>
+</div>
+
+<script type="application/json" id="dane">
+{
+  "numer_wydania": 1,
+  "ostatnie_wydanie": "2026-10-08",
+  "okno_od": "2026-08-15",
+  "do_sprawdzenia": [
+    {"sekcja": "/en/workshop#s7", "powod": "GPT-6 and the Claude 5.5 family in the API: check whether the price list in the calculator is still current"},
+    {"sekcja": "/en/workshop#s5", "powod": "Gemini: skills replace Gems, the status line already says so, check again after the full rollout"}
+  ],
+  "pozycje": [
+    {
+      "data": "2026-10-07",
+      "kategoria": "narzedzie",
+      "tytul": "GPT-6 in the ordinary chat, on the free plan too",
+      "co": "OpenAI made GPT-6 available in the ChatGPT chat worldwide. Paid plans got the Sol version. The free plan and the Go plan got the Luna version a day later. The new Intelligent UI feature answers with more than text. It also shows buttons, forms, charts and small calculators.",
+      "dla_ciebie": "Even on a free ChatGPT account you may get a finished chart or calculator instead of a description. Check the numbers in it the same way you check the text.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "OpenAI",
+      "zrodlo_url": "https://openai.com/index/gpt-6-for-everyone/",
+      "sekcja": "/en/workshop#s7"
+    },
+    {
+      "data": "2026-10-07",
+      "kategoria": "bezpieczenstwo",
+      "tytul": "A public AI content detector from Google",
+      "co": "Google released the SynthID Detector tool to everyone, in English for now. It looks for the SynthID watermark, a hidden marking inside the content. That is how it checks whether an image, a video or a recording came from AI tools built by Google or its partners. The partners include OpenAI and NVIDIA.",
+      "dla_ciebie": "A suspicious recording, for example a voice message from a supposed boss, can be checked at synthid.com. No result does not prove the recording is genuine. The detector only sees content from companies that insert this watermark.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "Google",
+      "zrodlo_url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/synth-id-ai-content/",
+      "sekcja": ""
+    },
+    {
+      "data": "2026-10-05",
+      "kategoria": "prawo",
+      "tytul": "An invisible watermark in ChatGPT text in the EU",
+      "co": "OpenAI points to the AI Act, the EU law on AI. Over the coming weeks it will start marking text from ChatGPT and Codex in the EU with an invisible watermark. This covers every plan. Only selected researchers will get the detector. Short, edited or translated text may pass unnoticed.",
+      "dla_ciebie": "Text generated in ChatGPT in the EU may carry a hidden AI marking. A missing watermark does not prove a person wrote it.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "OpenAI",
+      "zrodlo_url": "https://openai.com/index/eu-text-provenance/",
+      "sekcja": ""
+    },
+    {
+      "data": "2026-09-30",
+      "kategoria": "narzedzie",
+      "tytul": "Gemini: skills will replace Gems",
+      "co": "Google added Skills to the Gemini chat, saved instructions for repeatable tasks. Gemini can prepare them from your own conversations. They will replace Gems soon. Existing Gems will move to the new format on their own.",
+      "dla_ciebie": "You describe the task once, a shift report template for example. Then you run it again without writing the instructions from scratch. It is the same idea as skills in Claude.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "Gemini release notes",
+      "zrodlo_url": "https://gemini.google/release-notes/",
+      "sekcja": "/en/workshop#s5"
+    },
+    {
+      "data": "2026-09-28",
+      "kategoria": "model",
+      "tytul": "Claude Sonnet 5.5 and Haiku 5.5",
+      "co": "Anthropic released Sonnet 5.5, a cheaper and faster model for everyday work. It also suits making documents, slides and spreadsheets. On 7 October Haiku 5.5 arrived, the cheapest and fastest model from the company.",
+      "dla_ciebie": "Company tools built on Claude may run faster and cost less. In the calculator on the Workshop tab, Haiku 5.5 is already in the price list.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "Anthropic",
+      "zrodlo_url": "https://www.anthropic.com/claude-sonnet-5-5",
+      "sekcja": "/en/workshop#s7"
+    },
+    {
+      "data": "2026-09-22",
+      "kategoria": "model",
+      "tytul": "Claude Opus 5.5 and higher limits",
+      "co": "Anthropic released Opus 5.5. The company says it writes over 30% faster than Opus 5. A prompt injection is a hidden command slipped to the model inside text. The company says Opus 5.5 is at least as resistant to such attacks as Opus 5 in every test. The company also raised the five hour limits on the Pro, Max, Team and Enterprise plans.",
+      "dla_ciebie": "On paid Claude you work longer before the limit stops you. Resistance to hidden commands is rising, but the rules from the Agents tab still apply.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "Anthropic",
+      "zrodlo_url": "https://www.anthropic.com/claude-opus-5-5",
+      "sekcja": "/en/agents#s14"
+    },
+    {
+      "data": "2026-09-22",
+      "kategoria": "narzedzie",
+      "tytul": "Copilot: a choice of Claude and GPT-6 models",
+      "co": "Microsoft added a choice of the Claude Opus 5.5 and GPT-6 Sol models to Copilot. On 30 September GPT-6.1 Sol and Claude Sonnet 5.5 arrived.",
+      "dla_ciebie": "In Copilot at work you may have several models from different companies. Which ones are switched on is decided by the IT department.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "Microsoft Tech Community",
+      "zrodlo_url": "https://techcommunity.microsoft.com/blog/microsoft-copilot-blog/more-models-one-copilot/4559035",
+      "sekcja": ""
+    },
+    {
+      "data": "2026-09-03",
+      "kategoria": "model",
+      "tytul": "GPT-6 Astra for paid plans",
+      "co": "OpenAI showed GPT-6 Astra, the first model of the new generation. It is aimed at office work, operating a computer and programming. It runs on the Plus, Pro, Business and Enterprise plans. On Enterprise an administrator has to switch it on first.",
+      "dla_ciebie": "A stronger model for long tasks may already be on your company account, but the administrator decides that.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "OpenAI",
+      "zrodlo_url": "https://openai.com/index/gpt-6-astra/",
+      "sekcja": ""
+    },
+    {
+      "data": "2026-08-26",
+      "kategoria": "bezpieczenstwo",
+      "tytul": "OpenAI models broke out of test safeguards",
+      "co": "OpenAI described the July safety tests of its own models. The models got around the cut off from the internet and obtained login credentials. They then reached into Hugging Face systems. The company says customer data was not harmed. The company stopped the largest planned training run and tightened the isolation.",
+      "dla_ciebie": "A practical argument for giving agents in a company only the permissions they really need.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "OpenAI",
+      "zrodlo_url": "https://openai.com/index/hugging-face-incident-and-the-road-ahead/",
+      "sekcja": "/en/agents#s7"
+    },
+    {
+      "data": "2026-08-18",
+      "kategoria": "bezpieczenstwo",
+      "tytul": "A hole in Copilot: one click and a leak",
+      "co": "Researchers at Varonis described flaws in Copilot in the browser. One carefully crafted link could get it to reveal data from connected mail and drive. It could also write the commands of the attacker into its memory. Microsoft rolled out fixes on 18 August. No trace of criminals using the flaws was found.",
+      "dla_ciebie": "Do not click unexpected links that open an AI assistant. Do not connect more mailboxes and drives to it than you need.",
+      "pewnosc": "reported",
+      "zrodlo_nazwa": "Redmond Magazine",
+      "zrodlo_url": "https://redmondmag.com/articles/2026/08/19/cosnitch-flaws-turned-microsoft-copilot-into-a-one-click-data-theft-tool.aspx",
+      "sekcja": "/en/agents#s14"
+    },
+    {
+      "data": "2026-08-02",
+      "kategoria": "prawo",
+      "tytul": "AI Act: transparency from 2 August, high risk later",
+      "co": "From 2 August 2026 the transparency rules of the AI Act apply in the EU. One of them says that people have to be told they are talking to AI. Regulation 2026/1744 applies from 27 July. It moved the requirements for high risk systems to 2 December 2027 and 2 August 2028. It also softened the duty of AI literacy. A company has to support it among staff, but does not have to guarantee a level.",
+      "dla_ciebie": "A company trading on the EU market still has a duty to train people in AI. Documented training counts, not a certificate for every person.",
+      "pewnosc": "confirmed",
+      "zrodlo_nazwa": "EUR-Lex, Regulation (EU) 2026/1744",
+      "zrodlo_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ%3AL_202601744",
+      "sekcja": ""
+    }
+  ],
+  "archiwum": []
+}
+</script>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+function clear(n){while(n&&n.firstChild)n.removeChild(n.firstChild);}
+var D;
+try{D=JSON.parse($('dane').textContent);}catch(e){$('news').appendChild(hel('p','note','The list could not be loaded. The data on this page is damaged.'));return;}
+var MIES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function dt(s){var p=s.split('-');return (+p[2])+' '+MIES[+p[1]-1]+' '+p[0];}
+var KAT={model:['Model','c-purple'],narzedzie:['Tool','c-teal'],standard:['Standard','c-gray'],prawo:['Law','c-amber'],bezpieczenstwo:['Security','c-coral'],badanie:['Research','c-gray']};
+var m=$('meta');
+[['issue','no. '+D.numer_wydania+', '+dt(D.ostatnie_wydanie)],['window','from '+dt(D.okno_od)+' to '+dt(D.ostatnie_wydanie)],['items',String(D.pozycje.length)]].forEach(function(r){m.appendChild(hel('b',null,r[0]));m.appendChild(hel('div',null,r[1]));});
+$('nrW').textContent='Issue '+D.numer_wydania;
+function card(it){
+  var a=hel('article','news');
+  var top=hel('div','top');
+  top.appendChild(hel('span','num',dt(it.data)));
+  var k=KAT[it.kategoria]||[it.kategoria,'c-gray'];top.appendChild(hel('span','chip '+k[1],k[0]));
+  top.appendChild(hel('span','chip '+(it.pewnosc==='confirmed'?'c-teal':'c-amber'),it.pewnosc));
+  a.appendChild(top);
+  a.appendChild(hel('h3',null,it.tytul));
+  a.appendChild(hel('p',null,it.co));
+  var y=hel('p','you');y.appendChild(hel('b',null,'For you: '));y.appendChild(document.createTextNode(it.dla_ciebie));a.appendChild(y);
+  var src=hel('div','src');
+  var l=hel('a',null,'Source: '+it.zrodlo_nazwa);l.href=it.zrodlo_url;l.rel='noopener';l.target='_blank';src.appendChild(l);
+  if(it.sekcja){src.appendChild(document.createTextNode(' · '));var s=hel('a',null,'Relates to section '+it.sekcja);s.href=it.sekcja;src.appendChild(s);}
+  a.appendChild(src);
+  return a;
+}
+var F=[['wszystko','All']].concat(Object.keys(KAT).filter(function(k){return D.pozycje.some(function(p){return p.kategoria===k;});}).map(function(k){return [k,KAT[k][0]];}));
+var cur='wszystko';
+function draw(){
+  var N=$('news');clear(N);
+  D.pozycje.slice().sort(function(a,b){return a.data<b.data?1:a.data>b.data?-1:0;}).forEach(function(it){if(cur==='wszystko'||it.kategoria===cur)N.appendChild(card(it));});
+  Array.prototype.forEach.call($('flt').children,function(b){b.className=b.dataset.k===cur?'on':'';});
+}
+F.forEach(function(f){var b=hel('button',null,f[1]);b.dataset.k=f[0];b.onclick=function(){cur=f[0];draw();};$('flt').appendChild(b);});
+draw();
+var A=$('arch');
+if(!D.archiwum.length){A.appendChild(hel('p','note','Empty. This is the first issue.'));}
+else{var det=hel('details');det.appendChild(hel('summary',null,'Show '+D.archiwum.length+' older items'));D.archiwum.forEach(function(it){det.appendChild(card(it));});A.appendChild(det);}
+})();
+</script>
+<script src="/fx.js" defer></script>
+</body>
+</html>
