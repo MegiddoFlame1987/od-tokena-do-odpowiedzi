@@ -100,6 +100,8 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
+.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
+.tabs a.lang:hover{background:var(--purple-bg)}
 .mods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 12px}
 @media (max-width:560px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mod{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--purple);border-radius:8px;padding:10px;font-size:14px;line-height:1.3;transition:opacity .25s ease}
@@ -131,7 +133,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Zakładki materiału"><a href="/szkolenie" aria-current="page" class="tab-train">Szkolenie</a><a href="/">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/wykrywanie">4 Wykrywanie</a><a href="/nowosci">5 Nowości</a></nav>
+  <nav class="tabs" aria-label="Zakładki materiału"><a href="/szkolenie" aria-current="page" class="tab-train">Szkolenie</a><a href="/">1 Tokeny</a><a href="/agenci">2 Agenci</a><a href="/warsztat">3 Warsztat</a><a href="/wykrywanie">4 Wykrywanie</a><a href="/nowosci">5 Nowości</a><a href="/en/training" class="lang" hreflang="en" title="English version">EN</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MAZOR LTD · PROGRAM SZKOLENIA · WERSJA 1.0</div>
   <h1>Szkolenie MAZOR AI</h1>
   <p class="lead">Practical AI Literacy &amp; Safe AI Use for the Workplace. Praktyczne szkolenie z rozumienia i bezpiecznego używania generatywnej AI w pracy. Jedna historia w ośmiu modułach: od tego, co naprawdę robi model językowy (LLM, large language model), do tego, jak użyć go jutro w pracy bez narażania siebie i firmy.</p>
