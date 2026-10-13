@@ -98,16 +98,14 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
-.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
-.tabs a.lang:hover{background:var(--purple-bg)}
 </style>
 <link rel="stylesheet" href="/fx.css">
 </head>
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents" aria-current="page">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection">4 Detection</a><a href="/en/news">5 News</a><a href="/agenci" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
-  <a class="back" href="/en/">← FROM TOKEN TO ANSWER</a>
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/">1 Tokens</a><a href="/agents" aria-current="page">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
+  <a class="back" href="/">← FROM TOKEN TO ANSWER</a>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · AGENTS</div>
   <h1>From Task to Agent</h1>
   <p class="lead">A model answers. An agent acts. An agent is the same model, run in a loop, with tools and a stopping condition. A tool is a function that a program runs when the model asks for it. Then comes the scratchpad, which is what the agent writes down so that it does not forget. And permissions: what it is allowed to do without asking a person. This page shows each of those parts on its own. At the end: where this arrangement breaks, and how to spot a task worth handing to an agent.</p>
@@ -200,7 +198,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Working file</td><td>Disk or a repository, that is a project folder with a history of changes</td><td>Survives the end of the task</td><td>It has to be read and written deliberately</td></tr>
   <tr><td>Long-term memory</td><td>A separate store, appended to the window</td><td>Survives between tasks</td><td>Needs rules about what to save</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> the weights of the model do not change while an agent works. Everything the agent "remembers" is text put into the window at every step. The mechanism is the same as in an ordinary chat, described in <a href="/en/#s19">the section on memory</a>. <b>In practice:</b> long tasks break on the summary most often, not on a lack of intelligence.</div>
+<div class="status"><b>Verified:</b> the weights of the model do not change while an agent works. Everything the agent "remembers" is text put into the window at every step. The mechanism is the same as in an ordinary chat, described in <a href="/#s19">the section on memory</a>. <b>In practice:</b> long tasks break on the summary most often, not on a lack of intelligence.</div>
 </section>
 
 <section class="s" id="s7">
@@ -364,7 +362,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </table></div>
 </div>
 
-<footer>Part two of the material. The first: <a href="/en/">From Token to Answer</a>, the mechanism of a language model. This one: what happens when the same model is given a loop and tools. The third: <a href="/en/workshop">From Chat to Workshop</a>, the tools with which the model reaches further.</footer>
+<footer>Part two of the material. The first: <a href="/">From Token to Answer</a>, the mechanism of a language model. This one: what happens when the same model is given a loop and tools. The third: <a href="/workshop">From Chat to Workshop</a>, the tools with which the model reaches further.</footer>
 </div>
 
 <script>

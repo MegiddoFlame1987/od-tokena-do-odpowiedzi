@@ -100,15 +100,13 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
-.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
-.tabs a.lang:hover{background:var(--purple-bg)}
 </style>
 <link rel="stylesheet" href="/fx.css">
 </head>
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection" aria-current="page">4 Detection</a><a href="/en/news">5 News</a><a href="/wykrywanie" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection" aria-current="page">4 Detection</a><a href="/news">5 News</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · DETECTION</div>
   <h1>Did AI Make This?</h1>
   <p class="lead">This question comes up more and more often. The answer is not the one people expect. There is no tool that looks at the content and says who made it. There are three mechanisms, each one checks something different and each one has a different weakness. This page shows what is left of them by the time a file reaches you. And how to answer when the origin cannot be established.</p>
@@ -343,7 +341,7 @@ What I do not know: <span class="vv">...</span></div>
 <p class="note">The repository of this page, that is, the folder with its files, holds a skill for Claude called <code>sprawdz-pochodzenie</code>. A skill is a folder with instructions that Claude loads when a task matches. This one reads metadata locally, walks you through SynthID and keeps the report template with its mandatory last row.</p>
 </div>
 
-<footer>Part four of the material. First: <a href="/en/">From Token to Answer</a>, how the model works. Second: <a href="/en/agents">From Task to Agent</a>, the loop and permissions. Third: <a href="/en/workshop">From Chat to Workshop</a>, tools. This one: what can be established about a finished file. What changes as it happens: <a href="/en/news">AI News</a>.</footer>
+<footer>Part four of the material. First: <a href="/">From Token to Answer</a>, how the model works. Second: <a href="/agents">From Task to Agent</a>, the loop and permissions. Third: <a href="/workshop">From Chat to Workshop</a>, tools. This one: what can be established about a finished file. What changes as it happens: <a href="/news">AI News</a>.</footer>
 </div>
 
 <script>

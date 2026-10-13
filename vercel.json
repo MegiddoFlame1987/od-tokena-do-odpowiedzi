@@ -1,1 +1,13 @@
-{ "cleanUrls": true, "trailingSlash": false }
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/en", "destination": "/", "permanent": true },
+    { "source": "/en/:path*", "destination": "/:path*", "permanent": true },
+    { "source": "/agenci", "destination": "/agents", "permanent": true },
+    { "source": "/warsztat", "destination": "/workshop", "permanent": true },
+    { "source": "/wykrywanie", "destination": "/detection", "permanent": true },
+    { "source": "/nowosci", "destination": "/news", "permanent": true },
+    { "source": "/szkolenie", "destination": "/training", "permanent": true }
+  ]
+}

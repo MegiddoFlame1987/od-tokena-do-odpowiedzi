@@ -108,7 +108,7 @@ To nie jest ostrożność dla ostrożności. Fałszywe oskarżenie na podstawie 
 | Element | Gdzie |
 |---|---|
 | Nowe nazwy generatorów | Lista `GENERATORY` w `scripts/pochodzenie.py` |
-| Nowi partnerzy SynthID | Tabela w kroku 3 i sekcja 3 na stronie `/wykrywanie` |
+| Nowi partnerzy SynthID | Tabela w kroku 3 i sekcja 3 na stronie `/detection` |
 | Nowe pola metadanych | `PNG_KLUCZE_AI` i `IPTC_AI` w skrypcie |
 
 Stan wiedzy o SynthID: 8 października 2026.

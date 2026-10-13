@@ -1,6 +1,6 @@
 ---
 name: tokena-pm
-description: Product manager strony "Od tokena do odpowiedzi" (repo MegiddoFlame1987/od-tokena-do-odpowiedzi, Vercel). Użyj, gdy Norbert pyta o następny krok strony, backlog, nową stronę lub sekcję, status materiału szkoleniowego, albo każe odświeżyć zakładkę Nowości (/nowosci). Do samej redakcji tekstu używaj tokena-redakcja.
+description: Product manager strony "Od tokena do odpowiedzi" (repo MegiddoFlame1987/od-tokena-do-odpowiedzi, Vercel). Użyj, gdy Norbert pyta o następny krok strony, backlog, nową stronę lub sekcję, status materiału szkoleniowego, albo każe odświeżyć zakładkę Nowości (/news). Do samej redakcji tekstu używaj tokena-redakcja.
 ---
 
 # PM: Od tokena do odpowiedzi
@@ -11,12 +11,12 @@ Strona to baza materiału szkoleniowego MAZOR AI (praktyczna znajomość AI i be
 
 | Zakładka | Plik | Rola | Odświeżanie |
 |---|---|---|---|
-| Szkolenie `/szkolenie` | `szkolenie.html` | Program szkolenia MAZOR: 8 modułów, 4 kategorie, 3 formaty, ćwiczenia z kluczem, handout, pilotaż. Linkuje do sekcji zakładek 1 do 5 jako materiału do pokazów | Po każdym pilotażu: czasy, lista wycięć, efekty |
+| Szkolenie `/training` | `training.html` | Program szkolenia MAZOR: 8 modułów, 4 kategorie, 3 formaty, ćwiczenia z kluczem, handout, pilotaż. Linkuje do sekcji zakładek 1 do 5 jako materiału do pokazów | Po każdym pilotażu: czasy, lista wycięć, efekty |
 | 1 `/` | `index.html` | Mechanizm modelu, token → produkt | Rzadko. Mechanizm się nie starzeje |
-| 2 `/agenci` | `agenci.html` | Pętla, narzędzia, uprawnienia | Rzadko |
-| 3 `/warsztat` | `warsztat.html` | Umiejętności, API, MCP, programy, GitHub | Co kwartał. Nazwy modeli, ceny i wsparcie się zmieniają |
-| 4 `/wykrywanie` | `wykrywanie.html` | Czy to zrobiła AI: znak wodny, C2PA, metadane, detektory | Co kwartał |
-| 5 `/nowosci` | `nowosci.html` | Co się zmieniło i co to znaczy dla pracownika | Co 1–2 tygodnie, procedura niżej |
+| 2 `/agents` | `agents.html` | Pętla, narzędzia, uprawnienia | Rzadko |
+| 3 `/workshop` | `workshop.html` | Umiejętności, API, MCP, programy, GitHub | Co kwartał. Nazwy modeli, ceny i wsparcie się zmieniają |
+| 4 `/detection` | `detection.html` | Czy to zrobiła AI: znak wodny, C2PA, metadane, detektory | Co kwartał |
+| 5 `/news` | `news.html` | Co się zmieniło i co to znaczy dla pracownika | Co 1–2 tygodnie, procedura niżej |
 
 Menu: zakładki tylko u góry (`nav.tabs`), podmenu części strony (`nav.parts`) tylko z linkami `#` do tej samej strony. Nowa sekcja w szkoleniu, która nie wspiera efektu „wartość następnego dnia w pracy”, trafia do sekcji „Co wyciąć”.
 
@@ -48,7 +48,7 @@ Jedno zadanie, nie lista pięciu.
 
 ## Procedura: odświeżenie Nowości
 
-Dane siedzą w `nowosci.html`, w bloku `<script type="application/json" id="dane">`. Strona renderuje się z tego bloku. Edytujesz tylko JSON, nie HTML.
+Dane siedzą w `news.html`, w bloku `<script type="application/json" id="dane">`. Strona renderuje się z tego bloku. Edytujesz tylko JSON, nie HTML.
 
 ### 1. Okno czasu
 
@@ -81,7 +81,7 @@ Pozycja wchodzi, gdy spełnia co najmniej jedno:
 | B | Zmienia fakt cytowany na stronie albo w szkoleniu |
 | C | Prawo, regulacja albo incydent bezpieczeństwa dotykający firm w UK lub UE |
 
-Odpada zawsze: rundy finansowania, wyceny, zmiany w zarządach, przecieki, plotki, zapowiedzi bez daty, rzeczy tylko dla programistów (wyjątek: zmienia coś na `/warsztat`).
+Odpada zawsze: rundy finansowania, wyceny, zmiany w zarządach, przecieki, plotki, zapowiedzi bez daty, rzeczy tylko dla programistów (wyjątek: zmienia coś na `/workshop`).
 
 ### 4. Format pozycji
 
@@ -95,7 +95,7 @@ Odpada zawsze: rundy finansowania, wyceny, zmiany w zarządach, przecieki, plotk
   "pewnosc": "potwierdzone | doniesienie",
   "zrodlo_nazwa": "Nazwa",
   "zrodlo_url": "https://...",
-  "sekcja": "/warsztat#s5 albo pusty string"
+  "sekcja": "/workshop#s5 albo pusty string"
 }
 ```
 
@@ -112,9 +112,9 @@ Zasady:
 2. Ustaw `ostatnie_wydanie` na dziś i zwiększ `numer_wydania`.
 3. Pozycje starsze niż 90 dni przesuń do tablicy `archiwum` (zostają na stronie, zwinięte).
 4. Każda pozycja z `sekcja` niepustym oznacza, że ta sekcja może być nieaktualna. Dopisz ją do listy `do_sprawdzenia` w JSON i pokaż Norbertowi.
-5. Sprawdź JSON: `python3 -c "import json,re;s=open('nowosci.html').read();json.loads(re.search(r'id=\"dane\">(.*?)</script>',s,re.S).group(1))"`.
+5. Sprawdź JSON: `python3 -c "import json,re;s=open('news.html').read();json.loads(re.search(r'id=\"dane\">(.*?)</script>',s,re.S).group(1))"`.
 6. Otwórz stronę w przeglądarce, sprawdź, czy wszystko się renderuje.
-7. Commit na gałęzi `nowosci/RRRR-MM-DD`, push. Merge do `main` dopiero po zgodzie Norberta, bo `main` od razu idzie na żywo.
+7. Commit na gałęzi `news/RRRR-MM-DD`, push. Merge do `main` dopiero po zgodzie Norberta, bo `main` od razu idzie na żywo.
 
 ### 6. Raport po odświeżeniu
 
@@ -123,10 +123,10 @@ Wydanie N, okno <od>–<do>. Weszło X, odrzucone Y.
 Najważniejsze dla szkolenia: <jedna pozycja, jedno zdanie dlaczego>.
 Nieaktualne na stronie: <sekcje albo "nic">.
 Doniesienia bez potwierdzenia: <lista albo "brak">.
-Gałąź: nowosci/RRRR-MM-DD, preview Vercel czeka na merge.
+Gałąź: news/RRRR-MM-DD, preview Vercel czeka na merge.
 ```
 
-## Odświeżenie `/warsztat`
+## Odświeżenie `/workshop`
 
 Raz na kwartał albo gdy Nowości oznaczą sekcję. Ceny i nazwy modeli mają datę sprawdzenia w tekście („stan na…"). Aktualizujesz datę tylko wtedy, gdy faktycznie otworzyłeś stronę cennika.
 

@@ -1,18 +1,18 @@
-/* fx.css — wspólna warstwa wizualna dla wszystkich zakładek.
-   Strony działają bez tego pliku; fx dokłada ruch i panele rozdziałów. */
+/* fx.css: shared visual layer for every tab.
+   Pages work without this file; fx adds motion and chapter panels. */
 :root{--fx-ink:#1A1538;--fx-ink-2:#251E52;--fx-on:#ECEAF7;--fx-on-muted:#B5B0D6;--fx-a1:#AFA9EC;--fx-a2:#5DCAA5;--fx-a3:#EF9F27;--fx-a4:#F0997B}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fx-ink:#211A48;--fx-ink-2:#2E2563}}
 :root[data-theme="dark"]{--fx-ink:#211A48;--fx-ink-2:#2E2563}
 html,body{overflow-x:clip}
 
-/* tło: pole tokenów */
+/* background: token field */
 #fx-field{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
 
-/* pasek postępu */
+/* progress bar */
 #fx-bar{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(var(--fx-prog,0));z-index:50;
   background:linear-gradient(90deg,var(--fx-a1),var(--fx-a2) 45%,var(--fx-a3) 75%,var(--fx-a4));pointer-events:none}
 
-/* tytuł składany z tokenów */
+/* title assembled from tokens */
 h1.fx-tok{position:relative}
 h1.fx-tok .fx-w{display:inline-block;white-space:nowrap}
 h1.fx-tok .fx-t{display:inline-block;border-radius:.14em;padding:0 .02em;
@@ -26,7 +26,7 @@ h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+3){--fx-chip:var(--amber-bg);--fx-ch
 h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-chip-line:var(--coral)}
 .fx-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* rozdziały: pełna szerokość, ciemny panel, kształt kręcony scrollem */
+/* chapters: full width, dark panel, shape turned by scroll */
 .part>header.fx-ch{position:relative;isolation:isolate;overflow:hidden;
   margin:0 calc(50% - 50vw) 36px;padding:clamp(72px,16vh,150px) max(20px,calc(50vw - 380px)) clamp(56px,11vh,110px);
   background:radial-gradient(120% 90% at 85% 10%,var(--fx-ink-2),var(--fx-ink) 60%);color:var(--fx-on)}
@@ -43,20 +43,20 @@ h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-ch
 .part>header.fx-ch svg.fx-orb .fx-ring2{transform-origin:300px 300px;transform:rotate(calc(var(--fx-p,0.5) * -260deg))}
 @media (max-width:640px){.part>header.fx-ch svg.fx-orb{right:-38vw;width:105vw;opacity:.6}.part>header.fx-ch .fx-num{right:8px}}
 
-/* panele wjeżdżające przy przewijaniu (sterowane --fx-r: 0 poza ekranem, 1 na miejscu) */
+/* panels sliding in on scroll, driven by --fx-r: 0 off screen, 1 in place */
 .fx-slide{--fx-r:1;--fx-dir:1;will-change:transform;
   transform:perspective(900px) translateX(calc((1 - var(--fx-r)) * var(--fx-dir) * 70px)) rotateY(calc((1 - var(--fx-r)) * var(--fx-dir) * -9deg));
   opacity:calc(.12 + .88 * var(--fx-r))}
 .fx-slide.fx-soft{transform:translateX(calc((1 - var(--fx-r)) * var(--fx-dir) * 28px));opacity:calc(.25 + .75 * var(--fx-r))}
 
-/* dema: światło za kursorem */
+/* demos: light behind the cursor */
 .demo.fx-glow{position:relative;isolation:isolate}
 .demo.fx-glow::before{content:"";position:absolute;inset:-1px;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s ease;
   background:radial-gradient(360px circle at var(--fx-mx,50%) var(--fx-my,50%),color-mix(in srgb,var(--purple) 22%,transparent),transparent 65%)}
 .demo.fx-glow:hover::before{opacity:1}
 .demo.fx-glow{border-color:color-mix(in srgb,var(--purple) 18%,var(--line))}
 
-/* karty łańcucha w hero: przechylają się za kursorem */
+/* chain cards in the hero: they tilt towards the cursor */
 .chain a{transition:transform .25s ease,border-color .2s ease}
 .chain a:hover{transform:translateY(-3px) rotate(-1deg)}
 
@@ -68,11 +68,11 @@ h1.fx-tok.fx-in.fx-chips .fx-t:nth-child(4n+4){--fx-chip:var(--coral-bg);--fx-ch
   .chain a:hover{transform:none}
 }
 
-/* podmenu części: bez paska przewijania; na szerokim ekranie zawija się, na telefonie przesuwa palcem */
+/* part submenu: no scrollbar; it wraps on a wide screen and swipes on a phone */
 nav.parts{scrollbar-width:none;-ms-overflow-style:none}
 nav.parts::-webkit-scrollbar{display:none}
 @media (min-width:700px){nav.parts{flex-wrap:wrap;overflow:visible;justify-content:flex-start}}
 
-/* zakładka szkolenia: wyróżniona w pasku zakładek */
+/* training tab: highlighted in the tab bar */
 .tabs a.tab-train{color:var(--teal);border-color:var(--teal)}
 .tabs a.tab-train[aria-current="page"]{background:var(--teal-bg)}
