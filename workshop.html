@@ -100,19 +100,17 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
-.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
-.tabs a.lang:hover{background:var(--purple-bg)}
 </style>
 <link rel="stylesheet" href="/fx.css">
 </head>
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop" aria-current="page">3 Workshop</a><a href="/en/detection">4 Detection</a><a href="/en/news">5 News</a><a href="/warsztat" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop" aria-current="page">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · WORKSHOP</div>
   <h1>From Chat to Workshop</h1>
   <p class="lead">The chat window is only one door to the model. Behind it stands a whole workshop. Skills, which are ready made instructions for the model. The API, which is the entrance for programs. Then gateways to other systems, programs on your computer and GitHub, where all of it is downloaded from. This page shows each of these tools separately. The same question comes up with every one: what can the model touch through it, and who is responsible.</p>
-  <p class="note" style="margin-top:16px">Model names, prices and the list of supported programs: state of play on 8 October 2026. The mechanisms described below age slowly, price lists age fast. Changes go to the <a href="/en/news">News</a> tab.</p>
+  <p class="note" style="margin-top:16px">Model names, prices and the list of supported programs: state of play on 8 October 2026. The mechanisms described below age slowly, price lists age fast. Changes go to the <a href="/news">News</a> tab.</p>
 </header>
 
 <nav class="parts" aria-label="Parts">
@@ -186,7 +184,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>An instruction in the conversation</td><td>Text you paste in, or save in the project settings</td><td>One thing that must hold for the whole of this conversation</td></tr>
   <tr><td>A skill</td><td>A folder with an instruction, loaded when the task fits</td><td>A repeatable procedure: a report, editing, a quality check</td></tr>
   <tr><td>A tool, for example from an MCP server in part IV</td><td>A function with a description, which the program runs when the model asks</td><td>The model has to read or change data in another system</td></tr>
-  <tr><td>A subagent</td><td>A separate agent with a clean window, which comes back with a conclusion</td><td>A broad task that can be split up. Described in <a href="/en/agents#s10">part two</a></td></tr>
+  <tr><td>A subagent</td><td>A separate agent with a clean window, which comes back with a conclusion</td><td>A broad task that can be split up. Described in <a href="/agents#s10">part two</a></td></tr>
 </table></div>
 <div class="status"><b>In practice:</b> a skill teaches how to do something. A tool gives the ability to do it. A good skill often says which tool to use. <b>Simplified:</b> the names differ between products. In Gemini, skills replace the former "Gems", in ChatGPT a similar role was played by "GPTs".</div>
 </section>
@@ -280,7 +278,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 
 <section class="s" id="s12">
 <div class="k">12 / 16</div><h3>A gateway works both ways</h3>
-<p>A tool from an MCP server has a description, which the model reads like any other text. If someone hides an instruction in the tool description, the model may carry it out. This is the same mechanism as <a href="/en/agents#s14">prompt injection</a> in part two.</p>
+<p>A tool from an MCP server has a description, which the model reads like any other text. If someone hides an instruction in the tool description, the model may carry it out. This is the same mechanism as <a href="/agents#s14">prompt injection</a> in part two.</p>
 <div class="tbl"><table>
   <tr><th>What happened</th><th>When</th><th>Mechanism</th></tr>
   <tr><td>A malicious MCP server hid an instruction in a tool description that told the agent to send WhatsApp chat history to the attacker</td><td>April 2025, a researcher demonstration</td><td>An instruction hidden in a tool description</td></tr>
@@ -310,7 +308,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Gemini CLI</td><td>Google</td><td>Yes, Apache 2.0 licence</td><td>A free allowance after signing in with a Google account</td></tr>
   <tr><td>Copilot CLI</td><td>GitHub</td><td>No. The licence forbids changes to the code</td><td>A paid Copilot subscription</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> licences, which are the rules for using the code, and the ways of getting access, from the project pages on GitHub and from vendor documentation, state of play on 8.10.2026. All four send the content of the files they read to a model in the cloud. <b>In practice:</b> start an agent in a folder with one project, never in your home folder, where all your files sit. The folder is the boundary of what the agent sees. The permissions from <a href="/en/agents#s7">part two</a> apply here literally.</div>
+<div class="status"><b>Verified:</b> licences, which are the rules for using the code, and the ways of getting access, from the project pages on GitHub and from vendor documentation, state of play on 8.10.2026. All four send the content of the files they read to a model in the cloud. <b>In practice:</b> start an agent in a folder with one project, never in your home folder, where all your files sit. The folder is the boundary of what the agent sees. The permissions from <a href="/agents#s7">part two</a> apply here literally.</div>
 </section>
 
 <section class="s" id="s14">
@@ -358,7 +356,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>Copilot agent in GitHub</td><td>You assign an issue to the agent as you would to a colleague. The agent works on its own and hands back a proposed change for review</td></tr>
   <tr><td>Claude in GitHub Actions</td><td>You write "@claude" in an issue, the agent analyses the code and proposes a change</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> AGENTS.md was handed over together with MCP in December 2025 to a foundation under the Linux Foundation. Both agents in GitHub hand their work back as a proposed change, they do not alter the main version of the code without review. <b>In practice:</b> a file for the agent is the same scratchpad as in <a href="/en/agents#s6">part two</a>, only written down for good. This page got one too: two skills in the <span class="num">.claude/skills</span> folder look after editing and the News tab.</div>
+<div class="status"><b>Verified:</b> AGENTS.md was handed over together with MCP in December 2025 to a foundation under the Linux Foundation. Both agents in GitHub hand their work back as a proposed change, they do not alter the main version of the code without review. <b>In practice:</b> a file for the agent is the same scratchpad as in <a href="/agents#s6">part two</a>, only written down for good. This page got one too: two skills in the <span class="num">.claude/skills</span> folder look after editing and the News tab.</div>
 </section>
 </div>
 
@@ -379,7 +377,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <p class="note" style="margin-top:18px"><b style="color:var(--fg)">Sources:</b> <a href="https://agentskills.io/specification">agentskills.io</a> · <a href="https://modelcontextprotocol.io/specification/latest">MCP specification</a> · <a href="https://aaif.io/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation-aaif-anchored-by-new-project-contributions-including-model-context-protocol-mcp-goose-and-agents-md/">Agentic AI Foundation</a> · <a href="https://agents.md">agents.md</a> · prices: <a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic</a>, <a href="https://openai.com/api/pricing/">OpenAI</a>, <a href="https://ai.google.dev/gemini-api/docs/pricing">Google</a> · incidents: <a href="https://invariantlabs.ai/blog/whatsapp-mcp-exploited">Invariant Labs</a>, <a href="https://www.bleepingcomputer.com/news/security/unofficial-postmark-mcp-npm-silently-stole-users-emails/">BleepingComputer</a>, <a href="https://github.blog/security/supply-chain-security/our-plan-for-a-more-secure-npm-supply-chain/">GitHub</a>, <a href="https://arcticwolf.com/resources/blog-uk/supply-chain-attack-impacts-axios-npm-package/">Arctic Wolf</a> · <a href="https://lmstudio.ai/blog/free-for-work">LM Studio</a></p>
 </div>
 
-<footer>Part three of the material. The first: <a href="/en/">From Token to Answer</a>, the mechanism of a model. The second: <a href="/en/agents">From Task to Agent</a>, the loop and permissions. This one: the tools a model reaches further with. What changes as it happens: <a href="/en/news">News</a>.</footer>
+<footer>Part three of the material. The first: <a href="/">From Token to Answer</a>, the mechanism of a model. The second: <a href="/agents">From Task to Agent</a>, the loop and permissions. This one: the tools a model reaches further with. What changes as it happens: <a href="/news">News</a>.</footer>
 </div>
 
 <script>

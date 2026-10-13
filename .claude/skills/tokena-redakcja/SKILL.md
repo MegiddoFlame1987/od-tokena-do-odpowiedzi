@@ -21,11 +21,29 @@ Sekcja przechodzi, gdy spełnia wszystkie pięć warunków. Każdy da się spraw
 | 4 | Linia statusu mówi zwykłym językiem, co jest pewne | Czytelnik bez wiedzy technicznej umie ją powtórzyć jednym zdaniem |
 | 5 | Ani jednej pauzy, półpauzy ani zwrotu z listy zakazanej | Skrypt liczy pauzy, resztę grep |
 
-## Progi
+## Stan po przejściu na angielski (13 października 2026)
+
+Strony są po angielsku. Skrypt `scripts/czytelnosc.py` liczy FOG-PL: polskie samogłoski, polskie sylaby, polska lista żargonu, wykrywanie formy „my". Na tekście angielskim **wyda liczby, które nic nie znaczą**. Nie używaj go i nie cytuj jego wyników jako progu.
+
+Co nadal obowiązuje, bo nie zależy od języka:
+
+| Działa dalej | Zawieszone do rekalibracji |
+|---|---|
+| Kształt sekcji: nagłówek, jedno zdanie, jedno demo, jedna linia statusu | FOG-PL i progi w tabeli niżej |
+| Krótkie zdania, jedna myśl na zdanie | Odsetek słów 4+ sylab |
+| Każdy termin objaśniony przy pierwszym użyciu | Lista żargonu (polska) |
+| Przykład z pracy, nie z laboratorium | Wykrywanie formy „my" |
+| Zero pauz i półpauz | |
+
+Dodatkowo po angielsku: w łańcuchach JS w apostrofach nie wolno używać angielskiego apostrofu (`do not` zamiast `don't`), bo rozwala plik.
+
+Decyzja do podjęcia: albo dopisać do skryptu metrykę angielską (Flesch-Kincaid albo Gunning Fog po angielsku) i skalibrować ją na obecnych stronach tak samo jak kiedyś na v3, albo zrezygnować z pomiaru i zostawić same warunki jakościowe. Do tego czasu redakcja idzie na warunkach z tabeli po lewej.
+
+## Progi (polskie, zawieszone)
 
 Skalibrowane na stronach v3 (8 października 2026), tą samą metodą co skrypt. To nie norma z podręcznika, tylko poziom, który materiał już trzyma. Nowy tekst nie może być gorszy od starego.
 
-| Metryka | `/` (v3) | `/agenci` (v3) | Próg sekcji | Próg strony |
+| Metryka | `/` (v3) | `/agents` (v3) | Próg sekcji | Próg strony |
 |---|---|---|---|---|
 | FOG-PL | 6,8 | 7,8 | ≤ 10,5 | ≤ 8,0 |
 | Średnie zdanie, słowa | 6,4 | 7,0 | ≤ 9 | ≤ 8 |
@@ -33,7 +51,7 @@ Skalibrowane na stronach v3 (8 października 2026), tą samą metodą co skrypt.
 | Słowa 4+ sylab | 10,6% | 12,5% | ≤ 18% | ≤ 13% |
 | Pauzy | 0 | 0 | 0 | 0 |
 
-Najgorsze sekcje v3 to `/` s6 (FOG 11,1), s12 (10,8), `/agenci` s14 (10,4). Jeśli redagujesz stare strony, zacznij od nich.
+Najgorsze sekcje v3 to `/` s6 (FOG 11,1), s12 (10,8), `/agents` s14 (10,4). Jeśli redagujesz stare strony, zacznij od nich.
 
 Ograniczenie metryki: komórka tabeli liczy się jak zdanie, więc sekcje z tabelami wychodzą łagodniej. FOG mierzy długość, nie zrozumienie. Warunek 3 i 4 sprawdzasz głową.
 
@@ -41,7 +59,7 @@ Ograniczenie metryki: komórka tabeli liczy się jak zdanie, więc sekcje z tabe
 
 1. **Termin przed użyciem.** Pierwsze wystąpienie słowa z listy zargonu na stronie dostaje objaśnienie w tym samym zdaniu albo zaraz po nim. Wzór z v3: „Narzędzie to funkcja z opisem." Potem słowo działa bez objaśnienia. Lista w `scripts/czytelnosc.py`, zmienna `ZARGON`. Dopisuj nowe terminy, gdy się pojawią.
 2. **Słownik stały.** Te same rzeczy tymi samymi słowami na wszystkich stronach. Tabela niżej. Nie wprowadzaj synonimu dla urozmaicenia.
-3. **Przykład z pracy, nie z laboratorium.** Linia produkcyjna, magazyn, raport zmianowy, faktura, grafik, mail do klienta. Wzór: demo pętli w `/agenci` liczy przestoje linii 3. Nie: „przykład: funkcja foo".
+3. **Przykład z pracy, nie z laboratorium.** Linia produkcyjna, magazyn, raport zmianowy, faktura, grafik, mail do klienta. Wzór: demo pętli w `/agents` liczy przestoje linii 3. Nie: „przykład: funkcja foo".
 4. **Jedno zdanie, jedna myśl.** Zdanie z „który", „a także" i przecinkiem rozbij na dwa.
 5. **Angielski tylko, gdy czytelnik go spotka na ekranie.** „API", „MCP", „README" zostają, bo tak je zobaczy w produkcie. Obok polskie objaśnienie. Angielskie słowo, którego nie zobaczy, zamieniasz na polskie.
 6. **Status po ludzku.** Etykiety tylko z tego zestawu: Sprawdzone, Uproszczone, Logiczne, Praktyczne, Niesprawdzone, Następny krok. „Sprawdzone" znaczy: mechanizm albo konsensus inżynierski, z dokumentacji lub pomiaru. Nigdy nie podnoś „Logiczne" do „Sprawdzone" przy redakcji.

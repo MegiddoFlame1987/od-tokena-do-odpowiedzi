@@ -100,8 +100,6 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
-.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
-.tabs a.lang:hover{background:var(--purple-bg)}
 .news{border-top:1px solid var(--line);padding:22px 0 10px}
 .news .top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;font-size:13px;color:var(--muted)}
 .news .top .num{margin-right:4px}
@@ -115,7 +113,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection">4 Detection</a><a href="/en/news" aria-current="page">5 News</a><a href="/nowosci" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news" aria-current="page">5 News</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · NEWS</div>
   <h1>What Changed</h1>
   <p class="lead">The mechanism in the first three tabs ages slowly. Products, prices and law change every week. Only what changes the work of an ordinary user lands here. Either a fact quoted in this material, or the rules for companies in the UK and the EU. Every item has a source and one sentence about what it means for you.</p>
@@ -152,7 +150,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
 <div id="arch"></div>
 </div>
 
-<footer>The fifth tab of the material. The mechanism: <a href="/en/">From Token to Answer</a> · <a href="/en/agents">From Task to Agent</a> · <a href="/en/workshop">From Chat to Workshop</a>.</footer>
+<footer>The fifth tab of the material. The mechanism: <a href="/">From Token to Answer</a> · <a href="/agents">From Task to Agent</a> · <a href="/workshop">From Chat to Workshop</a>.</footer>
 </div>
 
 <script type="application/json" id="dane">
@@ -161,8 +159,8 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
   "ostatnie_wydanie": "2026-10-08",
   "okno_od": "2026-08-15",
   "do_sprawdzenia": [
-    {"sekcja": "/en/workshop#s7", "powod": "GPT-6 and the Claude 5.5 family in the API: check whether the price list in the calculator is still current"},
-    {"sekcja": "/en/workshop#s5", "powod": "Gemini: skills replace Gems, the status line already says so, check again after the full rollout"}
+    {"sekcja": "/workshop#s7", "powod": "GPT-6 and the Claude 5.5 family in the API: check whether the price list in the calculator is still current"},
+    {"sekcja": "/workshop#s5", "powod": "Gemini: skills replace Gems, the status line already says so, check again after the full rollout"}
   ],
   "pozycje": [
     {
@@ -174,7 +172,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "confirmed",
       "zrodlo_nazwa": "OpenAI",
       "zrodlo_url": "https://openai.com/index/gpt-6-for-everyone/",
-      "sekcja": "/en/workshop#s7"
+      "sekcja": "/workshop#s7"
     },
     {
       "data": "2026-10-07",
@@ -207,7 +205,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "confirmed",
       "zrodlo_nazwa": "Gemini release notes",
       "zrodlo_url": "https://gemini.google/release-notes/",
-      "sekcja": "/en/workshop#s5"
+      "sekcja": "/workshop#s5"
     },
     {
       "data": "2026-09-28",
@@ -218,7 +216,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "confirmed",
       "zrodlo_nazwa": "Anthropic",
       "zrodlo_url": "https://www.anthropic.com/claude-sonnet-5-5",
-      "sekcja": "/en/workshop#s7"
+      "sekcja": "/workshop#s7"
     },
     {
       "data": "2026-09-22",
@@ -229,7 +227,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "confirmed",
       "zrodlo_nazwa": "Anthropic",
       "zrodlo_url": "https://www.anthropic.com/claude-opus-5-5",
-      "sekcja": "/en/agents#s14"
+      "sekcja": "/agents#s14"
     },
     {
       "data": "2026-09-22",
@@ -262,7 +260,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "confirmed",
       "zrodlo_nazwa": "OpenAI",
       "zrodlo_url": "https://openai.com/index/hugging-face-incident-and-the-road-ahead/",
-      "sekcja": "/en/agents#s7"
+      "sekcja": "/agents#s7"
     },
     {
       "data": "2026-08-18",
@@ -273,7 +271,7 @@ details summary{cursor:pointer;font-family:var(--mono);font-size:13px;color:var(
       "pewnosc": "reported",
       "zrodlo_nazwa": "Redmond Magazine",
       "zrodlo_url": "https://redmondmag.com/articles/2026/08/19/cosnitch-flaws-turned-microsoft-copilot-into-a-one-click-data-theft-tool.aspx",
-      "sekcja": "/en/agents#s14"
+      "sekcja": "/agents#s14"
     },
     {
       "data": "2026-08-02",

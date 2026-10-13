@@ -1,6 +1,6 @@
-/* fx.js — ruch i panele dla wszystkich zakładek. Bez zależności.
-   1. tytuł składany z tokenów, 2. pole tokenów w tle, 3. rozdziały kręcone scrollem,
-   4. panele wjeżdżające przy przewijaniu, 5. światło za kursorem w demach, 6. pasek postępu. */
+/* fx.js: motion and chapter panels for every tab. No dependencies.
+   1. title assembled from tokens, 2. token field in the background, 3. chapters turned by scroll,
+   4. panels sliding in on scroll, 5. light behind the cursor in demos, 6. progress bar. */
 (function(){
 'use strict';
 var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9,7 +9,7 @@ var SVGNS='http://www.w3.org/2000/svg';
 function clamp(x,a,b){return x<a?a:x>b?b:x;}
 function rnd(seed){var s=seed||1;return function(){s=(s*16807)%2147483647;return (s-1)/2147483646;};}
 
-/* ---------- 1. tytuł z tokenów ---------- */
+/* ---------- 1. title from tokens ---------- */
 function tokenizeTitle(){
   var h=document.querySelector('.hero h1');if(!h||h.dataset.fx)return;
   var text=h.textContent.trim();h.dataset.fx='1';
@@ -39,13 +39,13 @@ function tokenizeTitle(){
   });});
 }
 
-/* ---------- 2. pole tokenów w tle ---------- */
+/* ---------- 2. token field in the background ---------- */
 var field=null;
 function setupField(){
   var c=document.createElement('canvas');c.id='fx-field';c.setAttribute('aria-hidden','true');
   document.body.insertBefore(c,document.body.firstChild);
   var ctx=c.getContext('2d');if(!ctx)return;
-  var words=(document.querySelector('main, .wrap')||document.body).innerText.split(/[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]+/).filter(function(w){return w.length>3;});
+  var words=(document.querySelector('main, .wrap')||document.body).innerText.split(/[^A-Za-z]+/).filter(function(w){return w.length>3;});
   var r=rnd(4242),P=[],W=0,H=0,colL=0,colR=0,dpr=1,col='#534AB7',vel=0;
   function color(){var v=getComputedStyle(root).getPropertyValue('--purple').trim();if(v)col=v;}
   function frag(){var w=words[(r()*words.length)|0]||'token',s=(r()*(w.length-2))|0;return w.slice(s,s+2+((r()*2)|0)).toLowerCase();}
@@ -83,7 +83,7 @@ function setupField(){
   requestAnimationFrame(loop);
 }
 
-/* ---------- 3. rozdziały ---------- */
+/* ---------- 3. chapters ---------- */
 var chapters=[];
 function orb(seed){
   var r=rnd(seed*131+7),s=document.createElementNS(SVGNS,'svg');
@@ -94,12 +94,12 @@ function orb(seed){
   defs.appendChild(g);s.appendChild(defs);
   function el(n,a,p){var e=document.createElementNS(SVGNS,n);for(var k in a)e.setAttribute(k,a[k]);(p||s).appendChild(e);return e;}
   var ring1=el('g',{}),ring2=el('g',{'class':'fx-ring2'});
-  /* pierścienie z „tokenów”: przerywane łuki */
+  /* rings of "tokens": dashed arcs */
   [250,205,160].forEach(function(R,i){
     var dash=(8+r()*30).toFixed(0)+' '+(6+r()*22).toFixed(0);
     el('circle',{cx:300,cy:300,r:R,fill:'none',stroke:'url(#fxg'+seed+')','stroke-width':i===0?2:1.2,'stroke-dasharray':dash,opacity:(.9-i*.2).toFixed(2)},i===1?ring2:ring1);
   });
-  /* punkty i łuki uwagi między nimi */
+  /* points and attention arcs between them */
   var pts=[],n=9+((r()*5)|0);
   for(var k=0;k<n;k++){var a=k/n*6.283+r()*.3;pts.push([300+250*Math.cos(a),300+250*Math.sin(a)]);}
   for(var j=0;j<n+3;j++){
@@ -123,7 +123,7 @@ function setupChapters(){
   });
 }
 
-/* ---------- 4. panele wjeżdżające ---------- */
+/* ---------- 4. sliding panels ---------- */
 var sliders=[];
 function setupSliders(){
   var list=document.querySelectorAll('.demo, .tbl, .status, article.news, .chain');
@@ -137,7 +137,7 @@ function setupSliders(){
   });
 }
 
-/* ---------- 5. światło w demach ---------- */
+/* ---------- 5. light in demos ---------- */
 function setupGlow(){
   Array.prototype.forEach.call(document.querySelectorAll('.demo'),function(d){
     if(d.parentElement&&d.parentElement.closest('.demo'))return;

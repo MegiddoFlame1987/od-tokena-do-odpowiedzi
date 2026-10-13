@@ -100,8 +100,6 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 .tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
 .tabs a:hover{color:var(--fg);border-color:var(--purple)}
 .tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
-.tabs a.lang{margin-left:auto;border-color:var(--purple);color:var(--purple)}
-.tabs a.lang:hover{background:var(--purple-bg)}
 .mods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 12px}
 @media (max-width:560px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mod{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--purple);border-radius:8px;padding:10px;font-size:14px;line-height:1.3;transition:opacity .25s ease}
@@ -133,7 +131,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <body>
 <div class="wrap">
 <header class="hero">
-  <nav class="tabs" aria-label="Material tabs"><a href="/en/training" aria-current="page" class="tab-train">Training</a><a href="/en/">1 Tokens</a><a href="/en/agents">2 Agents</a><a href="/en/workshop">3 Workshop</a><a href="/en/detection">4 Detection</a><a href="/en/news">5 News</a><a href="/szkolenie" class="lang" hreflang="pl" title="Polska wersja">PL</a></nav>
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" aria-current="page" class="tab-train">Training</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
   <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">MAZOR LTD · TRAINING PROGRAMME · VERSION 1.0</div>
   <h1>MAZOR AI Training</h1>
   <p class="lead">Practical AI Literacy &amp; Safe AI Use for the Workplace. Practical training in understanding and safely using generative AI at work. One story in eight modules: from what a language model (LLM, large language model) really does, to how to use it at work tomorrow without exposing yourself or the organisation.</p>
@@ -247,7 +245,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <div class="ph">
   <b>lesson</b><div>The model has no dictionary of definitions such as "dog = animal". It has relations between a vast number of tokens, which are pieces of text, and contexts. It follows that context and the wording of the question change the answer, that the model generalises, and that a wrong answer can sound sensible.</div>
   <b>analogy</b><div>The trainer's dog learns that "walkies" means going out and "ham" means a reward. It does not know the definitions of those words. It links a signal with many earlier situations. The model did something similar at a scale no dog will reach: it learned the relations between billions of fragments of text.</div>
-  <b>demo</b><div>On screen: <a href="/en/#s1">token</a>, <a href="/en/#s2">embedding, a numeric record of meaning</a>, <a href="/en/#s12">context window</a>, <a href="/en/#s14">choosing the next token</a>, <a href="/en/#s20">the whole chain</a>. Five demos, two minutes each at most.</div>
+  <b>demo</b><div>On screen: <a href="/#s1">token</a>, <a href="/#s2">embedding, a numeric record of meaning</a>, <a href="/#s12">context window</a>, <a href="/#s14">choosing the next token</a>, <a href="/#s20">the whole chain</a>. Five demos, two minutes each at most.</div>
   <b>exercise</b><div>Everyone types the same question twice, once with one extra sentence of context. Answers compared in pairs.</div>
   <b>result</b><div>The answers differ. The participant can point to the sentence of context that changed the result.</div>
 </div>
@@ -292,7 +290,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <b>exercise</b><div>A shift handover built from chaotic notes. Four rounds minimum. Each round written down in one sentence: what was changed and why.</div>
   <b>result</b><div>By the fourth round the document contains the open issues and the safety items from the notes. The participant challenged the answer at least once and checked it against the notes at least once.</div>
 </div>
-<div class="status"><b>In practice:</b> the "challenge" round gets skipped most often and gives the most. Asked what is missing or what could be wrong, the model often points to its own weak spots. <b>Careful:</b> the model can also agree with a wrong remark from the user. Criticism from the model is a hint, not a verdict. More in <a href="/en/#s21">the section on conversations</a>.</div>
+<div class="status"><b>In practice:</b> the "challenge" round gets skipped most often and gives the most. Asked what is missing or what could be wrong, the model often points to its own weak spots. <b>Careful:</b> the model can also agree with a wrong remark from the user. Criticism from the model is a hint, not a verdict. More in <a href="/#s21">the section on conversations</a>.</div>
 </section>
 
 <section class="s" id="s9">
@@ -315,7 +313,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <b>exercise</b><div>A prepared answer contains three facts, one of them invented. The participant finds it by checking against the attached source.</div>
   <b>result</b><div>The invented fact is identified. The participant asks the model "what are you basing this on" and notices that without the document the model has no way of knowing.</div>
 </div>
-<div class="status"><b>Verified:</b> language models generate untrue content delivered in a confident tone. The mechanism is described in <a href="/en/#s15">the section on hallucinations</a>. <b>Careful:</b> no figures such as "the model is wrong in X% of cases". The rate depends on the model, the task and the date of measurement. If a number is given, it comes with the name of the study and the date. <b>In practice:</b> the live demo may fail, because newer models refuse more often. Keep a screenshot from an earlier attempt.</div>
+<div class="status"><b>Verified:</b> language models generate untrue content delivered in a confident tone. The mechanism is described in <a href="/#s15">the section on hallucinations</a>. <b>Careful:</b> no figures such as "the model is wrong in X% of cases". The rate depends on the model, the task and the date of measurement. If a number is given, it comes with the name of the study and the date. <b>In practice:</b> the live demo may fail, because newer models refuse more often. Keep a screenshot from an earlier attempt.</div>
 </section>
 
 <section class="s" id="s10">
@@ -339,7 +337,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <tr><td>4. How long is the data kept</td></tr>
   <tr><td>5. Does the text contain personal or confidential data that can be removed before pasting</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> processing personal data in an AI tool falls under UK GDPR, and the ICO publishes separate guidance for it. A site that gives access to a well known model may be running through an intermediary, described in <a href="/en/workshop#s11">the section on routers</a>. <b>Careful:</b> retention and training rules differ between plans from the same provider and change over time. No sentences such as "ChatGPT trains on your data", only "check the terms of your plan". <b>In practice:</b> the aim is the habit of checking, not fear of the tools.</div>
+<div class="status"><b>Verified:</b> processing personal data in an AI tool falls under UK GDPR, and the ICO publishes separate guidance for it. A site that gives access to a well known model may be running through an intermediary, described in <a href="/workshop#s11">the section on routers</a>. <b>Careful:</b> retention and training rules differ between plans from the same provider and change over time. No sentences such as "ChatGPT trains on your data", only "check the terms of your plan". <b>In practice:</b> the aim is the habit of checking, not fear of the tools.</div>
 </section>
 
 <section class="s" id="s11">
@@ -352,7 +350,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </div>
 <div class="ph">
   <b>to discuss</b><div>Why data can end up treated as an instruction. Why a document, a web page or an email can be the source of an attack. Why adding "ignore malicious instructions" to the prompt gives no guarantee.</div>
-  <b>result</b><div>The participant finds the hidden line and states the rule: text the user did not write is material, not an instruction. The mechanism and the safeguards: <a href="/en/agents#s14">the part on agents</a>.</div>
+  <b>result</b><div>The participant finds the hidden line and states the rule: text the user did not write is material, not an instruction. The mechanism and the safeguards: <a href="/agents#s14">the part on agents</a>.</div>
 </div>
 <div class="status"><b>Verified:</b> prompt injection is the first item on the OWASP Top 10 list for LLM applications and has no complete fix at the model level. <b>Careful:</b> fictional data and your own training documents only. No testing of real client systems unless there is a separate scope and written consent for it. <b>In practice:</b> the model may behave differently on successive attempts. Prepare a screenshot of both versions.</div>
 </section>
@@ -398,7 +396,7 @@ Do not grade me. The trainer has the answer key.</div>
   <b>exercise</b><div>Everyone writes down one rule of their own for using AI. A few people read theirs out loud.</div>
   <b>health</b><div>AI is not a therapist and not a substitute for professional help. In a difficult situation: your GP, NHS 111, Samaritans on 116 123.</div>
 </div>
-<div class="status"><b>Verified:</b> the tendency of models to agree with the person they are talking to (sycophancy) is described in research and in provider documentation. On this site: <a href="/en/#s21">how the model moves through a conversation</a>. <b>Careful:</b> no claims about the effect of AI on mental health without a source. Talk about the mechanism, do not diagnose.</div>
+<div class="status"><b>Verified:</b> the tendency of models to agree with the person they are talking to (sycophancy) is described in research and in provider documentation. On this site: <a href="/#s21">how the model moves through a conversation</a>. <b>Careful:</b> no claims about the effect of AI on mental health without a source. Talk about the mechanism, do not diagnose.</div>
 </section>
 </div>
 
@@ -455,16 +453,16 @@ Do not grade me. The trainer has the answer key.</div>
 <p>Sentences that are easy to overstate in a session. The left column is the risky version, the middle one is the safe wording.</p>
 <div class="tbl"><table>
   <tr><th>Too strong</th><th>Better</th><th>Source to show</th></tr>
-  <tr><td>"The model understands what you write"</td><td>The model processes relations between tokens and context</td><td>Mechanism: <a href="/en/#s20">the whole chain</a></td></tr>
+  <tr><td>"The model understands what you write"</td><td>The model processes relations between tokens and context</td><td>Mechanism: <a href="/#s20">the whole chain</a></td></tr>
   <tr><td>"The model thinks like a human"</td><td>Analogies, the dog one included, are a learning aid, not a description of how it works</td><td>No source, present it as an analogy</td></tr>
   <tr><td>"AI is wrong in 20% of cases"</td><td>The error rate depends on the model, the task and the date</td><td>A specific study with a date, or no number</td></tr>
   <tr><td>"ChatGPT trains on your data"</td><td>That depends on the plan and the settings. Check the terms of your plan</td><td>The current provider terms</td></tr>
   <tr><td>"AI will save you 40% of your time"</td><td>The saving depends on the task. Measure it on one task</td><td>Provider figures are independently unverified</td></tr>
   <tr><td>"You just tell the model to ignore malicious instructions"</td><td>That gives no guarantee. The safeguard is permissions and human consent</td><td>OWASP Top 10 for LLM, item LLM01</td></tr>
-  <tr><td>"An AI detector will show who used ChatGPT"</td><td>Text detectors fail and are not fit for judging people</td><td><a href="/en/detection#s8">The tab on detection</a></td></tr>
+  <tr><td>"An AI detector will show who used ChatGPT"</td><td>Text detectors fail and are not fit for judging people</td><td><a href="/detection#s8">The tab on detection</a></td></tr>
   <tr><td>"AI harms mental health"</td><td>The model can confirm assumptions and does not know the whole situation</td><td>A description of the mechanism, no diagnosis</td></tr>
 </table></div>
-<div class="status"><b>In practice:</b> the EU AI Act requires AI training only from companies operating on the EU market. Since July 2026 that requirement is milder. For a UK-only business it is better not to sell the training as a legal obligation. Details in <a href="/en/news">News</a>.</div>
+<div class="status"><b>In practice:</b> the EU AI Act requires AI training only from companies operating on the EU market. Since July 2026 that requirement is milder. For a UK-only business it is better not to sell the training as a legal obligation. Details in <a href="/news">News</a>.</div>
 </section>
 
 <section class="s" id="s18">
@@ -515,7 +513,7 @@ Do not grade me. The trainer has the answer key.</div>
 <p class="note" style="margin-top:18px"><b style="color:var(--fg)">Sources:</b> <a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/">OWASP Top 10 for LLM, LLM01</a> · <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/guidance-on-ai-and-data-protection/">ICO, AI and data protection</a> · the material on this site, tabs 1 to 5</p>
 </div>
 
-<footer>MAZOR AI training programme, version 1.0 before the pilot. Source material: <a href="/en/">From Token to Answer</a>, <a href="/en/agents">From Task to Agent</a>, <a href="/en/workshop">From Chat to Workshop</a>, <a href="/en/detection">Did AI Make This?</a>.</footer>
+<footer>MAZOR AI training programme, version 1.0 before the pilot. Source material: <a href="/">From Token to Answer</a>, <a href="/agents">From Task to Agent</a>, <a href="/workshop">From Chat to Workshop</a>, <a href="/detection">Did AI Make This?</a>.</footer>
 </div>
 
 <script>
