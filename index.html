@@ -32,7 +32,7 @@ p{margin:0 0 14px;max-width:62ch}
 a{color:var(--purple)}
 .hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
 .hero p.lead{font-size:19px;color:var(--muted);margin-top:16px}
-.chain{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:28px}
+.chain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:28px}
 .chain a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:13px;line-height:1.3}
 .chain a b{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
 .chain a:hover{border-color:var(--purple)}
@@ -99,43 +99,82 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 <div class="wrap">
 <header class="hero">
   <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/" aria-current="page">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
-  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple)">TRAINING MATERIAL · PART ONE · v3</div>
+  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple)">TRAINING MATERIAL</div>
   <h1>From Token to Answer</h1>
   <p class="lead">How a language model works, in one chain. From the smallest thing the model sees to the product layer you work in. Every section has one demo to play with and one line about what is verified and what is simplified.</p>
 </header>
 
-<nav class="parts" aria-label="Parts">
-  <a href="#p1">I Bricks</a><a href="#p2">II Architecture</a><a href="#p3">III Where weights come from</a><a href="#p4">IV When you type</a><a href="#p5">V Product</a><a href="#p6">VI Conversations</a><a href="#status">Status</a>
-</nav>
+<nav class="parts" aria-label="Parts"><a href="#p1">1 What you give it</a><a href="#p2">2 Inside</a><a href="#p3">3 How it learned</a><a href="#p4">4 What comes back</a><a href="#p5">Putting it together</a><a href="#status">Verified</a></nav>
 
-<!-- ===================== I ===================== -->
+<!-- ======== Part 1 ======== -->
 <div class="part" id="p1">
-<header><div class="k">Part I</div><h2>Bricks</h2><p>Four things that everything further on is built from. If these four are clear, the rest is assembly.</p></header>
+<header><div class="k">Part 1</div><h2>What you give it</h2><p>Everything the model works with arrives as one block of text. This part is about what goes into that block, what it costs you, and what never reaches it at all.</p></header>
 
-<section class="s" id="s1">
-<div class="k">1 / 20</div><h3>Token</h3>
-<p>The model does not see letters or words. It sees tokens, pieces of text from a fixed vocabulary (usually 50 to 200 thousand entries). Type something and watch the split.</p>
+<section class="s" data-stara="1" id="s1">
+<div class="k">1 / 20</div><h3>How your text is cut up</h3>
+<p>A till does not see your weekly shop, it sees one barcode after another, each one from a list the shop already holds. Your text reaches the model the same way, chopped into pieces that all come from a fixed list of 50 to 200 thousand entries. Those pieces are called tokens, and they are all the model ever sees: not letters, not words. Type something and watch where the cuts fall.</p>
 <div class="demo">
   <textarea id="tokIn" aria-label="Text to tokenise">Night shift: line 3 down for 40 minutes, no raw material.</textarea>
   <div class="out" id="tokOut"></div>
   <div class="note"><span class="num" id="tokN"></span></div>
 </div>
-<div class="status"><b>Verified:</b> text is cut into tokens from a vocabulary, Polish needs more tokens than English. <b>Simplified:</b> the split in the demo is approximate. A real tokeniser, the program that cuts the text (BPE for example), splits differently, but about as densely.</div>
+<div class="status"><b>Verified:</b> your text is cut into tokens taken from a fixed list, and the same sentence in Polish needs more tokens than in English. <b>Simplified:</b> the demo cuts roughly. The real program that does the cutting, called a tokeniser, puts the cuts in different places but makes about as many of them.</div>
 </section>
-
-<section class="s" id="s2">
-<div class="k">2 / 20</div><h3>Embedding</h3>
-<p>An embedding is a vector, a list of numbers, given to every token. Tokens with similar meaning land close together. Click a word and you will see its three nearest neighbours.</p>
+<section class="s" data-stara="2" id="s2">
+<div class="k">2 / 20</div><h3>Words become numbers</h3>
+<p>In a stockroom you shelve similar things together: foil next to cling film, nowhere near the invoices. The model does that with words, except the shelf address is a long list of numbers, and the list given to one token is its embedding. Words that get used in similar ways end up with similar numbers, which lands them close together. Click a word to see its three nearest neighbours.</p>
 <div class="demo">
   <svg viewBox="0 0 680 320" role="img" aria-label="Embedding space, words as points"><g id="embL"></g><g id="embP"></g></svg>
   <div class="note" id="embN">Click a word.</div>
 </div>
-<div class="status"><b>Verified:</b> embeddings come out of training. Words used in similar ways land close together. <b>Simplified:</b> two dimensions instead of a few thousand. The example "king − man + woman ≈ queen" works in practice, though not always perfectly.</div>
+<div class="status"><b>Verified:</b> nobody sets these numbers by hand, they come out of training, and words used in similar ways really do land near each other. <b>Simplified:</b> the picture shows two directions where a real model uses a few thousand. The well known sum "king − man + woman ≈ queen" does work, though not every time.</div>
 </section>
+<section class="s" data-stara="12" id="s12">
+<div class="k">3 / 20</div><h3>Everything in one block</h3>
+<p>Picture handing over to whoever covers your shift, and the only thing you may give them is one sheet of paper: whatever is not on that sheet does not exist for them. The sheet the model gets is called its context window, and the standing instructions, any documents, the conversation so far and your prompt, which is just the text you type and send, all land on it as one long run of tokens. The model never sees your files or your messages, only that run. Click "Next".</p>
+<div class="demo">
+  <div class="legend"><span><i style="background:var(--gray)"></i>Instructions</span><span><i style="background:var(--teal)"></i>Documents</span><span><i style="background:var(--purple)"></i>Conversation</span><span><i style="background:var(--coral)"></i>Question</span><span><i style="background:var(--amber)"></i>Answer</span></div>
+  <svg viewBox="0 0 680 150" role="img" aria-label="The context window as a row of tokens"><g id="cxArcs"></g><g id="cxTok"></g><rect id="cxPend" x="0" y="80" width="12" height="22" rx="3" fill="none" stroke="var(--amber)" stroke-dasharray="3 2" style="opacity:0"/><line x1="40" y1="118" x2="640" y2="118" class="ln"/><line x1="40" y1="112" x2="40" y2="124" class="ln"/><line x1="640" y1="112" x2="640" y2="124" class="ln"/><text x="340" y="142" text-anchor="middle" class="m">the context window: one block of tokens, with a hard limit</text></svg>
+  <div class="note" id="cxLbl"></div><div class="out" id="cxCap" style="min-height:80px"></div>
+  <div class="row"><button id="cxPrev">Back</button><div class="dots" id="cxDots"></div><button id="cxNext">Next</button></div>
+</div>
+<div class="status"><b>Verified:</b> there is one window, the model reads all of it in one go, and from one message to the next it keeps nothing. The answer is built one token at a time. <b>Simplified:</b> the arcs here only suggest what looks at what. Which parts of the history get cut is decided by the app you are using, not by the model.</div>
+</section>
+<section class="s" data-stara="13" id="s13">
+<div class="k">4 / 20</div><h3>What a long context costs</h3>
+<p>Before you answer a long email thread you skim it from the top again. The model is stricter: every token it writes has to look back at every token in front of it, so with nothing saved it would work through the whole thread again for each new word. The KV cache is that saved working, kept for the tokens the model has already read. It is not free, because the cache sits in memory, and the memory grows as the context gets longer.</p>
+<div class="demo">
+  <div class="row"><label for="kvN">Context length</label><input type="range" id="kvN" min="1" max="200" step="1" value="40"><span class="num" id="kvNV">40k tokens</span></div>
+  <div class="tbl"><table>
+    <tr><th></th><th>No store</th><th>With the store</th></tr>
+    <tr><td>Sums for each new token</td><td class="num" id="kvA"></td><td class="num" id="kvB"></td></tr>
+    <tr><td>Memory the store takes, roughly</td><td>0</td><td class="num" id="kvM"></td></tr>
+  </table></div>
+  <div class="note">This is where the money and the waiting come from. A long conversation answers more slowly and costs you more, because you pay by the token and every reply carries the whole thread again. Providers keep a copy of the opening of a chat, the part that repeats with every message, so that part comes back faster and costs less. That service is called prompt caching.</div>
+</div>
+<div class="status"><b>Verified:</b> while the model is writing, the KV cache changes how fast the cost grows. Without it, twice the context means four times the work. With it, twice the context means twice the work, and the memory the cache needs also doubles. <b>Simplified:</b> the memory figures are the right ballpark only, the real number depends on the model.</div>
+</section>
+<section class="s" data-stara="19" id="s19">
+<div class="k">5 / 20</div><h3>What it remembers about you</h3>
+<p>Open a new chat and you are talking to someone who has never met you, because the model itself learned nothing from yesterday. When an app does seem to remember you, it is keeping a few lines of text about you on its own side and pasting them back into the window with every message. Take that text away and you are back to the stranger. Its own numbers, the weights, never change while you talk to it.</p>
+<div class="tbl"><table>
+  <tr><th>What you see</th><th>What is really happening</th><th>Where it runs out</th></tr>
+  <tr><td>It knows what we said earlier</td><td>The whole conversation is sent again from the top, every time</td><td>The window limit, so older parts get cut or boiled down</td></tr>
+  <tr><td>It remembers things about me</td><td>A short file of facts, either pasted into the window or read when needed</td><td>Only what somebody wrote down is in there</td></tr>
+  <tr><td>It has read my project files</td><td>The files go into the window, and once they stop fitting the app searches them and pastes in the matching parts</td><td>A search can bring back the wrong parts, or miss the part that mattered</td></tr>
+  <tr><td>It follows the house rules</td><td>Text sitting at the very start of the window</td><td>It competes for attention with everything after it</td></tr>
+</table></div>
+<div class="status"><b>Verified:</b> Claude Projects switches to searching the files, a method called RAG, as a project gets close to the limit. OpenAI file search does the same thing through a vector store, which is a searchable index of the text. <b>In practice:</b> several small projects, one topic each, work better than one big one.</div>
+</section>
+</div>
 
-<section class="s" id="s3">
-<div class="k">3 / 20</div><h3>Weight and neuron</h3>
-<p>A neuron multiplies every input by a weight and adds the results up. Then it adds a constant (the bias) and passes the sum through an activation function. Here that is ReLU: it turns a negative result into zero. The weights are the numbers that hold what the model has learned. They are the only thing the model learns in training. Move the sliders.</p>
+<!-- ======== Part 2 ======== -->
+<div class="part" id="p2">
+<header><div class="k">Part 2</div><h2>What happens inside</h2><p>That one block of text now goes through the machine. Five pieces wait for it, and each piece is simple enough that you could do it yourself with a calculator and a quiet afternoon. Stacked deep enough, they account for everything the model can do.</p></header>
+
+<section class="s" data-stara="3" id="s3">
+<div class="k">6 / 20</div><h3>What a weight is</h3>
+<p>Think about scoring job applicants: years on the line count for a lot, a tidy CV counts for a little, so you score each thing, multiply it by how much it matters, add the results up, and if the total clears your bar you call them in. One round of that scoring is a neuron, and a weight is the multiplier, one number saying how much one thing matters. The model holds billions of weights, and they are the only thing it learns in training. Move the sliders to set three of them by hand: the total also gets a fixed allowance, called the bias, and then a floor called ReLU, which reports anything negative as zero.</p>
 <div class="demo">
   <svg viewBox="0 0 680 250" role="img" aria-label="A single neuron">
     <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -157,12 +196,11 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div id="nSl"></div>
   <div class="note num" id="nEq"></div>
 </div>
-<div class="status"><b>Verified:</b> the definition of a neuron and of ReLU. <b>Important:</b> the transformer is the architecture of current language models. Inside it a "neuron" sits one level below the operations people talk about (matrices, attention). The intuition carries over, the vocabulary does not always.</div>
+<div class="status"><b>Verified:</b> this is what a neuron does, and what ReLU does. <b>Important:</b> current language models are built on a design called the transformer, and inside it a single neuron sits one level below the things people actually talk about, which are whole tables of weights and attention. The picture carries over, the word is rarely used.</div>
 </section>
-
-<section class="s" id="s4">
-<div class="k">4 / 20</div><h3>Layer</h3>
-<p>A layer is many neurons computed at once. In the arithmetic it is an input vector times a matrix, a table of weights. Three inputs and four outputs give twelve weights. Real layers have millions of them.</p>
+<section class="s" data-stara="4" id="s4">
+<div class="k">7 / 20</div><h3>Where the numbers get big</h3>
+<p>Now score the same applicant for four different jobs at once. Every detail on the form feeds into every one of the four totals, so three details and four jobs need twelve multipliers, one for each pairing. That is a layer: several of those scorings run side by side, and the arithmetic is one table of weights applied to the inputs in a single step. Real layers are the same shape with millions of entries.</p>
 <div class="demo">
   <svg viewBox="0 0 680 260" role="img" aria-label="A fully connected layer, 3 inputs and 4 outputs">
     <g id="layerLines"></g>
@@ -174,42 +212,34 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="560" y="154" class="mono">= 16 parameters</text>
   </svg>
   <div class="tbl"><table>
-    <tr><th>Layer</th><th>Inputs × outputs</th><th>Weights</th></tr>
+    <tr><th>Example</th><th>Inputs × outputs</th><th>Weights</th></tr>
     <tr><td>This drawing</td><td class="num">3 × 4</td><td class="num">12</td></tr>
-    <tr><td>Small model, one matrix</td><td class="num">4 096 × 4 096</td><td class="num">16.8 million</td></tr>
-    <tr><td>A whole large model</td><td>hundreds of matrices</td><td class="num">10¹¹ and more</td></tr>
+    <tr><td>Small model, one layer</td><td class="num">4 096 × 4 096</td><td class="num">16.8 million</td></tr>
+    <tr><td>A whole large model</td><td>hundreds of such tables</td><td class="num">10¹¹ and more</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Verified:</b> a dense layer, where every input connects to every output, is a multiplication by a matrix. The number of weights is inputs times outputs. <b>Simplified:</b> the orders of magnitude are indicative.</div>
+<div class="status"><b>Verified:</b> when every input feeds every output, the whole layer is one table of weights, and the count of weights is inputs times outputs. <b>Simplified:</b> the sizes in the table are rough orders of magnitude, not exact figures for any one model.</div>
 </section>
-</div>
-
-<!-- ===================== II ===================== -->
-<div class="part" id="p2">
-<header><div class="k">Part II</div><h2>Architecture</h2><p>How a transformer is built out of the bricks. One operation makes all the difference here: attention.</p></header>
-
-<section class="s" id="s5">
-<div class="k">5 / 20</div><h3>Attention</h3>
-<p>Attention is the mechanism in which every token looks at all the earlier ones. It scores which of them matter to it. Click any word and you will see what it looks at. A thicker line means a stronger link.</p>
+<section class="s" data-stara="5" id="s5">
+<div class="k">8 / 20</div><h3>What each word looks at</h3>
+<p>Read one line from a handover note: the mixer stopped because it was overloaded. To work out what "it" stands for you glanced back at "mixer" and ignored nearly every other word, and that is the whole trick: each token looks back over the ones before it, scores how much each of them matters to it, and takes its meaning mostly from the ones that score high. That looking back is attention, and nearly everything the model does well traces back to it. Click any word to see what it looks at, a thicker line for a stronger link.</p>
 <div class="demo">
   <svg viewBox="0 0 680 200" role="img" aria-label="Attention weights between the tokens of a sentence"><g id="attArcs"></g><g id="attTok"></g></svg>
   <div class="note" id="attN"></div>
 </div>
-<div class="status"><b>Verified:</b> attention computes how strongly each token ties to the others, and mixes their vectors accordingly. <b>Simplified:</b> these values were picked by hand to fit the intuition. Real ones look less tidy.</div>
+<div class="status"><b>Verified:</b> attention works out how strongly each token is tied to the others, then blends their lists of numbers together in those proportions. <b>Simplified:</b> the strengths shown here were picked by hand to make the point clear. Real ones look far less tidy.</div>
 </section>
-
-<section class="s" id="s6">
-<div class="k">6 / 20</div><h3>Many heads</h3>
-<p>An attention head is one separate set of attention. Each head learns a different kind of link between words. A model has dozens of them in every layer. Below is the same token and three heads. Each one asks about something different.</p>
+<section class="s" data-stara="6" id="s6">
+<div class="k">9 / 20</div><h3>Several readers at once</h3>
+<p>Hand the same shift report to three people and none of them reads it the same way: the engineer hunts for which machine stopped, the planner picks out the times, the quality lead looks for what was done about it. All three scan the same lines at once, and attention does the same, running several copies in parallel, each one scoring the words for a different kind of link: who did what, what a word like "it" stands for, what sits next to what. One such copy is called a head, and a model has dozens of them in every layer. Below, one token is read by three heads.</p>
 <div class="demo">
   <svg viewBox="0 0 680 300" role="img" aria-label="Three attention heads for the same token"><g id="heads"></g></svg>
 </div>
-<div class="status"><b>Verified:</b> heads specialise. Research into the inside of models finds heads for syntax, for position and for reference. <b>Simplified:</b> in a real model that division is not as clean as the labels suggest.</div>
+<div class="status"><b>Verified:</b> heads do end up specialising. Researchers who look inside trained models find heads that track grammar, heads that track where a word sits, and heads that track what a word refers to. <b>Simplified:</b> in a real model the split is never as clean as three labels make it look.</div>
 </section>
-
-<section class="s" id="s7">
-<div class="k">7 / 20</div><h3>The transformer block and the stack</h3>
-<p>One block is attention, and after it a small dense network, marked FFN in the drawing. Both have a shortcut connection: the input skips the part and is added to its result. A model is dozens of such blocks stacked one on top of another. The model knows the position of a token only because the position arrives glued to the embedding.</p>
+<section class="s" data-stara="7" id="s7">
+<div class="k">10 / 20</div><h3>The same move, over and over</h3>
+<p>Picture a long line of stations, every one doing the same small pair of jobs to whatever reaches it and handing the work on. That is the shape of the model: in one station, called a block, attention gathers what matters from the other words, then a small scoring network, marked FFN in the drawing, reworks the result, and each part has a shortcut, so whatever went in is added back to what came out and nothing already worked out gets dropped. Word order is glued onto each embedding before the first block, since nothing further down the line would otherwise know which word came first. No single block does anything you could not do with a calculator, and thirty to a hundred of them in a row is where that stops being obvious.</p>
 <div class="demo">
   <svg viewBox="0 0 680 330" role="img" aria-label="The transformer block: attention, FFN, shortcut connections, a stack of N blocks">
     <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -221,7 +251,7 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <circle cx="270" cy="198" r="10" fill="var(--card)" stroke="var(--muted)"/><text x="270" y="202" text-anchor="middle" class="m">+</text>
     <line x1="270" y1="174" x2="270" y2="186" class="ln"/>
     <line x1="270" y1="208" x2="270" y2="226" class="ln" marker-end="url(#ar2)"/>
-    <rect x="200" y="230" width="140" height="44" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="270" y="257" text-anchor="middle">FFN (dense network)</text>
+    <rect x="200" y="230" width="140" height="44" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="270" y="257" text-anchor="middle">FFN (scoring network)</text>
     <circle cx="270" cy="296" r="10" fill="var(--card)" stroke="var(--muted)"/><text x="270" y="300" text-anchor="middle" class="m">+</text>
     <line x1="270" y1="274" x2="270" y2="284" class="ln"/>
     <path d="M200 82 L160 82 L160 198 L258 198" class="ln" stroke-dasharray="3 3"/>
@@ -235,35 +265,34 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="555" y="300" text-anchor="middle" class="m">N = 30 to 100+</text>
   </svg>
 </div>
-<div class="status"><b>Verified:</b> the structure of the block, the shortcut connections, position encoding, the stack of blocks. <b>Simplified:</b> normalisation layers and variants are left out, for example RoPE (a different way of encoding position) and MoE (many specialised sub-networks).</div>
+<div class="status"><b>Verified:</b> what sits inside one block, the shortcuts round each part, the way position is added to the embedding, and the stack of blocks. <b>Simplified:</b> some housekeeping steps that keep the numbers in a sane range are left out, and so are two common variants: one that encodes position a different way, and one that splits the scoring network into many specialists so that only a few of them work on any one word.</div>
 </section>
 </div>
 
-<!-- ===================== III ===================== -->
+<!-- ======== Part 3 ======== -->
 <div class="part" id="p3">
-<header><div class="k">Part III</div><h2>Where the weights come from</h2><p>Nobody writes the weights by hand. They come out of one number: the error. And one operation: a step downhill.</p></header>
+<header><div class="k">Part 3</div><h2>How it learned</h2><p>Nobody wrote those numbers by hand. They come out of one measurement, repeated billions of times.</p></header>
 
-<section class="s" id="s8">
-<div class="k">8 / 20</div><h3>Loss</h3>
-<p>The model predicts how likely each token is to come next. The loss says how badly it was wrong: the less probability it gave the correct token, the bigger the penalty. Click which token was the correct one.</p>
+<section class="s" data-stara="8" id="s8">
+<div class="k">11 / 20</div><h3>The error</h3>
+<p>Every pack leaving a line gets weighed against a target, and the gap between the two is the number the shift works to shrink. The loss is that gap for a guess: the model gave each possible next token a probability, and the less it gave the token that actually came next, the bigger the penalty. Pushing that one number down, averaged over billions of guesses, is the whole of training. Click the token that really came next.</p>
 <div class="demo">
   <div class="note" style="margin:0 0 8px">Start of the sentence: "The capital of France is" → the model predicted:</div>
   <div id="lossBars"></div>
   <div class="out"><span class="num" id="lossOut"></span></div>
   <div class="note">loss = −ln(p of the correct token). Training looks for weights that push this number down on average across billions of examples.</div>
 </div>
-<div class="status"><b>Verified:</b> loss computed this way (cross-entropy) is the standard in pretraining. Pretraining is the first and largest stage of training. <b>Simplified:</b> a distribution over 6 tokens instead of the whole vocabulary.</div>
+<div class="status"><b>Verified:</b> measuring the error this way, which has the name cross-entropy, is the standard method in pretraining, the first and largest stage of training. <b>Simplified:</b> six candidate tokens here instead of the whole vocabulary the model has to choose from.</div>
 </section>
-
-<section class="s" id="s9">
-<div class="k">9 / 20</div><h3>Gradient</h3>
-<p>The gradient is the slope of the loss with respect to one weight. It says which way to move the weight so that the loss goes down. Click "Step". Then set the step size to the maximum and watch what happens.</p>
+<section class="s" data-stara="9" id="s9">
+<div class="k">12 / 20</div><h3>Which way to nudge</h3>
+<p>You are walking down a hill in thick fog, unable to see the bottom, but you can feel which way the ground tilts under your feet, so you step that way and feel again. The model asks the same question about each one of its billions of numbers: if I nudge this one up slightly, does the error grow or shrink? That tilt is the gradient, and it is the only thing pointing the way down. Click "Step", then push the step size to the maximum and watch what happens.</p>
 <div class="demo">
   <svg viewBox="0 0 680 300" role="img" aria-label="Gradient descent along the loss curve">
-    <text x="60" y="30" class="m">loss</text>
+    <text x="60" y="30" class="m">error</text>
     <line x1="60" y1="40" x2="60" y2="250" class="ln"/><line x1="60" y1="250" x2="620" y2="250" class="ln"/>
     <text x="340" y="290" text-anchor="middle" class="m">the value of one weight</text>
-    <line x1="438" y1="48" x2="438" y2="250" stroke="var(--line)" stroke-dasharray="4 4"/><text x="444" y="46" class="m">minimum</text>
+    <line x1="438" y1="48" x2="438" y2="250" stroke="var(--line)" stroke-dasharray="4 4"/><text x="444" y="46" class="m">lowest point</text>
     <polyline id="gCv" fill="none" stroke="var(--purple)" stroke-width="2"/>
     <g id="gTr"></g>
     <line id="gTan" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/>
@@ -273,21 +302,20 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="row"><button id="gGo">Step</button><button id="gRs">Reset</button><span class="note num" id="gSt" style="margin:0"></span></div>
   <div class="out" id="gMsg"></div>
 </div>
-<div class="status"><b>Verified:</b> the gradient is a derivative. The step goes in the direction opposite to the gradient. Too long a step makes training diverge. <b>Simplified:</b> one smooth curve instead of a surface with billions of dimensions. Real optimisers, the programs that steer the step (Adam for example), add momentum and set the step size themselves.</div>
+<div class="status"><b>Verified:</b> the gradient is a derivative, the step goes the opposite way to it, and too long a step throws training off instead of settling it. <b>Simplified:</b> one smooth curve here instead of a landscape with billions of directions. The programs that steer the stepping in practice, Adam for one, carry momentum and set the step size themselves.</div>
 </section>
-
-<section class="s" id="s10">
-<div class="k">10 / 20</div><h3>Backpropagation</h3>
-<p>The loss appears at the end of the model. The gradient, though, is needed for the weights in the first layer too. Backpropagation computes it with the chain rule: the error flows backwards through every layer and is multiplied along the way.</p>
+<section class="s" data-stara="10" id="s10">
+<div class="k">13 / 20</div><h3>Spreading the correction</h3>
+<p>A batch fails its check at the end of the line, and blaming the last station fixes nothing: you walk back through every stage working out how much of the fault belongs to each one. The model does that with its error. Starting at the loss, the correction is handed back layer by layer, and each layer takes its own share of the blame and learns how far to move. That pass backwards is backpropagation, and the computer works the sums out on its own.</p>
 <div class="demo">
   <svg viewBox="0 0 680 220" role="img" aria-label="The forward and backward pass through three layers">
     <defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
-    <text x="40" y="40" class="m">forward: data → prediction</text>
-    <text x="40" y="200" class="m">backward: error → weight corrections</text>
+    <text x="40" y="40" class="m">forward: your text → a prediction</text>
+    <text x="40" y="200" class="m">backward: the error → a correction for every weight</text>
     <rect x="40" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="95" y="115" text-anchor="middle">layer 1</text>
     <rect x="200" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="255" y="115" text-anchor="middle">layer 2</text>
     <rect x="360" y="80" width="110" height="60" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="415" y="115" text-anchor="middle">layer 3</text>
-    <rect x="520" y="80" width="120" height="60" rx="8" fill="var(--coral-bg)" stroke="var(--coral)"/><text x="580" y="115" text-anchor="middle">loss</text>
+    <rect x="520" y="80" width="120" height="60" rx="8" fill="var(--coral-bg)" stroke="var(--coral)"/><text x="580" y="115" text-anchor="middle">error</text>
     <line x1="154" y1="98" x2="196" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
     <line x1="314" y1="98" x2="356" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
     <line x1="474" y1="98" x2="516" y2="98" stroke="var(--teal)" stroke-width="1.5" marker-end="url(#ar3)"/>
@@ -299,105 +327,77 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="415" y="165" text-anchor="middle" class="mono">∂L/∂w₃</text>
   </svg>
 </div>
-<div class="status"><b>Verified:</b> backprop is the chain rule applied layer by layer. The computer works it out on its own. <b>Simplified:</b> the formulas are left out.</div>
+<div class="status"><b>Verified:</b> sharing the error out backwards like this is one piece of school calculus, the chain rule, applied layer by layer, and the computer does it without help. <b>Simplified:</b> the formulas are left out.</div>
 </section>
-
-<section class="s" id="s11">
-<div class="k">11 / 20</div><h3>Pretraining, post-training, fine-tuning</h3>
-<p>The same mechanism (loss, gradient, step) run on different data gives different models. A raw model after pretraining can only finish text. What makes it an assistant is post-training, further training on examples of conversations and on human ratings. Fine-tuning is the tuning of a finished model on your own examples. The second table compares it with supplying knowledge in the context, in the text sent together with the question. RAG is the automatic picking of document fragments for that text (section 17).</p>
+<section class="s" data-stara="11" id="s11">
+<div class="k">14 / 20</div><h3>From finishing text to answering you</h3>
+<p>Fresh out of pretraining the model can only carry a piece of text on: give it the opening line of an email and it writes a plausible rest, with no sense that anything was asked of it. What makes it answer, turn down a bad request and hold a format is a second stage called post-training: examples of good conversations first, then people judging which of two answers was better. The machinery does not change, still error, direction, step, only the data it is pointed at. The last column says who does each stage, and only the bottom row is ever yours.</p>
 <div class="demo">
   <svg viewBox="0 0 680 150" role="img" aria-label="Training stages">
     <defs><marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
     <rect x="20" y="40" width="150" height="70" rx="8" fill="var(--purple-bg)" stroke="var(--purple)"/><text x="95" y="68" text-anchor="middle">Pretraining</text><text x="95" y="90" text-anchor="middle" class="m">trillions of tokens</text>
     <line x1="174" y1="75" x2="186" y2="75" class="ln" marker-end="url(#ar4)"/>
-    <rect x="190" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="265" y="68" text-anchor="middle">SFT</text><text x="265" y="90" text-anchor="middle" class="m">dialogue examples</text>
+    <rect x="190" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="265" y="68" text-anchor="middle">Answer examples</text><text x="265" y="90" text-anchor="middle" class="m">called SFT</text>
     <line x1="344" y1="75" x2="356" y2="75" class="ln" marker-end="url(#ar4)"/>
-    <rect x="360" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="435" y="68" text-anchor="middle">RLHF / preferences</text><text x="435" y="90" text-anchor="middle" class="m">rating answers</text>
+    <rect x="360" y="40" width="150" height="70" rx="8" fill="var(--amber-bg)" stroke="var(--amber)"/><text x="435" y="68" text-anchor="middle">Human ratings</text><text x="435" y="90" text-anchor="middle" class="m">called RLHF</text>
     <line x1="514" y1="75" x2="526" y2="75" class="ln" marker-end="url(#ar4)"/>
     <rect x="530" y="40" width="130" height="70" rx="8" fill="var(--teal-bg)" stroke="var(--teal)"/><text x="595" y="68" text-anchor="middle">Fine-tuning</text><text x="595" y="90" text-anchor="middle" class="m">your data</text>
   </svg>
   <div class="tbl"><table>
-    <tr><th>Stage</th><th>Data</th><th>What it gives</th><th>Who</th></tr>
+    <tr><th>Stage</th><th>What it is trained on</th><th>What it gives</th><th>Who does it</th></tr>
     <tr><td>Pretraining</td><td>The internet, books, code</td><td>Language, general knowledge, patterns</td><td>A lab</td></tr>
-    <tr><td>SFT (training on model answers)</td><td>Question → good answer</td><td>The assistant format, brevity, refusals</td><td>A lab</td></tr>
-    <tr><td>RLHF (training on human ratings)</td><td>Two answers, which one is better</td><td>Tone, caution, "helpfulness"</td><td>A lab</td></tr>
-    <tr><td>Fine-tuning</td><td>Your examples</td><td>Style, jargon, the format of your trade</td><td>You / your company</td></tr>
+    <tr><td>Answer examples, called SFT</td><td>A question with a good answer written out</td><td>The habit of answering, brevity, saying no</td><td>A lab</td></tr>
+    <tr><td>Human ratings, called RLHF</td><td>Two answers, and which one a person preferred</td><td>Tone, caution, being helpful rather than correct on paper</td><td>A lab</td></tr>
+    <tr><td>Fine-tuning</td><td>Your own examples</td><td>Style, your jargon, the format of your trade</td><td>You or your company</td></tr>
   </table></div>
+</div>
+<div class="status"><b>Verified:</b> the split into pretraining, which gives the language, and the post-training after it, which gives the assistant. <b>Simplified:</b> four tidy boxes in place of a programme that runs these stages more than once.</div>
+</section>
+<section class="s" data-stara="11b" id="s23">
+<div class="k">15 / 20</div><h3>Teach it, or just tell it</h3>
+<p>This is the choice you will actually face with your own material. Fine-tuning carries on training a finished model on a few thousand of your own examples, so your format and your wording come out of it without anyone asking. The other way is to send the material with the question, in the same block of text the model reads: paste the quote, attach the procedure, or let the model fetch the right fragments from your documents by itself, the method called RAG later on. Read the table as one rule: train it for how you write, give it the file for what is true.</p>
+<div class="demo">
   <div class="tbl"><table>
-    <tr><th>Need</th><th>Fine-tuning</th><th>Context / RAG</th></tr>
-    <tr><td>The same style and format every time</td><td>Strong</td><td>Works, costs tokens</td></tr>
-    <tr><td>Knowing 500 documents</td><td>Weak, the facts blur</td><td>Strong</td></tr>
+    <tr><th>What you need</th><th>Fine-tuning</th><th>The material in the text, or RAG</th></tr>
+    <tr><td>The same style and format every time</td><td>Strong</td><td>Works, and you pay in tokens every time</td></tr>
+    <tr><td>Knowing 500 documents</td><td>Weak, the facts blur together</td><td>Strong</td></tr>
     <tr><td>The data changes every week</td><td>Out of the question</td><td>You swap the file</td></tr>
-    <tr><td>Citing the source</td><td>Not possible</td><td>Yes</td></tr>
-    <tr><td>Risk</td><td>Some invention in your own jargon</td><td>Attention blurring in a long window</td></tr>
+    <tr><td>Saying where the answer came from</td><td>Not possible</td><td>Yes</td></tr>
+    <tr><td>The risk</td><td>Confident invention, in your own house language</td><td>Attention spread thin in a very long window</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Verified:</b> the split into pretraining and post-training. Fine-tuning teaches style better, RAG delivers facts better. <b>Logical, no number:</b> whether fine-tuning pays off depends on the number of queries.</div>
+<div class="status"><b>Verified:</b> fine-tuning teaches style better, and fetching the documents delivers facts better. Fine-tuning a model on facts tends to produce confident invention worded in your own house language, which is harder to catch than an obvious mistake. <b>Logical, no number:</b> whether fine-tuning pays for itself depends on how many queries you run.</div>
 </section>
 </div>
 
-<!-- ===================== IV ===================== -->
+<!-- ======== Part 4 ======== -->
 <div class="part" id="p4">
-<header><div class="k">Part IV</div><h2>When you type</h2><p>What happens from the moment you press Enter to the last token of the answer. The weights no longer change.</p></header>
+<header><div class="k">Part 4</div><h2>What comes back</h2><p>Where the answer actually comes from, and the places where it goes wrong.</p></header>
 
-<section class="s" id="s12">
-<div class="k">12 / 20</div><h3>Context window</h3>
-<p>The context window is everything the model sees at one moment. Instructions, documents, the conversation history and your prompt all go in there as one sequence of tokens. The prompt is the text you send to the model. The model does not see files or messages, only that sequence. Click "Next".</p>
-<div class="demo">
-  <div class="legend"><span><i style="background:var(--gray)"></i>Instructions</span><span><i style="background:var(--teal)"></i>Documents</span><span><i style="background:var(--purple)"></i>Conversation</span><span><i style="background:var(--coral)"></i>Question</span><span><i style="background:var(--amber)"></i>Answer</span></div>
-  <svg viewBox="0 0 680 150" role="img" aria-label="The context window as a row of tokens"><g id="cxArcs"></g><g id="cxTok"></g><rect id="cxPend" x="0" y="80" width="12" height="22" rx="3" fill="none" stroke="var(--amber)" stroke-dasharray="3 2" style="opacity:0"/><line x1="40" y1="118" x2="640" y2="118" class="ln"/><line x1="40" y1="112" x2="40" y2="124" class="ln"/><line x1="640" y1="112" x2="640" y2="124" class="ln"/><text x="340" y="142" text-anchor="middle" class="m">context window: one sequence with a hard limit</text></svg>
-  <div class="note" id="cxLbl"></div><div class="out" id="cxCap" style="min-height:80px"></div>
-  <div class="row"><button id="cxPrev">Back</button><div class="dots" id="cxDots"></div><button id="cxNext">Next</button></div>
-</div>
-<div class="status"><b>Verified:</b> the model has one window and processes all of it at once. From message to message it remembers nothing. The answer is built token by token. <b>Simplified:</b> the attention arcs are illustrative. How the history gets cut depends on the application.</div>
-</section>
-
-<section class="s" id="s13">
-<div class="k">13 / 20</div><h3>KV cache</h3>
-<p>Every new token has to look at all the previous ones. Without a cache the model would compute them again every single time. The KV cache stores the results for the old tokens. The price is memory, which grows along with the length of the context.</p>
-<div class="demo">
-  <div class="row"><label for="kvN">Context length</label><input type="range" id="kvN" min="1" max="200" step="1" value="40"><span class="num" id="kvNV">40k tokens</span></div>
-  <div class="tbl"><table>
-    <tr><th></th><th>Without cache</th><th>With cache</th></tr>
-    <tr><td>Operations per 1 new token</td><td class="num" id="kvA"></td><td class="num" id="kvB"></td></tr>
-    <tr><td>Cache memory (rough)</td><td>0</td><td class="num" id="kvM"></td></tr>
-  </table></div>
-  <div class="note">This is why a long context is slower and more expensive. Providers also store the repeating openings of conversations. That service is called prompt caching.</div>
-</div>
-<div class="status"><b>Verified:</b> during generation the KV cache turns a quadratic cost into a linear one. Without it, twice the context means four times the computation, with it, twice. Memory grows at the same rate as the context. <b>Simplified:</b> the memory figures are an order of magnitude, they depend on the model.</div>
-</section>
-
-<section class="s" id="s14">
-<div class="k">14 / 20</div><h3>Softmax and temperature</h3>
-<p>At the end the model has one number for every token in the vocabulary. Softmax is the formula that turns them into probabilities. Temperature is the randomness setting. A low one sharpens the distribution and the model almost always picks the same thing, a high one flattens it. Then a token is drawn at random. That is why the same conversation gives different answers.</p>
+<section class="s" data-stara="14" id="s14">
+<div class="k">16 / 20</div><h3>Picking the next word</h3>
+<p>Think of a raffle drum. The model has just scored every token in its vocabulary, and softmax is the sum that turns those scores into how many tickets each token holds, while temperature sets how lopsided the draw is: turn it down and the front runner holds almost every ticket, turn it up and the outsiders get a real chance. Then one ticket is drawn. The answer is picked, not looked up, and that is why the same question asked twice can come back worded two different ways.</p>
 <div class="demo">
   <div class="note" style="margin:0 0 8px">Context: "The capital of France is"</div>
   <div class="row"><label for="tmp">Temperature</label><input type="range" id="tmp" min="0.1" max="2" step="0.1" value="1"><span class="num" id="tmpV">1.0</span></div>
   <div id="smBars"></div>
   <div class="row" style="margin-top:10px"><button id="smGo">Sample a token</button><button id="smClr">Clear</button><span class="out num" id="smHist" style="margin:0"></span></div>
 </div>
-<div class="status"><b>Verified:</b> softmax, temperature, drawing a token (sampling). <b>Simplified:</b> 6 candidates instead of the whole vocabulary. Products add filters, for example top-p, which cuts off the least likely tokens.</div>
+<div class="status"><b>Verified:</b> the scores really are turned into shares by softmax, temperature really does flatten or sharpen them, and the token really is drawn at random, which is called sampling. <b>Simplified:</b> 6 candidates here instead of the whole vocabulary. Products add filters as well, for example top-p, which takes the least likely tokens out of the drum before the draw.</div>
 </section>
-
-<section class="s" id="s15">
-<div class="k">15 / 20</div><h3>Hallucinations</h3>
-<p>A hallucination is a confident sounding answer that nothing backs up. A missing fact does not raise an error message. The weights know the shape of the answer, so the model writes something plausible. Switch whether the fact is in the context.</p>
+<section class="s" data-stara="15" id="s15">
+<div class="k">17 / 20</div><h3>Why it invents things</h3>
+<p>Imagine a form where no field is allowed to stay empty. A missing fact raises no error inside the model, so nothing stops at the gap: it writes the most likely thing that would sit there, a plausible date, a plausible clause number, a plausible supplier name, in the same confident voice as everything it has right. That is a hallucination. Switch whether the fact is in the context.</p>
 <div class="demo">
   <div class="row"><button id="hlA" class="on">The fact is in the context</button><button id="hlB">The fact is nowhere</button></div>
   <div class="out" id="hlOut"></div>
   <div class="note" id="hlN"></div>
 </div>
-<div class="status"><b>Verified:</b> a hallucination follows from the model writing the most likely continuation. It is not an "error" in the ordinary sense. Post-training teaches the model to say "I do not know", but it does not remove the mechanism.</div>
+<div class="status"><b>Verified:</b> an invented answer comes out of the same process as a correct one, the model writing the most likely continuation. Nothing has broken, so there is no "error" in the ordinary sense for anything to report. Later training teaches the model to say "I do not know" more often, and that helps, but the mechanism underneath stays.</div>
 </section>
-</div>
-
-<!-- ===================== V ===================== -->
-<div class="part" id="p5">
-<header><div class="k">Part V</div><h2>Product</h2><p>The layer you work in. Here you decide what goes into the window and what kind of answers you can expect.</p></header>
-
-<section class="s" id="s16">
-<div class="k">16 / 20</div><h3>Three modes: weights only, mixed, context only</h3>
-<p>Every answer comes from two sources at once, but the proportion changes. Pick a mode. The colour in the answer shows where a fragment comes from.</p>
+<section class="s" data-stara="16" id="s16">
+<div class="k">18 / 20</div><h3>Three modes, and knowing which one you are in</h3>
+<p>Think about how you answer a question at work. Sometimes it comes straight out of your own experience, sometimes you answer with the staff rota open in front of you, and sometimes you only read back what the rota says. Every answer the model gives is one of those three mixes, and which one you are in decides how much of it you have to check. Pick a mode, and the colour in the answer shows where each fragment came from.</p>
 <div class="demo">
   <div class="row"><button class="md on" data-m="0">Weights only</button><button class="md" data-m="1">Weights plus context</button><button class="md" data-m="2">Context only</button></div>
   <div class="legend"><span><i style="background:var(--purple)"></i>From the weights (training)</span><span><i style="background:var(--teal)"></i>From the context (your data)</span><span><i style="background:var(--coral)"></i>Invented / to be checked</span></div>
@@ -409,35 +409,33 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
   <div class="tbl"><table id="mdT"></table></div>
 </div>
 <div class="tbl"><table>
-  <tr><th>Mode</th><th>When</th><th>What to expect</th><th>Typical slip</th></tr>
-  <tr><td>Weights only</td><td>A question with no material: general knowledge, explanations, ideas</td><td>Fluent, general, the same for everyone, no source. Good for settled knowledge</td><td>Out of date facts, invented numbers, names, quotes</td></tr>
-  <tr><td>Weights plus context</td><td>Your data plus the skill of the model: a summary, analysis, a transformation, a decision</td><td>Specific to you, the quality depends on what you pasted in</td><td>The model "corrects" your data with general knowledge, it mixes the sources</td></tr>
-  <tr><td>Context only</td><td>Extract, quote, find, rewrite, add up from a table</td><td>High fidelity, little creativity, checkable</td><td>Losing a detail in a long window, answering something that is not there</td></tr>
+  <tr><th>Mode</th><th>When you are in it</th><th>What to expect</th><th>Typical slip</th></tr>
+  <tr><td>Weights only</td><td>You ask and paste nothing in: general knowledge, an explanation, ideas for a plan</td><td>Fluent, general, the same answer anyone else would get, with no source behind it. Fine for settled knowledge</td><td>Facts that are out of date, and invented numbers, names and quotes</td></tr>
+  <tr><td>Weights plus context</td><td>Your material handled with the skill of the model: summarise this report, analyse it, rewrite it, help decide</td><td>Specific to you, and only as good as what you pasted in</td><td>The model "corrects" your figures to match what it learnt, so the two sources blur together</td></tr>
+  <tr><td>Context only</td><td>Pull out, quote, find, reword, add up the column in a table you supplied</td><td>Close to your material, little invention, easy to check against the original</td><td>A detail lost in a long window, or an answer to something the material never said</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> the weights are always in use, including for reading the context. "Context only" is the mode in which the content comes from the window and the weights supply only the ability to read. <b>Simplified:</b> the percentages in the bar are an illustration, they cannot be measured directly.</div>
+<div class="status"><b>Verified:</b> the weights are working in all three modes, because reading your material is itself something the model had to learn. In "context only" the content comes from the window and the weights supply nothing but the ability to read it. <b>Simplified:</b> the percentages in the bar are there to show the idea, they cannot be measured directly.</div>
 </section>
-
-<section class="s" id="s17">
-<div class="k">17 / 20</div><h3>RAG</h3>
-<p>When there are too many documents for the window, a separate search engine picks the matching fragments and glues them into the window. That is RAG. The model sees only what got in. Top-k is the number of fragments picked. Switch between the questions and move the slider.</p>
+<section class="s" data-stara="17" id="s17">
+<div class="k">19 / 20</div><h3>When there is too much to paste in</h3>
+<p>You have years of shift reports and no chance of pasting them all in. So a separate search engine goes first, picks the handful of passages closest to your question, and glues only those into the window: that is RAG. The engine does the choosing, and the model reads what arrived and knows nothing about the rest. Top-k is how many passages it hands over, so switch between the questions and move the slider.</p>
 <div class="demo">
   <div class="row" id="rgQ"></div>
   <div class="row"><label for="rgK">Top-k</label><input type="range" id="rgK" min="1" max="5" step="1" value="3"><span class="num" id="rgKV">3</span></div>
   <svg viewBox="0 0 680 400" role="img" aria-label="Choosing fragments in RAG"><text x="40" y="36" class="m">meaning space</text><text x="372" y="36" class="m">similarity ranking</text><rect x="40" y="46" width="300" height="250" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/><g id="rgL"></g><g id="rgD"></g><g id="rgR"></g><text x="40" y="340" class="m">context window sent to the model</text><g id="rgC"></g></svg>
 </div>
 <div class="tbl"><table>
-  <tr><th>Problem</th><th>Symptom</th></tr>
-  <tr><td>A bad split of the document</td><td>The answer cut across two fragments, the model sees half of it</td></tr>
-  <tr><td>k too small</td><td>Context is missing, the model guesses or says it does not know</td></tr>
-  <tr><td>k too large</td><td>Noise, attention blurs</td></tr>
-  <tr><td>Codes, numbers, proper names</td><td>Vectors catch the sense, not exact strings. Hence the pairing with keyword search</td></tr>
+  <tr><th>What goes wrong</th><th>What you see</th></tr>
+  <tr><td>The document was cut into passages in the wrong places</td><td>The answer straddles two passages and the model gets half of it</td></tr>
+  <tr><td>k set too small</td><td>The piece that mattered never arrived, so the model guesses or says it does not know</td></tr>
+  <tr><td>k set too large</td><td>Mostly irrelevant passages arrive and attention is spread thin</td></tr>
+  <tr><td>Part codes, order numbers, proper names</td><td>The search matches on meaning, not on exact characters, which is why it is usually paired with plain keyword search</td></tr>
 </table></div>
-<div class="status"><b>Verified:</b> a document fragment (chunk) → vector → similarity → top-k. In products the model itself decides when to search and with what (agentic retrieval). <b>Simplified:</b> two dimensions instead of thousands. No reranker, the second sieve that orders the results once more.</div>
+<div class="status"><b>Verified:</b> each passage of a document, called a chunk, becomes a vector, the vectors are compared for closeness, and the nearest few, the top-k, are the ones sent on. In products the model itself decides when to search and what to search for, which is called agentic retrieval. <b>Simplified:</b> two dimensions here instead of thousands, and no reranker, the second sieve that puts the results in order once more.</div>
 </section>
-
-<section class="s" id="s18">
-<div class="k">18 / 20</div><h3>Tools and the agent</h3>
-<p>The model has no hands. What it has is a trained habit: instead of answering, it can write out a tool call. A tool is a function with a description, which the application runs at the request of the model. The application performs the call and pastes the result back into the window. The loop runs until the model writes an answer. A model in such a loop is an agent.</p>
+<section class="s" data-stara="18" id="s18">
+<div class="k">20 / 20</div><h3>Tools and the agent</h3>
+<p>The model cannot open a file or ring a supplier. What it can do, because it was trained to, is write out a request instead of an answer: use this tool, with these details, picked from a short list of jobs the application has described to it. The application runs the job for real and pastes what came back into the window as more text, which is all a tool result ever is. The loop repeats until the model writes an answer, and a model running in that loop is an agent.</p>
 <div class="demo">
   <svg viewBox="0 0 680 200" role="img" aria-label="The agent loop: model, tool, result returns to the context">
     <defs><marker id="ar5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
@@ -452,63 +450,50 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
     <text x="340" y="180" text-anchor="middle" class="m">↻ the result returns to the window as more tokens, the loop runs until it is done</text>
   </svg>
   <div class="tbl"><table>
-    <tr><th>What</th><th>How it looks to the model</th></tr>
-    <tr><td>Searching the web</td><td>The tool returns fragments of pages as text in the window</td></tr>
-    <tr><td>Running code</td><td>The model writes code, gets the result as text</td></tr>
-    <tr><td>Memory</td><td>A file of facts about you, pasted in or read on demand</td></tr>
-    <tr><td>Searching the chat history</td><td>The tool returns fragments of old conversations</td></tr>
+    <tr><th>The tool</th><th>What the model actually receives</th></tr>
+    <tr><td>Searching the web</td><td>Passages of pages, arriving as text in the window</td></tr>
+    <tr><td>Running code</td><td>The model writes the code, and the result comes back as text</td></tr>
+    <tr><td>Memory</td><td>A file of facts about you, pasted in or fetched when needed</td></tr>
+    <tr><td>Searching the chat history</td><td>Passages of your earlier conversations</td></tr>
   </table></div>
 </div>
-<div class="status"><b>Verified:</b> tool calls are text generated by the model and executed by the application, the result comes back into the window. <b>Important:</b> every tool result is tokens, which use up the window. <b>Next:</b> what happens when this loop is given a goal, a scratchpad and permissions, in part two: <a href="/agents">From Task to Agent</a>.</div>
-</section>
-
-<section class="s" id="s19">
-<div class="k">19 / 20</div><h3>Memory and projects</h3>
-<p>"The model remembers me" means this: the application keeps some text and pastes it into the window with every message. The weights never change.</p>
-<div class="tbl"><table>
-  <tr><th>Feature</th><th>What sits underneath</th><th>The limit</th></tr>
-  <tr><td>Conversation history</td><td>The whole conversation sent again from scratch</td><td>The window limit, cutting or summarising</td></tr>
-  <tr><td>Memory about you</td><td>A file of facts, a list in the window, content read on demand</td><td>Only what was written down</td></tr>
-  <tr><td>A project with files</td><td>All of it in the window, above the limit automatic RAG</td><td>Above the limit the weaknesses of RAG come back</td></tr>
-  <tr><td>System instructions</td><td>Text at the start of the window</td><td>They compete with the rest for attention</td></tr>
-</table></div>
-<div class="status"><b>Verified:</b> Claude Projects switches to RAG when a project approaches the limit. OpenAI file search uses a vector store. <b>In practice:</b> several small projects on single topics work better than one big one.</div>
-</section>
-
-<section class="s" id="s20">
-<div class="k">20 / 20</div><h3>The whole chain</h3>
-<p>From the smallest to the largest. Every element uses the one before it.</p>
-<div class="demo"><div class="tbl"><table>
-  <tr><th>#</th><th>Element</th><th>Uses</th><th>One sentence</th></tr>
-  <tr><td>1</td><td>Token</td><td>text</td><td>The unit the model sees</td></tr>
-  <tr><td>2</td><td>Embedding</td><td>token</td><td>A token as a vector of numbers</td></tr>
-  <tr><td>3</td><td>Neuron</td><td>vector, weights</td><td>Weighted sum + activation</td></tr>
-  <tr><td>4</td><td>Layer</td><td>neurons</td><td>Vector × matrix of weights</td></tr>
-  <tr><td>5</td><td>Attention</td><td>token vectors</td><td>Every token weighs the others</td></tr>
-  <tr><td>6</td><td>Heads</td><td>attention</td><td>Many relations at once</td></tr>
-  <tr><td>7</td><td>Block and stack</td><td>attention, layer</td><td>Attention + FFN, repeated N times</td></tr>
-  <tr><td>8</td><td>Loss</td><td>prediction</td><td>A number: how badly wrong</td></tr>
-  <tr><td>9</td><td>Gradient</td><td>loss, weight</td><td>The direction of the correction</td></tr>
-  <tr><td>10</td><td>Backprop</td><td>gradient, stack</td><td>A correction for every layer</td></tr>
-  <tr><td>11</td><td>Training</td><td>backprop, data</td><td>Billions of steps → weights</td></tr>
-  <tr><td>12</td><td>Context window</td><td>tokens</td><td>One sequence with a limit</td></tr>
-  <tr><td>13</td><td>KV cache</td><td>attention, window</td><td>Do not compute old tokens again</td></tr>
-  <tr><td>14</td><td>Softmax</td><td>the output of the stack</td><td>Numbers → probabilities → drawing one</td></tr>
-  <tr><td>15</td><td>Hallucination</td><td>softmax, a missing fact</td><td>Plausible instead of true</td></tr>
-  <tr><td>16</td><td>Three modes</td><td>weights, window</td><td>Where the answer comes from</td></tr>
-  <tr><td>17</td><td>RAG</td><td>embedding, window</td><td>The engine picks, the model reads</td></tr>
-  <tr><td>18</td><td>Tools</td><td>window, post-training</td><td>The model writes the call, the result comes back</td></tr>
-  <tr><td>19</td><td>Memory</td><td>window, tools</td><td>Text pasted in from scratch</td></tr>
-</table></div></div>
+<div class="status"><b>Verified:</b> a tool call is text the model wrote, the application is what runs it, and the result returns into the window. <b>Important:</b> every tool result is tokens, so it eats into the same window as everything else. <b>Next:</b> what happens when this loop is given a goal, a scratchpad and permissions, in part two: <a href="/agents">From Task to Agent</a>.</div>
 </section>
 </div>
 
-<!-- ===================== VI ===================== -->
-<div class="part" id="p6">
-<header><div class="k">Part VI</div><h2>Ten conversations</h2><p>The same mechanism, different questions. Philosophy, science, life decisions, your own projects. The only thing that changes is which source carries the answer and where the model can lead you off the track.</p></header>
+<!-- ======== Zamkniecie ======== -->
+<div class="part" id="p5">
+<header><div class="k">Putting it together</div><h2>The whole chain, and ten real conversations</h2><p>The twenty steps in one table, then what all of it looks like when a real question lands.</p></header>
 
-<section class="s" id="s21">
-<div class="k">21 / 22</div><h3>How the model moves through a conversation</h3>
+<section class="s" data-stara="20" id="s20">
+<div class="k">Closing</div><h3>The whole chain</h3>
+<p>Twenty steps, smallest first. Each one uses the one before it. If a section did not land, the sentence here is the short version.</p>
+<div class="demo"><div class="tbl"><table>
+  <tr><th>#</th><th>Step</th><th>Builds on</th><th>In one sentence</th></tr>
+  <tr><td>1</td><td>How your text is cut up</td><td>your text</td><td>The model sees tokens, not letters and not words</td></tr>
+  <tr><td>2</td><td>Words become numbers</td><td>a token</td><td>Each token becomes a list of numbers</td></tr>
+  <tr><td>3</td><td>Everything in one block</td><td>tokens</td><td>Instructions, documents, history and your question, one sequence</td></tr>
+  <tr><td>4</td><td>What a long context costs</td><td>the block</td><td>A longer block means a slower and dearer answer</td></tr>
+  <tr><td>5</td><td>What it remembers about you</td><td>the block</td><td>Nothing by itself. The app pastes it back in every time</td></tr>
+  <tr><td>6</td><td>What a weight is</td><td>numbers</td><td>One number saying how much one thing matters</td></tr>
+  <tr><td>7</td><td>Where the numbers get big</td><td>weights</td><td>A single layer holds millions of them</td></tr>
+  <tr><td>8</td><td>What each word looks at</td><td>layers</td><td>Every word weighs every word before it</td></tr>
+  <tr><td>9</td><td>Several readers at once</td><td>attention</td><td>Many kinds of relation, read at the same time</td></tr>
+  <tr><td>10</td><td>The same move, over and over</td><td>steps 8 and 9</td><td>Depth is what turns simple pieces into something capable</td></tr>
+  <tr><td>11</td><td>The error</td><td>a prediction</td><td>One number saying how badly wrong the guess was</td></tr>
+  <tr><td>12</td><td>Which way to nudge</td><td>the error</td><td>The direction that makes that number smaller</td></tr>
+  <tr><td>13</td><td>Spreading the correction</td><td>step 12</td><td>Every layer gets its own share of the blame</td></tr>
+  <tr><td>14</td><td>From finishing text to answering you</td><td>step 13</td><td>Training first, then the stage that makes it an assistant</td></tr>
+  <tr><td>15</td><td>Teach it, or just tell it</td><td>step 14</td><td>Fine-tuning changes the weights. Context does not</td></tr>
+  <tr><td>16</td><td>Picking the next word</td><td>the stack</td><td>The answer is drawn, not looked up</td></tr>
+  <tr><td>17</td><td>Why it invents things</td><td>step 16</td><td>A missing fact raises no error, so something plausible comes out</td></tr>
+  <tr><td>18</td><td>Three modes, and knowing which one you are in</td><td>weights and the block</td><td>Where this particular answer actually came from</td></tr>
+  <tr><td>19</td><td>When there is too much to paste in</td><td>step 3</td><td>A search engine picks. The model only reads what arrived</td></tr>
+  <tr><td>20</td><td>Tools and the agent</td><td>steps 3 and 14</td><td>A tool result is more text in the block, nothing more</td></tr>
+</table></div></div>
+</section>
+<section class="s" data-stara="21" id="s21">
+<div class="k">Closing</div><h3>How the model moves through a conversation</h3>
 <p>Four phases, always the same ones. Pick a conversation and you will see what happens in each phase and where the answer comes from.</p>
 <div class="demo">
   <div class="conv" id="cvB"></div>
@@ -521,9 +506,8 @@ svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
 </div>
 <div class="status"><b>Verified:</b> the model has no separate mode for philosophy or for decisions. The type of question affects which patterns in the weights switch on. It also affects how much the answer depends on the window. <b>Simplified:</b> the proportions in the bar are an illustration. In reality the phases overlap, they do not run one after another.</div>
 </section>
-
-<section class="s" id="s22">
-<div class="k">22 / 22</div><h3>Three rules that follow from this</h3>
+<section class="s" data-stara="22" id="s22">
+<div class="k">Closing</div><h3>Three rules that follow from this</h3>
 <div class="tbl"><table>
   <tr><th>Rule</th><th>Applies to conversations</th><th>What to do</th></tr>
   <tr><td>The more the question is "yours", the more the answer depends on what you paste in. The weights give only a skeleton.</td><td>4, 7, 8, 9</td><td>Paste the data, do not describe it. Numbers, not "roughly".</td></tr>

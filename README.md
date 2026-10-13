@@ -9,7 +9,7 @@ Materiał jest tylko po angielsku. Polska wersja została usunięta 13 paździer
 | Adres | Plik | Temat |
 |---|---|---|
 | `/training` | `training.html` | MAZOR AI Training v1.0: 8 modułów w 4 kategoriach, formaty 2h, pół dnia, cały dzień, ćwiczenia z kluczem, handout do druku, plan pilotażu. 19 sekcji, 9 dem. |
-| `/` | `index.html` | 1. From Token to Answer. Jak działa model językowy, od tokena do produktu. 22 sekcje, 10 dem. |
+| `/` | `index.html` | 1. From Token to Answer. Jak działa model językowy, od tokena do produktu. 4 części po 5 kroków, 10 dem. |
 | `/agents` | `agents.html` | 2. From Task to Agent. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |
 | `/workshop` | `workshop.html` | 3. From Chat to Workshop. Umiejętności, API i koszt, MCP i routery, agenci w terminalu, modele lokalne, GitHub. 16 sekcji, 8 dem. Stan na 2026-10-08. |
 | `/detection` | `detection.html` | 4. Did AI Make This? Znak wodny, metryczka C2PA, metadane, detektory tekstu, drzewko decyzyjne. 12 sekcji, 6 dem. Stan na 2026-10-08. |
@@ -76,3 +76,4 @@ Może kiedyś: osobny moduł szkolenia o polityce AI w firmie (dla zarządu).
 - v6.1: zakładka `/szkolenie` (program MAZOR AI 1.0), jedno menu u góry, podmenu bez paska przewijania, tekst bez formy „my”, reguła osoby w `tokena-redakcja`.
 - v6.2: wersja angielska wszystkich sześciu zakładek w `en/`, przełącznik PL/EN na pasku zakładek, `lang` w `<html>`, poprawiona numeracja zakładki w stopce Nowości.
 - v7: tylko angielski. Strony z `en/` przeniesione do katalogu głównego, polskie usunięte (historia: znacznik `pl-v6.2`), przełącznik języka zdjęty, komentarze w `fx.js` i `fx.css` po angielsku, 7 przekierowań 301 w `vercel.json`.
+- v8: przebudowa zakładki 1. Sześć części i 22 sekcje zamienione na cztery części po pięć kroków. Każda sekcja zaczyna się od sytuacji znanej czytelnikowi, termin pada po niej. Przeładowana sekcja o treningu rozbita na dwie. Tabela łańcucha przepisana na nową kolejność.
