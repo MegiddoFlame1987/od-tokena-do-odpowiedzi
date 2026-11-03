@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="From a single transistor to a language model in 13 levels: bits, gates, adding, memory, a toy CPU, a tiny compiler, cache, fractions, GPU and a 15-weight model. Every level has a task to click through.">
+<meta name="color-scheme" content="light dark">
+<title>From Bit to Token</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Chakra+Petch:wght@600;700&display=swap">
+<style>
+/* Layout: the page is a chip datasheet, and every exercise sits on a green circuit board. State 1 glows copper. */
+:root{
+  --bg:#ECEFE8; --ink:#13211C; --muted:#4F5F58; --rule:#C3CCC2; --surface:#F6F8F2;
+  --accent:#96460F; --on-accent:#FFF6EC;
+  --board:#0E4A3B; --board-deep:#0A372C; --trace:#1A6450;
+  --silk:#F1F6EF; --silk-dim:#B9D4C6; --hi:#F4A95C; --hi-ink:#2A1403; --lo:#0B3429;
+  --ok-b:#8BE6B2; --bad-b:#FFB9AD;
+  --f-display:"Chakra Petch","Atkinson Hyperlegible Next",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible Next",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Atkinson Hyperlegible Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1614; --ink:#E7EEE8; --muted:#A3B5AC; --rule:#2B3A34; --surface:#172220;
+  --accent:#F0A45A; --on-accent:#2A1403; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1614; --ink:#E7EEE8; --muted:#A3B5AC; --rule:#2B3A34; --surface:#172220;
+  --accent:#F0A45A; --on-accent:#2A1403; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:var(--accent)}
+button,input{font:inherit}
+button{touch-action:manipulation}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.board :focus-visible{outline-color:var(--silk)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--rule)}
+.top-in,.wrap,.pager-in{max-width:52rem;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rail{display:flex;overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.pad{flex:0 0 auto;position:relative;width:38px;height:44px;padding:0;border:0;background:none;color:var(--muted);cursor:pointer}
+.pad::before{content:"";position:absolute;inset:50% 0 auto;height:2px;margin-top:-1px;background:var(--rule)}
+.pad:first-child::before{left:50%}.pad:last-child::before{right:50%}
+.pad b{position:absolute;left:6px;top:9px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;border:2px solid var(--rule);background:var(--bg);font:700 .75rem var(--f-mono)}
+.pad.done b{border-color:var(--accent);color:var(--accent)}
+.pad[aria-current="step"] b{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+.ch{padding-block:20px 32px;display:grid;gap:16px}
+.ch>*{min-width:0}
+.eyebrow{margin:0;font:700 .8125rem/1.3 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+h1,h2{margin:0;font-family:var(--f-display);font-weight:700;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(2.25rem,8vw,3.5rem)}
+h2{font-size:clamp(1.6rem,5.5vw,2.25rem)}
+.ch p{margin:0;max-width:62ch}
+.lede{color:var(--ink)}
+.plain{font-size:1.1875rem;line-height:1.5;font-weight:600}
+.more{border-top:1px solid var(--rule);padding-top:8px}
+.more[open]>summary{margin-bottom:10px}
+.more>*+*{margin-top:10px}
+.keep{padding-top:12px;border-top:1px solid var(--rule)}
+.keep b{font-family:var(--f-mono);font-size:.8125rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);display:block}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9375rem}
+th,td{text-align:left;padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:700}
+td.mono{white-space:nowrap}
+
+.board{background-color:var(--board);background-image:radial-gradient(var(--trace) 1px,transparent 1.5px);background-size:22px 22px;color:var(--silk);border-radius:6px;padding:14px;display:grid;gap:12px;box-shadow:inset 0 0 0 2px var(--board-deep)}
+.board>*{min-width:0}
+.board p{max-width:none}
+.label{font:700 .75rem/1.3 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--silk-dim)}
+.board table{color:var(--silk)}
+.board th,.board td{border-color:var(--trace)}
+.small{font-size:.9375rem;line-height:1.5}
+.dim{color:var(--silk-dim)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{appearance:none;background:var(--board-deep);color:var(--silk);border:2px solid var(--silk-dim);border-radius:4px;padding:7px 12px;min-height:40px;font-weight:600;cursor:pointer}
+.btn.main{background:var(--hi);border-color:var(--hi);color:var(--hi-ink)}
+.btn[aria-pressed="true"]{background:var(--hi);border-color:var(--hi);color:var(--hi-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+input[type="text"]{width:100%;min-height:44px;padding:8px 10px;border:2px solid var(--silk-dim);border-radius:4px;background:var(--board-deep);color:var(--silk);font-family:var(--f-mono);font-size:1.0625rem}
+input[type="range"]{width:100%;accent-color:var(--hi);height:32px}
+.field{display:grid;gap:4px}
+.big{font:700 clamp(1.75rem,8vw,2.5rem)/1.1 var(--f-mono);color:var(--hi);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.task{border-top:1px dashed var(--silk-dim);padding-top:12px;display:grid;gap:8px}
+.task h3{margin:0;font:700 .8125rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--hi)}
+.status{font-weight:600;min-height:1.5em}
+.status.ok{color:var(--ok-b)}.status.no{color:var(--bad-b)}
+
+.bits{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px}
+.bitcell{display:grid;gap:2px;min-width:0}
+.place{font:700 .75rem var(--f-mono);text-align:center;color:var(--silk-dim)}
+.bit{appearance:none;width:100%;height:46px;padding:0;border:2px solid var(--trace);border-radius:4px;background:var(--lo);color:var(--silk-dim);font:700 1.125rem var(--f-mono);cursor:pointer}
+.bit[aria-pressed="true"]{background:var(--hi);border-color:var(--hi);color:var(--hi-ink)}
+.cell{height:32px;display:grid;place-items:center;font:700 1rem var(--f-mono);color:var(--silk-dim);border-radius:3px}
+
+.sw-wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.sw{width:96px;height:72px;font-size:2rem;flex:0 0 auto}
+.lamp{width:58px;height:58px;border-radius:50%;background:var(--lo);border:2px solid var(--trace);flex:0 0 auto}
+.lamp.on{background:var(--hi);border-color:var(--hi);box-shadow:0 0 22px var(--hi)}
+.scope{width:100%;height:64px;display:block;background:var(--board-deep);border-radius:4px}
+.found{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.found span{padding:5px 0;text-align:center;border:1px dashed var(--trace);border-radius:3px;font:700 .9375rem var(--f-mono);color:var(--silk-dim)}
+.found span.hit{background:var(--hi);border:1px solid var(--hi);color:var(--hi-ink)}
+
+.gate-svg{width:100%;max-width:340px;height:auto;display:block;margin-inline:auto}
+.board table.truth{width:auto;font-family:var(--f-mono)}
+.truth td,.truth th{padding:4px 16px 4px 0;text-align:center}
+.truth tr.now td{color:var(--hi);font-weight:700}
+
+.adder{display:grid;grid-template-columns:3.2rem repeat(4,minmax(0,1fr));gap:3px;align-items:center;max-width:24rem}
+.adder .cap{font:700 .75rem var(--f-mono);color:var(--silk-dim)}
+.adder .cell.active,.adder .bit.active{outline:2px solid var(--silk);outline-offset:0}
+.adder .sum{color:var(--hi)}
+.adder .carry{height:22px;font-size:.8125rem}
+
+.mulrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:baseline;padding-block:3px;border-bottom:1px solid var(--trace)}
+.mulrow .mono{font-weight:700}
+.mulrow.off .mono,.mulrow.off span{color:var(--silk-dim)}
+.mulrow.total .mono{color:var(--hi)}
+
+.chars{display:flex;flex-wrap:wrap;gap:6px}
+.chr{display:grid;gap:1px;padding:5px 8px;border:1px solid var(--trace);border-radius:4px;background:var(--board-deep);font-family:var(--f-mono);min-width:5.4rem}
+.chr b{font-size:1.25rem;color:var(--hi);line-height:1.2}
+.chr span{font-size:.875rem}
+.chr .n{color:var(--silk-dim)}
+
+.ram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+@media (min-width:640px){.ram{grid-template-columns:repeat(8,minmax(0,1fr))}}
+.byte{appearance:none;padding:4px 0;border:2px solid var(--trace);border-radius:3px;background:var(--lo);color:var(--silk);font-family:var(--f-mono);cursor:pointer;display:grid;gap:0;min-width:0}
+.byte i{font-style:normal;font-size:.6875rem;color:var(--silk-dim)}
+.byte span{font-size:.8125rem}
+.byte.sel{background:var(--hi);border-color:var(--hi);color:var(--hi-ink)}
+.byte.sel i{color:var(--hi-ink)}
+
+.cpu{display:grid;gap:12px}
+.cpu>*{min-width:0}
+.cpu-side{display:grid;gap:10px;background:var(--board);padding-block:4px}
+@media (max-width:719px) and (min-height:640px){.cpu-side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 45px);z-index:3;border-bottom:1px dashed var(--silk-dim);padding-bottom:10px}}
+@media (min-width:720px){.cpu{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.regs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stats.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.reg{display:grid;gap:0;padding:4px 6px;background:var(--board-deep);border-radius:4px;min-width:0}
+.reg span:first-child{font:700 .6875rem var(--f-mono);color:var(--silk-dim)}
+.reg span:last-child{font:700 1rem var(--f-mono);color:var(--hi);overflow-wrap:anywhere}
+.stages{margin:0;padding:0;list-style:none;display:grid;gap:2px;font-size:.875rem;line-height:1.35}
+.stages b{display:inline-block;min-width:4.2rem;color:var(--silk-dim)}
+.memrow{display:grid;grid-template-columns:1.35rem repeat(8,1.3rem) 1.8rem minmax(0,1fr);gap:1px;align-items:center;padding-block:1px;border-radius:3px;font-family:var(--f-mono);font-size:.8125rem}
+.memrow .bit{height:26px;font-size:.8125rem;border-width:1px;border-radius:2px}
+.memrow .ad{color:var(--silk-dim);text-align:right;padding-right:3px}
+.memrow .val{text-align:right;padding-right:4px}
+.memrow .asm{white-space:nowrap;color:var(--silk-dim);overflow:hidden;text-overflow:ellipsis}
+.memrow.pc{background:var(--trace);box-shadow:0 0 0 2px var(--hi)}
+.memrow.pc .asm{color:var(--hi);font-weight:700}
+.memrow.touch .val{color:var(--hi);font-weight:700}
+details{font-size:.9375rem}
+summary{cursor:pointer;font-weight:600;min-height:32px}
+
+.rams{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+.rc{aspect-ratio:1;max-width:100%;padding:0;border:1px solid var(--trace);background:var(--lo);color:var(--silk-dim);border-radius:2px;font:400 .6875rem var(--f-mono);cursor:pointer}
+.rc:nth-child(4n+1){margin-left:0}
+.rc.in{background:var(--trace);color:var(--silk)}
+.rc.hit{background:var(--ok-b);color:var(--board-deep)}
+.rc.miss{background:var(--bad-b);color:var(--board-deep)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.barrow{display:grid;grid-template-columns:4.7rem minmax(0,1fr) 5.2rem;gap:8px;align-items:center;font-size:.9375rem}
+.bar{height:16px;background:var(--lo);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--hi);width:0}
+.barrow .num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.fl{display:grid;gap:4px}
+.flhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;font-size:.9375rem}
+.fbits{display:flex;flex-wrap:wrap;gap:1px}
+.fb{width:1.05rem;text-align:center;font:700 .8125rem/1.5 var(--f-mono);border-radius:1px}
+.fb.s{background:var(--silk);color:var(--board-deep)}
+.fb.e{background:var(--hi);color:var(--hi-ink)}
+.fb.m{background:var(--ok-b);color:var(--board-deep)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.875rem}
+.legend span::before{content:"";display:inline-block;width:.8em;height:.8em;margin-right:5px;border-radius:1px;background:var(--c)}
+.board canvas{display:block;width:100%;height:150px;background:var(--board-deep);border-radius:4px}
+
+.area{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.die{aspect-ratio:2/1;max-width:100%;border:2px solid var(--silk-dim);border-radius:3px;background:var(--board-deep)}
+.die.cpu-d{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px}
+.die.cpu-d i{background:var(--hi);border-radius:2px}
+.die.gpu-d{background-image:linear-gradient(var(--board-deep) 1px,transparent 1px),linear-gradient(90deg,var(--board-deep) 1px,transparent 1px);background-color:var(--hi);background-size:3px 3px}
+
+.airows{display:grid;gap:8px}
+.airow{display:grid;grid-template-columns:5rem minmax(0,1fr) 2.8rem;gap:4px 8px;align-items:center}
+.airow .calc{grid-column:1/-1;font-size:.8125rem;line-height:1.35;color:var(--silk-dim);overflow-wrap:anywhere}
+.airow .mono:not(.calc){text-align:right}
+.tok{appearance:none;min-height:36px;padding:2px 6px;border:2px solid var(--silk-dim);border-radius:4px;background:var(--board-deep);color:var(--silk);font-weight:600;cursor:pointer}
+.sent{font:700 1.375rem/1.35 var(--f-mono);color:var(--hi);overflow-wrap:anywhere}
+.chain{margin:0;padding:0;list-style:none;display:grid;gap:0}
+.chain li{padding:7px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
+
+.drill{display:grid;gap:10px}
+.drill form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.q{font:700 clamp(1.125rem,4.6vw,1.5rem)/1.35 var(--f-mono);color:var(--silk);overflow-wrap:anywhere}
+
+.pager{position:sticky;bottom:0;z-index:8;background:var(--bg);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
+.pager-in{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:7px}
+.nav{appearance:none;min-height:42px;padding:6px 14px;border:2px solid var(--accent);border-radius:4px;background:none;color:var(--accent);font-weight:700;cursor:pointer}
+.nav.go{background:var(--accent);color:var(--on-accent)}
+.nav:disabled{visibility:hidden}
+#pos{font:700 .8125rem var(--f-mono);color:var(--muted);white-space:nowrap}
+@media (max-height:480px){.top,.pager{position:static}}
+@media (prefers-reduced-motion:no-preference){.lamp,.bit{transition:background-color .12s,border-color .12s}}
+
+/* Site tab bar above the level rail. It scrolls away; only the level rail stays sticky, so the two never overlap. */
+:root{--accent-bg:#F6E6D8;--teal:#0F6E56;--teal-bg:#E1F5EE;--purple:var(--accent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent-bg:#3A2410;--teal:#5DCAA5;--teal-bg:#04342C}}
+:root[data-theme="dark"]{--accent-bg:#3A2410;--teal:#5DCAA5;--teal-bg:#04342C}
+body{margin:0}
+/* Only one level shows at a time: .ch sets display:grid, so hidden needs to win. */
+[hidden]:not([hidden=until-found i]){display:none!important}
+.site .top-in{padding-block:10px 8px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.tabs a{font-family:var(--f-mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--rule);background:var(--surface)}
+.tabs a:hover{color:var(--ink);border-color:var(--accent)}
+.tabs a[aria-current="page"]{color:var(--accent);border-color:var(--accent);background:var(--accent-bg)}
+/* fx.js slides .status and .chain in on scroll. Here the levels swap in place, so task feedback must always be fully visible. */
+#deck .fx-slide,#deck .fx-slide.fx-soft{transform:none;opacity:1;will-change:auto}
+</style>
+<link rel="stylesheet" href="/fx.css">
+</head>
+<body>
+
+<div class="site"><div class="top-in">
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/bit" aria-current="page">0 Bits</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
+</div></div>
+
+<header class="top"><div class="top-in"><nav class="rail" id="rail" aria-label="Levels"></nav></div></header>
+
+<main class="wrap" id="deck">
+
+<section class="ch" data-id="bit">
+  <p class="eyebrow">Level 1 · Transistor</p>
+  <h1>From Bit to Token</h1>
+  <p class="lede">The whole story in 6 steps. You can click through each one yourself.</p>
+  <ol class="chain">
+    <li><span>A transistor is a switch: 0 or 1.</span><a href="#bit">Level 1</a></li>
+    <li><span>Switches make gates, which are simple rules.</span><a href="#gates">Level 3</a></li>
+    <li><span>Gates add bits.</span><a href="#adding">Level 4</a></li>
+    <li><span>Adding gives multiplying.</span><a href="#multiply">Level 5</a></li>
+    <li><span>The processor does this step by step, following instructions.</span><a href="#cpu">Level 8</a></li>
+    <li><span>AI (Artificial Intelligence) is billions of multiplications. A GPU (Graphics Processing Unit, the graphics processor) does them all at once.</span><a href="#ai">Level 13</a></li>
+  </ol>
+  <h2>A bit is one switch</h2>
+  <p class="plain">Like a light switch. On is 1, and off is 0.</p>
+  <p>A processor has billions of these tiny switches. They are called transistors.</p>
+  <div class="board">
+    <p class="label">U1 · One transistor</p>
+    <div class="sw-wrap">
+      <button class="bit sw" id="sw" type="button" aria-pressed="false" aria-label="Switch">0</button>
+      <div class="lamp" id="lamp"></div>
+      <p class="small" id="sw-text"></p>
+    </div>
+    <svg class="scope" viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true"><path id="scope" fill="none" stroke="var(--hi)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+    <div class="task">
+      <h3>Task</h3>
+      <p>One bit has 2 states. Set three switches in every possible way.</p>
+      <div class="bits" id="three" style="max-width:190px"></div>
+      <div class="found" id="found"></div>
+      <p class="status" id="st-bit" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>Each extra bit doubles the number of states.</p>
+</section>
+
+<section class="ch" data-id="numbers" hidden>
+  <p class="eyebrow">Level 2 · Writing numbers</p>
+  <h2>The place sets the value</h2>
+  <p class="plain">Each place has a fixed value. You add up the values where there is a 1.</p>
+  <p>Think of the number 111: the same digits mean 100, 10 and 1, because they stand in different places. In bits, each place is 2 times bigger than the one before.</p>
+  <div class="board">
+    <p class="label">U2 · 8-bit register</p>
+    <div class="bits" id="num-bits"></div>
+    <p class="big" id="num-val"></p>
+    <p class="small" id="num-sum"></p>
+    <div class="row">
+      <button class="btn" id="num-inc" type="button">Add 1</button>
+      <button class="btn" id="num-clr" type="button">Clear</button>
+    </div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Build the number <b class="mono" id="num-target"></b>. Round <span id="num-round"></span> of 3.</p>
+      <p class="status" id="st-num" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>8 bits make 1 byte. A byte has 256 values, from 0 to 255.</p>
+  <details class="more"><summary>More: how many values fit in bits</summary>
+    <div class="board">
+      <p class="label">U2B · Each bit doubles</p>
+      <label class="field" for="pow"><span>Number of bits: <b class="mono" id="pow-n"></b></span>
+        <input id="pow" type="range" min="1" max="64" value="8"></label>
+      <p class="big" id="pow-val"></p>
+      <p class="small" id="pow-note"></p>
+    </div>
+  </details>
+</section>
+
+<section class="ch" data-id="gates" hidden>
+  <p class="eyebrow">Level 3 · Logic gates</p>
+  <h2>Switches turn into logic</h2>
+  <p class="plain">A gate is a simple rule. It takes bits in and gives one bit out.</p>
+  <p>A gate understands nothing. Current either flows or it does not. There are 4 basic rules.</p>
+  <div class="scroll"><table>
+    <tr><th>Gate</th><th>Gives 1 when</th></tr>
+    <tr><td class="mono">NOT<br>not</td><td>The input is 0. Like a lamp with a dusk sensor: it shines when there is no sun.</td></tr>
+    <tr><td class="mono">AND<br>and</td><td>Both inputs are 1. Like two switches one after the other.</td></tr>
+    <tr><td class="mono">OR<br>or</td><td>At least one input is 1. Like two switches side by side.</td></tr>
+    <tr><td class="mono">XOR<br>exclusive OR</td><td>The inputs are different, "either one or the other". Like a two-way switch on a staircase.</td></tr>
+  </table></div>
+  <div class="board">
+    <p class="label">U3 · Gate</p>
+    <div class="row" id="g-pick" role="group" aria-label="Choose a gate"></div>
+    <div id="g-svg"></div>
+    <div class="row">
+      <button class="btn" id="g-a" type="button" aria-pressed="false">A = 0</button>
+      <button class="btn" id="g-b" type="button" aria-pressed="false">B = 0</button>
+    </div>
+    <p class="small" id="g-desc"></p>
+    <div class="scroll"><table class="truth" id="g-table"></table></div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Choose XOR and light up the output. Then change one switch and see the output go dark.</p>
+      <p class="status" id="st-gate" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>A gate is a rule, not thinking. XOR and AND are enough for adding, as the next level shows.</p>
+</section>
+
+<section class="ch" data-id="adding" hidden>
+  <p class="eyebrow">Level 4 · Adder</p>
+  <h2>Gates add numbers</h2>
+  <p class="plain">Adding two bits has only 4 cases. Two gates cover all of them.</p>
+  <div class="board">
+    <p class="label">U4 · Adding two bits</p>
+    <div class="row">
+      <button class="btn" id="ha-a" type="button" aria-pressed="false">A = 0</button>
+      <span class="mono">+</span>
+      <button class="btn" id="ha-b" type="button" aria-pressed="false">B = 0</button>
+    </div>
+    <p class="big" id="ha-res"></p>
+    <div class="stats two">
+      <div class="reg"><span>LEFT DIGIT: AND</span><span id="ha-l"></span></div>
+      <div class="reg"><span>RIGHT DIGIT: XOR</span><span id="ha-r"></span></div>
+    </div>
+    <p class="small" id="ha-msg"></p>
+  </div>
+  <p>You add longer numbers column by column, from the right, like on paper. When a column comes to 10, you write 0 and carry 1 to the next column.</p>
+  <div class="board">
+    <p class="label">U4B · Adding 4 bits</p>
+    <div class="adder" id="adder"></div>
+    <p class="big" id="add-res"></p>
+    <p class="small" id="add-msg"></p>
+    <div class="row"><button class="btn main" id="add-step" type="button">Step by step</button></div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>4 bits hold numbers up to 15. Set A and B so that the true result goes above 15.</p>
+      <p class="status" id="st-add" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>XOR gives the digit, and AND gives the carry. When the last carry has nowhere to go, it falls off and the result wraps round.</p>
+  <details class="more"><summary>More: what this looks like in a chip</summary>
+    <p>A column has 3 bits: A, B and the carry. A circuit of 5 gates (2 XOR, 2 AND and an OR) works out the sum and the new carry from them. This is a full adder. A processor has a row of them side by side, one for each bit.</p>
+    <p>When the carry falls off, the processor sets an overflow flag. The program decides what to do about it.</p>
+  </details>
+</section>
+
+<section class="ch" data-id="multiply" hidden>
+  <p class="eyebrow">Level 5 · Multiplying</p>
+  <h2>Multiplying is shifting and adding</h2>
+  <p class="plain">On paper you multiply row by row and add the rows up. In bits it is simpler, because each row is either A or nothing.</p>
+  <p>You look at the bits of the number B. Where there is a 1, you write A shifted to that place. Shifting 1 place to the left multiplies by 2.</p>
+  <div class="board">
+    <p class="label">U5 · Multiplying 4 × 4 bits</p>
+    <div class="area">
+      <div class="field"><span class="small">A = <b class="mono" id="mul-a"></b></span><div class="bits" id="mul-ba"></div></div>
+      <div class="field"><span class="small">B = <b class="mono" id="mul-b"></b></span><div class="bits" id="mul-bb"></div></div>
+    </div>
+    <div id="mul-rows"></div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Set A and B so that the result is 30.</p>
+      <p class="status" id="st-mul" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>Multiplying is shifting and adding. AI does this billions of times.</p>
+</section>
+
+<section class="ch" data-id="text" hidden>
+  <p class="eyebrow">Level 6 · Text</p>
+  <h2>A letter is a number by agreement</h2>
+  <p class="plain">Every letter has its own number. The computer stores the number, not the letter.</p>
+  <p>The numbers are set by a shared agreement. The older one is ASCII (American Standard Code for Information Interchange), and today's is Unicode.</p>
+  <div class="board">
+    <p class="label">U6 · Text in bytes</p>
+    <label class="field" for="txt"><span class="small">Type some text</span><input id="txt" type="text" maxlength="24" value="norbert" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+    <div class="chars" id="chars"></div>
+    <p class="small mono" id="txt-sum"></p>
+    <div class="row"><button class="btn" id="txt-case" type="button">Flip the bit worth 32 in the first letter</button></div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Type text that has 2 characters but takes 3 bytes. Hint: use an accented letter such as é.</p>
+      <p class="status" id="st-txt" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>The same bits are the number 65 one time and the letter A another time. The program gives them their meaning.</p>
+</section>
+
+<section class="ch" data-id="memory" hidden>
+  <p class="eyebrow">Level 7 · Memory</p>
+  <h2>Memory is a row of bytes with no dividers</h2>
+  <p class="plain">Memory is a row of numbered lockers. Each one holds 1 byte.</p>
+  <p>RAM (Random Access Memory, the working memory) has no dividers between pieces of data. The locker number is the address. An instruction says which locker to start reading from and how many to take.</p>
+  <div class="board">
+    <p class="label">U7 · 16 bytes of RAM</p>
+    <div class="ram" id="ram"></div>
+    <div class="row" id="ram-size" role="group" aria-label="How many bytes to read"></div>
+    <p class="small mono" id="ram-cmd"></p>
+    <div class="stats two">
+      <div class="reg"><span>AS TEXT</span><span id="ram-t"></span></div>
+      <div class="reg"><span>AS A NUMBER</span><span id="ram-n"></span></div>
+    </div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>A word in memory ends with a byte of all zeros. That is how the program knows where the text ends. Tap that byte.</p>
+      <p class="status" id="st-ram" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>The same bits are text one time and a number another time. The processor does not check. It takes as many lockers as the instruction says.</p>
+</section>
+
+<section class="ch" data-id="cpu" hidden>
+  <p class="eyebrow">Level 8 · Processor</p>
+  <h2>The processor repeats 3 steps</h2>
+  <p class="plain">A processor works like someone reading a recipe. It takes a line, understands it, does it and moves to the next one.</p>
+  <p>The CPU (Central Processing Unit, the main processor) does nothing more than that. Box A holds the current result, and the counter shows the line number. The program is bits in memory too, so you can change it with a tap.</p>
+  <div class="board">
+    <p class="label">U8 · Mini computer, 16 bytes</p>
+    <div class="row" id="cpu-progs" role="group" aria-label="Program"></div>
+    <div class="cpu">
+      <div class="cpu-side">
+        <div class="regs">
+          <div class="reg"><span>BOX A</span><span id="r-a"></span></div>
+          <div class="reg"><span>COUNTER</span><span id="r-pc"></span></div>
+          <div class="reg"><span>OUTPUT</span><span id="r-out"></span></div>
+        </div>
+        <div class="row">
+          <button class="btn main" id="cpu-step" type="button">Step</button>
+          <button class="btn" id="cpu-run" type="button">Run</button>
+          <button class="btn" id="cpu-reset" type="button">Start again</button>
+        </div>
+        <ul class="stages">
+          <li><b>Fetch</b><span id="s-f">Press Step.</span></li>
+          <li><b>Decode</b><span id="s-d"></span></li>
+          <li><b>Execute</b><span id="s-e"></span></li>
+        </ul>
+      </div>
+      <div id="cpu-mem" aria-label="Program memory"></div>
+    </div>
+    <details>
+      <summary>List of instructions</summary>
+      <div class="scroll"><table>
+        <tr><th>Bits</th><th>Name</th><th>What it does</th></tr>
+        <tr><td class="mono">0000</td><td class="mono">NOP</td><td>Nothing</td></tr>
+        <tr><td class="mono">0001</td><td class="mono">LDA x</td><td>Load address x into A</td></tr>
+        <tr><td class="mono">0010</td><td class="mono">ADD x</td><td>Add address x to A</td></tr>
+        <tr><td class="mono">0011</td><td class="mono">SUB x</td><td>Subtract address x from A</td></tr>
+        <tr><td class="mono">0100</td><td class="mono">STA x</td><td>Store A at address x</td></tr>
+        <tr><td class="mono">0101</td><td class="mono">LDI n</td><td>Put the number n into A</td></tr>
+        <tr><td class="mono">0110</td><td class="mono">JMP x</td><td>Jump to address x</td></tr>
+        <tr><td class="mono">0111</td><td class="mono">JZ x</td><td>Jump if the last result was 0</td></tr>
+        <tr><td class="mono">1110</td><td class="mono">OUT</td><td>Print A</td></tr>
+        <tr><td class="mono">1111</td><td class="mono">HLT</td><td>End the program</td></tr>
+      </table></div>
+      <p class="small">The top 4 bits are the command. The bottom 4 bits are an address or a number.</p>
+    </details>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Load the program 7 + 5. Change one bit in line 1 so that ADD becomes SUB. Then press Step until the program prints 2.</p>
+      <p class="status" id="st-cpu" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>Fetch, understand, execute. A real CPU does the same, only billions of times a second.</p>
+</section>
+
+<section class="ch" data-id="compiler" hidden>
+  <p class="eyebrow">Level 9 · Translator</p>
+  <h2>Text turns into instructions</h2>
+  <p class="plain">A compiler is a translator. It turns your text into instructions, and the instructions into bits.</p>
+  <p>This small compiler writes a program for the mini computer from level 8.</p>
+  <div class="board">
+    <p class="label">U9 · Compiler</p>
+    <label class="field" for="cc-in"><span class="small">A calculation with numbers from 0 to 255 and the signs + and −</span><input id="cc-in" type="text" value="7 + 5 - 2" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+    <p class="status" id="cc-err" aria-live="polite"></p>
+    <p class="small" id="cc-toks"></p>
+    <div class="scroll"><table id="cc-tab"></table></div>
+    <p class="small" id="cc-sum"></p>
+    <div class="row"><button class="btn main" id="cc-load" type="button">Load into the mini computer</button></div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Write a calculation that takes exactly 10 memory cells. Hint: each number takes 2 cells, and the end of the program takes another 2.</p>
+      <p class="status" id="st-cc" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>The processor never sees your text. It only sees the bits after translation.</p>
+  <details class="more"><summary>More: compiler and interpreter</summary>
+    <div class="scroll"><table>
+      <tr><th></th><th>Compiler</th><th>Interpreter</th></tr>
+      <tr><td>When it translates</td><td>Before the program runs</td><td>While the program runs</td></tr>
+      <tr><td>What it makes</td><td>A ready program</td><td>Usually no separate file</td></tr>
+      <tr><td>Speed</td><td>Usually faster</td><td>Usually slower</td></tr>
+      <tr><td>Example</td><td>C++</td><td>Python</td></tr>
+    </table></div>
+    <p><span class="mono">hipcc</span> from the AMD (Advanced Micro Devices) course is a compiler too, only its instructions go to a GPU.</p>
+  </details>
+</section>
+
+<section class="ch" data-id="cache" hidden>
+  <p class="eyebrow">Level 10 · Memory hierarchy</p>
+  <h2>The processor cannot wait for RAM</h2>
+  <p class="plain">The cache is what you hold in your hand. RAM is the desk, and the disk is the cupboard.</p>
+  <p>The processor calculates faster than RAM can hand it data. So it keeps the data it needs close by. From RAM it takes several neighbouring cells at once, because they will probably be needed soon.</p>
+  <div class="scroll"><table>
+    <tr><th>If the cache answered in 1 second</th><th>Waiting</th></tr>
+    <tr><td>RAM</td><td>About 2 minutes</td></tr>
+    <tr><td>Fast disk</td><td>About 1 day</td></tr>
+    <tr><td>Old spinning disk</td><td>About 4 months</td></tr>
+  </table></div>
+  <div class="board">
+    <p class="label">U10 · Cache with 2 lines, 4 cells per line</p>
+    <p class="small">Tap a RAM cell to read it. A cache hit costs 1 ns (nanosecond) here, and a miss costs 100 ns.</p>
+    <div class="rams" id="rams"></div>
+    <div class="stats">
+      <div class="reg"><span>HITS</span><span id="c-hit">0</span></div>
+      <div class="reg"><span>MISSES</span><span id="c-miss">0</span></div>
+      <div class="reg"><span>TIME</span><span id="c-time">0 ns</span></div>
+    </div>
+    <div class="row">
+      <button class="btn main" id="c-seq" type="button">Read in order</button>
+      <button class="btn main" id="c-jump" type="button">Read jumping around</button>
+      <button class="btn" id="c-clr" type="button">Clear</button>
+    </div>
+    <div class="field">
+      <div class="barrow"><span>In order</span><div class="bar"><i id="b-seq"></i></div><span class="num" id="n-seq">?</span></div>
+      <div class="barrow"><span>Jumping</span><div class="bar"><i id="b-jump"></i></div><span class="num" id="n-jump">?</span></div>
+    </div>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Run both patterns. Each one reads 32 cells, but the time will be different.</p>
+      <p class="status" id="st-cache" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>Reading in order is fast, and jumping around is slow. That is why a GPU likes continuous streams of data.</p>
+</section>
+
+<section class="ch" data-id="fractions" hidden>
+  <p class="eyebrow">Level 11 · Fractions</p>
+  <h2>Fewer bits means less precision</h2>
+  <p class="plain">Like π written as 3.14 instead of 3.1415927. The shorter form is less precise, but it takes less space.</p>
+  <p>A model's weights are fractions. The fewer bits, the bigger the steps between values.</p>
+  <div class="board">
+    <p class="label">U11 · What happens when you take bits away</p>
+    <canvas id="q-c" aria-label="A signal and its version stored with a small number of bits" role="img"></canvas>
+    <label class="field" for="q-n"><span>Number of bits: <b class="mono" id="q-v"></b></span><input id="q-n" type="range" min="1" max="8" value="3"></label>
+    <p class="small" id="q-t"></p>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Find the smallest number of bits at which the gap drops below 0.01.</p>
+      <p class="status" id="st-q" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>Fewer bits means less memory and faster sums. AI copes with small errors, because the result comes from billions of numbers.</p>
+  <details class="more"><summary>More: FP16 and BF16 from the AMD slide</summary>
+    <p>FP stands for Floating Point, a number whose decimal point can move. BF stands for Brain Floating Point. The digits in the name are the number of bits. The bits split into 3 parts: the sign says plus or minus, the exponent says how big the number is, and the mantissa says how precisely it is written.</p>
+    <div class="scroll"><table>
+      <tr><th>Format</th><th>Sign</th><th>Exp.</th><th>Mantissa</th><th>Maximum</th></tr>
+      <tr><td>FP32</td><td class="mono">1</td><td class="mono">8</td><td class="mono">23</td><td class="mono">3.4 × 10³⁸</td></tr>
+      <tr><td>FP16</td><td class="mono">1</td><td class="mono">5</td><td class="mono">10</td><td class="mono">65,504</td></tr>
+      <tr><td>BF16</td><td class="mono">1</td><td class="mono">8</td><td class="mono">7</td><td class="mono">3.4 × 10³⁸</td></tr>
+    </table></div>
+    <div class="board">
+      <p class="label">U11B · The same number in 3 formats</p>
+      <label class="field" for="fl-in"><span class="small">Type a number. Try 70,000 too.</span><input id="fl-in" type="text" inputmode="decimal" value="0.7213" autocomplete="off"></label>
+      <p class="status no" id="fl-err" aria-live="polite"></p>
+      <div class="legend">
+        <span style="--c:var(--silk)">Sign</span><span style="--c:var(--hi)">Exponent</span><span style="--c:var(--ok-b)">Mantissa</span>
+      </div>
+      <div class="fl" id="fl32"></div><div class="fl" id="fl16"></div><div class="fl" id="flb16"></div>
+      <p class="status" id="st-fl" aria-live="polite"></p>
+    </div>
+  </details>
+</section>
+
+<section class="ch" data-id="gpu" hidden>
+  <p class="eyebrow">Level 12 · GPU</p>
+  <h2>Thousands of simple units</h2>
+  <p class="plain">A CPU is a few master craftsmen. A GPU is thousands of simple helpers who all do the same thing at once.</p>
+  <p>When peeling a thousand potatoes, the helpers win. On a job where every step depends on the one before, the master wins.</p>
+  <div class="board">
+    <p class="label">U12 · The same area of silicon</p>
+    <div class="area">
+      <div class="field"><div class="die cpu-d" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="small">CPU: 8 strong cores</span></div>
+      <div class="field"><div class="die gpu-d" aria-hidden="true"></div><span class="small">GPU: 1000 simple units</span></div>
+    </div>
+    <label class="field" for="par"><span>How much of the work can run in parallel: <b class="mono" id="par-v"></b></span><input id="par" type="range" min="0" max="100" value="50"></label>
+    <div class="field">
+      <div class="barrow"><span>CPU</span><div class="bar"><i id="t-cpu"></i></div><span class="num" id="v-cpu"></span></div>
+      <div class="barrow"><span>GPU</span><div class="bar"><i id="t-gpu"></i></div><span class="num" id="v-gpu"></span></div>
+    </div>
+    <p class="small" id="par-msg"></p>
+    <p class="small dim">Simplified model: the work takes 1 s on one CPU core, and one simple unit is 4 times slower than a core.</p>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Set the slider to the first percentage at which the GPU wins.</p>
+      <div class="row"><button class="btn main" id="par-check" type="button">Check</button></div>
+      <p class="status" id="st-gpu" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="keep"><b>Remember</b>A GPU only wins when the work is almost entirely parallel. Multiplying matrices is exactly that kind of work.</p>
+  <details class="more"><summary>More: names and numbers from the AMD slide</summary>
+    <p>A simple unit is an ALU (Arithmetic Logic Unit, the part that does the sums). One command for many units at once is SIMT (Single Instruction, Multiple Threads: one instruction, many threads).</p>
+    <p>The slide gives an estimate of 18 to 25 TFLOPS (tera floating-point operations per second, trillions of calculations a second) for the EPYC 9754 CPU and about 1300 TFLOPS for the MI300X.</p>
+  </details>
+</section>
+
+<section class="ch" data-id="ai" hidden>
+  <p class="eyebrow">Level 13 · Language model</p>
+  <h2>An answer is matrix multiplication</h2>
+  <p class="plain">A model works like a very strong autocomplete. It works out which token, a small piece of text, fits best next.</p>
+  <p>Text turns into numbers, the numbers are multiplied by weights, and the result is the chance of each token. This toy model has 15 weights. Large models have billions of them.</p>
+  <div class="board">
+    <p class="label">U13 · A model with 15 weights</p>
+    <p class="sent" id="ai-sent" aria-live="polite"></p>
+    <div class="row">
+      <button class="btn" id="ai-kot" type="button">Start with: cat</button>
+      <button class="btn" id="ai-pies" type="button">Start with: dog</button>
+    </div>
+    <p class="small dim">What fits next? Tap a token or take the best one.</p>
+    <div class="airows" id="ai-mat"></div>
+    <div class="row">
+      <button class="btn main" id="ai-top" type="button">Take the best</button>
+      <button class="btn" id="ai-calc" type="button" aria-pressed="false">Show the maths</button>
+    </div>
+    <div class="field" id="ai-more" hidden>
+      <p class="small">The last token is 3 numbers (animal; food; end): <span class="mono" id="ai-vec"></span></p>
+      <p class="small" id="ai-count"></p>
+    </div>
+    <label class="field" for="ai-w"><span>Weight: "sleeps" × feature "animal": <b class="mono" id="ai-wv"></b></span><input id="ai-w" type="range" min="0" max="3" step="0.1" value="1.6"></label>
+    <div class="task">
+      <h3>Task</h3>
+      <p>Training a model means adjusting its weights. Change the weight so that after the token "cat" the model prefers "sleeps" to "eats".</p>
+      <p class="status" id="st-ai" aria-live="polite"></p>
+    </div>
+  </div>
+  <p>This model only sees the last token, so after "eats" it does not know who is eating. Large models look at the whole text.</p>
+  <p class="keep"><b>Remember</b>Every token is one pass through the model. With 10 billion weights that is about 10 billion multiplications, and each of them is made of the gates from level 3.</p>
+</section>
+
+<section class="ch" data-id="practice" hidden>
+  <p class="eyebrow">Practice</p>
+  <h2>Practise until it becomes a habit</h2>
+  <p class="lede">The questions are random and never run out. A longer streak brings longer numbers.</p>
+  <div class="board drill">
+    <p class="label">T1 · Practice loop</p>
+    <div class="stats">
+      <div class="reg"><span>STREAK</span><span id="d-streak">0</span></div>
+      <div class="reg"><span>BEST</span><span id="d-best">0</span></div>
+      <div class="reg"><span>CORRECT</span><span id="d-ok">0</span></div>
+    </div>
+    <p class="q" id="d-q" aria-live="polite"></p>
+    <form id="d-form" autocomplete="off">
+      <input id="d-in" type="text" inputmode="numeric" aria-label="Answer" autocomplete="off">
+      <button class="btn main" type="submit">Check</button>
+    </form>
+    <p class="status" id="d-st" aria-live="polite"></p>
+  </div>
+  <details>
+    <summary>Glossary of abbreviations</summary>
+    <div class="scroll"><table>
+      <tr><th>Abbreviation</th><th>Meaning</th></tr>
+      <tr><td>ALU</td><td>Arithmetic Logic Unit, the part that does the sums</td></tr>
+      <tr><td>ASCII</td><td>American Standard Code for Information Interchange</td></tr>
+      <tr><td>BF16</td><td>Brain Floating Point, 16-bit</td></tr>
+      <tr><td>CPU</td><td>Central Processing Unit, the main processor</td></tr>
+      <tr><td>FP16, FP32</td><td>Floating Point, a number whose decimal point can move, on 16 or 32 bits</td></tr>
+      <tr><td>GPU</td><td>Graphics Processing Unit, the graphics processor</td></tr>
+      <tr><td>HDD</td><td>Hard Disk Drive, a disk with spinning platters</td></tr>
+      <tr><td>PC</td><td>Program Counter, the line counter</td></tr>
+      <tr><td>RAM</td><td>Random Access Memory, the working memory</td></tr>
+      <tr><td>SIMT</td><td>Single Instruction, Multiple Threads: one instruction, many threads</td></tr>
+      <tr><td>SSD</td><td>Solid State Drive, a disk with no moving parts</td></tr>
+      <tr><td>TFLOPS</td><td>Tera floating-point operations per second, trillions of calculations a second</td></tr>
+      <tr><td>UTF-8</td><td>Unicode Transformation Format, 8-bit</td></tr>
+      <tr><td>XOR</td><td>Exclusive OR, "either one or the other"</td></tr>
+      <tr><td>MB, GB</td><td>Megabyte, gigabyte</td></tr>
+    </table></div>
+  </details>
+</section>
+</main>
+
+<nav class="pager" aria-label="Move between levels"><div class="pager-in">
+  <button class="nav" id="prev" type="button">Back</button>
+  <span id="pos"></span>
+  <button class="nav go" id="next" type="button">Next</button>
+</div></nav>
+
+<script id="logic">
+const bits=(v,n)=>(v>>>0).toString(2).padStart(n,'0');
+const gates={NOT:a=>a?0:1,AND:(a,b)=>a&b,OR:(a,b)=>a|b,XOR:(a,b)=>a^b};
+function fullAdder(a,b,c){const x=gates.XOR(a,b);return{s:gates.XOR(x,c),c:gates.OR(gates.AND(a,b),gates.AND(x,c))}}
+function add8(A,B,n=8){let c=0,sum=0;const carries=[0];for(let i=0;i<n;i++){const r=fullAdder(A>>i&1,B>>i&1,c);sum|=r.s<<i;c=r.c;carries.push(c)}return{sum,carries,overflow:c===1}}
+function terms(v){const t=[];for(let i=15;i>=0;i--)if(v>>i&1)t.push(2**i);return t.length?t.join(' + '):'0'}
+
+function roundEven(x){const f=Math.floor(x),d=x-f;if(d>.5)return f+1;if(d<.5)return f;return f%2?f+1:f}
+function encodeFloat(x,eb,mb){
+  const bias=2**(eb-1)-1,emin=1-bias,emax=bias,sign=(x<0||Object.is(x,-0))?1:0,a=Math.abs(x);
+  const pack=(ef,fr,value)=>({s:String(sign),e:Number(ef).toString(2).padStart(eb,'0'),m:Number(fr).toString(2).padStart(mb,'0'),value:sign?-value:value});
+  if(a===0)return pack(0,0,0);
+  if(!isFinite(a))return pack(2**eb-1,0,Infinity);
+  let e=Math.floor(Math.log2(a));
+  if(2**e>a)e--;else if(2**(e+1)<=a)e++;
+  let ee=Math.max(e,emin);
+  let m=roundEven(a/2**(ee-mb));
+  if(m>=2**(mb+1)){ee++;m/=2}
+  if(ee>emax)return pack(2**eb-1,0,Infinity);
+  const value=m*2**(ee-mb);
+  return m>=2**mb?pack(ee+bias,m-2**mb,value):pack(0,m,value);
+}
+
+const OPS={0:'NOP',1:'LDA',2:'ADD',3:'SUB',4:'STA',5:'LDI',6:'JMP',7:'JZ',14:'OUT',15:'HLT'};
+const HASARG={1:1,2:1,3:1,4:1,5:1,6:1,7:1};
+function disasm(b){const op=b>>4,arg=b&15;if(!OPS[op])return'?';return HASARG[op]?OPS[op]+' '+arg:OPS[op]}
+function newCpu(mem){return{mem:Uint8Array.from(mem),pc:0,a:0,z:false,halted:false,out:[],steps:0,read:null,wrote:null}}
+function cpuStep(s){
+  if(s.halted)return null;
+  const pc=s.pc,ir=s.mem[pc],op=ir>>4,arg=ir&15,name=OPS[op];
+  const fetch=`Address ${pc}: ${bits(ir,8)}`;
+  let decode=name?`${bits(op,4)} is ${name}`:`${bits(op,4)} is an unknown command`;
+  if(HASARG[op])decode+=`, ${bits(arg,4)} is ${op===5?'the number':'address'} ${arg}`;
+  let exec='';s.pc=(pc+1)&15;s.read=null;s.wrote=null;
+  switch(op){
+    case 0:exec='Do nothing.';break;
+    case 1:s.a=s.mem[arg];s.read=arg;exec=`A = ${s.a}`;break;
+    case 2:{const o=s.a,v=s.mem[arg],r=(o+v)&255;s.a=r;s.z=r===0;s.read=arg;exec=`A = ${o} + ${v} = ${r}${o+v>255?' (overflow)':''}`;break}
+    case 3:{const o=s.a,v=s.mem[arg],r=(o-v)&255;s.a=r;s.z=r===0;s.read=arg;exec=`A = ${o} − ${v} = ${r}${o<v?' (overflow)':''}`;break}
+    case 4:s.mem[arg]=s.a;s.wrote=arg;exec=`Address ${arg} gets ${s.a}`;break;
+    case 5:s.a=arg;exec=`A = ${arg}`;break;
+    case 6:s.pc=arg;exec=`Jump to address ${arg}`;break;
+    case 7:if(s.z){s.pc=arg;exec=`The result is 0, jump to address ${arg}`}else exec='The result is not zero, carry on';break;
+    case 14:s.out.push(s.a);exec=`Print ${s.a}`;break;
+    case 15:s.halted=true;s.pc=pc;exec='End of program';break;
+    default:exec='The processor does not know this, so it moves on';
+  }
+  s.steps++;
+  return{fetch,decode,exec};
+}
+function compileExpr(src){
+  const clean=src.replace(/−/g,'-').replace(/\s+/g,'');
+  if(!clean)return{error:'Type a calculation, for example 7 + 5 - 2.'};
+  const toks=clean.match(/\d+|./g),nums=[],ops=[];
+  for(let i=0;i<toks.length;i++){
+    const t=toks[i];
+    if(i%2===0){
+      if(!/^\d+$/.test(t))return{error:`A number should be here, but there is "${t}".`};
+      if(+t>255)return{error:`${t} does not fit in 8 bits. The largest number is 255.`};
+      nums.push(+t);
+    }else{
+      if(t!=='+'&&t!=='-')return{error:`A + or − sign should be here, but there is "${t}".`};
+      ops.push(t);
+    }
+  }
+  if(toks.length%2===0)return{error:'The calculation cannot end with a sign.'};
+  if(nums.length>7)return{error:'Memory has 16 cells, so it holds at most 7 numbers.'};
+  const n=nums.length,base=16-n,mem=new Array(16).fill(0),rows=[];
+  const put=(a,b,note)=>{mem[a]=b;rows.push({addr:a,byte:b,note})};
+  let a=0;
+  put(a,16|base,`LDA ${base}`);a++;
+  ops.forEach((o,i)=>{put(a,(o==='+'?32:48)|(base+i+1),`${o==='+'?'ADD':'SUB'} ${base+i+1}`);a++});
+  put(a,224,'OUT');a++;put(a,240,'HLT');a++;
+  nums.forEach((v,i)=>put(base+i,v,`Data: ${v}`));
+  return{toks,mem,rows,cells:2*n+2,n};
+}
+function newCache(){return{lines:[],time:0,hits:0,misses:0,last:null}}
+function cacheRead(c,addr,ways=2){
+  const l=addr>>2,i=c.lines.indexOf(l);
+  if(i>=0){c.lines.splice(i,1);c.lines.push(l);c.hits++;c.time+=1;c.last='hit'}
+  else{if(c.lines.length>=ways)c.lines.shift();c.lines.push(l);c.misses++;c.time+=100;c.last='miss'}
+  return c.last;
+}
+function parTimes(p){const f=p/100;return{cpu:(1-f)+f/8,gpu:(1-f)*4+f*4/1000}}
+const TOY={
+  emb:{cat:[.9,.1,0],dog:[.8,.2,.1],eats:[.1,.9,0],sleeps:[.2,0,.9],fish:[0,.1,.9],bone:[.1,0,.8]},
+  out:['eats','sleeps','fish','bone','.'],
+  W:[[2,-1,-2],[1.6,-1,-2],[-1,2.2,-1],[-1,1.8,-1],[-1.5,-1,2.5]]
+};
+function toyForward(vec,W){
+  const scores=W.map(r=>r.reduce((s,w,i)=>s+w*vec[i],0));
+  const ex=scores.map(Math.exp),sum=ex.reduce((a,b)=>a+b,0);
+  return{scores,probs:ex.map(v=>v/sum)};
+}
+/* Reads a number typed with a decimal point or a decimal comma. "70,000" and "1,500.5" count as thousands separators. */
+function parseNum(str){
+  const s=String(str).trim().replace(/\s/g,'');
+  if(/^[-+]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s))return{raw:s.replace(/,/g,''),x:Number(s.replace(/,/g,''))};
+  const raw=s.replace(',','.');return{raw,x:Number(raw)};
+}
+</script>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>n.toLocaleString('en-GB');
+const dec=(v,d)=>v.toFixed(d);
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CH=[['bit','Bit'],['numbers','Numbers'],['gates','Gates'],['adding','Adding'],['multiply','Multiplying'],['text','Text'],['memory','Memory'],['cpu','Processor'],['compiler','Compiler'],['cache','Cache'],['fractions','Fractions'],['gpu','GPU'],['ai','AI'],['practice','Practice']];
+const KEY='from-bit-to-token-v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(prog))}catch(e){}}
+const prog=load();prog.done=prog.done||{};prog.best=prog.best||0;prog.ok=prog.ok||0;
+let cur=null;const hooks={};
+
+function done(id){if(prog.done[id])return;prog.done[id]=1;save();paintRail()}
+function say(id,msg,ok){const e=$(id);e.textContent=msg;e.className='status'+(ok===true?' ok':ok===false?' no':'')}
+
+const rail=$('#rail');
+CH.forEach(([id,name],i)=>{const b=document.createElement('button');b.type='button';b.className='pad';b.dataset.id=id;b.title=name;b.setAttribute('aria-label',name);b.innerHTML=`<b>${i<13?i+1:'P'}</b>`;b.addEventListener('click',()=>go(id));rail.append(b)});
+function paintRail(){$$('.pad').forEach(p=>{p.classList.toggle('done',!!prog.done[p.dataset.id]);if(p.dataset.id===cur)p.setAttribute('aria-current','step');else p.removeAttribute('aria-current')})}
+function go(id,push=true){
+  const i=CH.findIndex(c=>c[0]===id);
+  if(i<0){id='bit';return go(id,push)}
+  if(id===cur){return}
+  cur=id;
+  $$('.ch').forEach(s=>{s.hidden=s.dataset.id!==id});
+  paintRail();
+  const p=$('.pad[aria-current]');rail.scrollLeft=p.offsetLeft-rail.offsetLeft-rail.clientWidth/2+p.offsetWidth/2;
+  $('#prev').disabled=i===0;$('#next').disabled=i===CH.length-1;
+  $('#next').textContent=i<CH.length-1?'Next: '+CH[i+1][1]:'Next';
+  $('#pos').textContent=`${i+1} / ${CH.length}`;
+  prog.last=id;save();
+  if(push&&location.hash.slice(1)!==id){try{location.hash=id}catch(e){}}
+  window.scrollTo(0,0);
+  if(hooks[id])hooks[id]();
+}
+$('#prev').addEventListener('click',()=>{const i=CH.findIndex(c=>c[0]===cur);if(i>0)go(CH[i-1][0])});
+$('#next').addEventListener('click',()=>{const i=CH.findIndex(c=>c[0]===cur);if(i<CH.length-1)go(CH[i+1][0])});
+addEventListener('hashchange',()=>go(location.hash.slice(1)||'bit',false));
+
+function bitRow(host,n,opt={}){
+  const o=Object.assign({value:0,places:true,onChange(){}},opt);let v=o.value;
+  host.style.setProperty('--n',n);const btns=[];
+  for(let i=n-1;i>=0;i--){
+    const w=document.createElement('div');w.className='bitcell';
+    if(o.places){const l=document.createElement('span');l.className='place';l.textContent=2**i;w.append(l)}
+    const b=document.createElement('button');b.type='button';b.className='bit';b.setAttribute('aria-label','Bit worth '+2**i);
+    b.addEventListener('click',()=>{v^=1<<i;paint();o.onChange(v)});
+    w.append(b);host.append(w);btns[i]=b;
+  }
+  function paint(){for(let i=0;i<n;i++){const on=v>>i&1;btns[i].textContent=on;btns[i].setAttribute('aria-pressed',on?'true':'false')}}
+  paint();return{get:()=>v,set(x){v=x;paint()}};
+}
+
+/* Level 1 */
+(function(){
+  let s=0;const hist=new Array(60).fill(0);
+  const draw=()=>{const dx=300/(hist.length-1);const y=b=>b?12:52;let d=`M0 ${y(hist[0])}`;hist.forEach((b,i)=>{if(i)d+=` H${(i*dx).toFixed(1)} V${y(b)}`});$('#scope').setAttribute('d',d)};
+  const paint=()=>{const b=$('#sw');b.textContent=s;b.setAttribute('aria-pressed',s?'true':'false');$('#lamp').classList.toggle('on',!!s);$('#sw-text').textContent=s?'Bit = 1. About 1 V (volt), current flows.':'Bit = 0. Close to 0 V, no current flows.'};
+  $('#sw').addEventListener('click',()=>{s^=1;paint();if(calm){hist.push(s);hist.shift();draw()}});
+  paint();draw();
+  if(!calm)setInterval(()=>{if(cur==='bit'&&!document.hidden){hist.push(s);hist.shift();draw()}},120);
+  const seen=new Set();const f=$('#found');
+  for(let i=0;i<8;i++){const e=document.createElement('span');e.textContent='???';e.dataset.v=i;f.append(e)}
+  const mark=v=>{seen.add(v);const e=f.children[v];e.textContent=bits(v,3);e.classList.add('hit');
+    if(seen.size===8){say('#st-bit','Found: 8 of 8. 3 bits give 2 × 2 × 2 = 8 states.',true);done('bit')}else say('#st-bit',`Found: ${seen.size} of 8.`)};
+  const r=bitRow($('#three'),3,{places:false,onChange:mark});mark(r.get());
+})();
+
+/* Level 2 */
+(function(){
+  const targets=[42,7,200,129,99,16,255,73,150,31,64,170];let round=1,t=targets[Math.floor(Math.random()*targets.length)];
+  const paint=v=>{$('#num-val').textContent=v;$('#num-sum').textContent=v?`${terms(v)} = ${v}`:'All switched off, so 0.'};
+  const check=v=>{
+    paint(v);
+    if(round>3||v!==t)return;
+    if(round===3){round=4;say('#st-num',`Correct: ${terms(v)} = ${v}. All 3 rounds done.`,true);done('numbers');return}
+    say('#st-num',`Correct: ${terms(v)} = ${v}.`,true);
+    round++;let n=t;while(n===t||n===v)n=targets[Math.floor(Math.random()*targets.length)];t=n;
+    $('#num-target').textContent=t;$('#num-round').textContent=round;
+  };
+  const r=bitRow($('#num-bits'),8,{value:65,onChange:check});
+  $('#num-target').textContent=t;$('#num-round').textContent=round;paint(65);
+  $('#num-inc').addEventListener('click',()=>{const v=(r.get()+1)&255;r.set(v);check(v)});
+  $('#num-clr').addEventListener('click',()=>{r.set(0);check(0)});
+  const pow=()=>{const n=+$('#pow').value,v=2n**BigInt(n);$('#pow-n').textContent=n;$('#pow-val').textContent=v.toLocaleString('en-GB');
+    $('#pow-note').textContent=n===8?'That is 1 byte.':n===16?'That is how many values a 16-bit number has.':n===32?'That is how many addresses a 32-bit processor has. It is the limit of 4 GB (gigabytes) of memory.':n===64?'That is how many addresses a 64-bit processor has, about 18 quintillion.':`The largest number is ${(v-1n).toLocaleString('en-GB')}.`};
+  $('#pow').addEventListener('input',pow);pow();
+})();
+
+/* Level 3 */
+(function(){
+  const G=['NOT','AND','OR','XOR'];let g='AND',a=0,b=0;
+  const DESC={NOT:'NOT flips the bit. It has one input.',AND:'AND: the light is on when both switches are on.',OR:'OR: the light is on when at least one switch is on.',XOR:'XOR: like a two-way switch on a staircase. The light is on when the switches are set differently.'};
+  const c=v=>v?'var(--hi)':'var(--silk-dim)';
+  function svg(){
+    const out=g==='NOT'?gates.NOT(a):gates[g](a,b);
+    let body='';
+    if(g==='AND')body='<path d="M90 20H130A40 40 0 0 1 130 100H90Z"';
+    if(g==='OR')body='<path d="M85 20Q125 20 170 60Q125 100 85 100Q105 60 85 20Z"';
+    if(g==='XOR')body=`<path d="M72 20Q92 60 72 100" fill="none" stroke="var(--silk)" stroke-width="3"/><path d="M85 20Q125 20 170 60Q125 100 85 100Q105 60 85 20Z"`;
+    if(g==='NOT')body='<circle cx="168" cy="60" r="8" fill="var(--board-deep)" stroke="var(--silk)" stroke-width="3"/><path d="M90 25L158 60L90 95Z"';
+    body+=' fill="var(--board-deep)" stroke="var(--silk)" stroke-width="3"/>';
+    const txt='font-family="var(--f-mono)" font-size="16" font-weight="700"';
+    const wires=g==='NOT'
+      ?`<path d="M28 60H92" stroke="${c(a)}" stroke-width="4"/><text x="4" y="66" fill="${c(a)}" ${txt}>${a}</text>`
+      :`<path d="M28 40H100" stroke="${c(a)}" stroke-width="4"/><path d="M28 80H100" stroke="${c(b)}" stroke-width="4"/><text x="4" y="46" fill="${c(a)}" ${txt}>${a}</text><text x="4" y="86" fill="${c(b)}" ${txt}>${b}</text>`;
+    const xo=g==='AND'?170:g==='NOT'?176:170;
+    $('#g-svg').innerHTML=`<svg class="gate-svg" viewBox="0 0 280 120" role="img" aria-label="Gate ${g}, output ${out}">${wires}<path d="M${xo} 60H238" stroke="${c(out)}" stroke-width="4"/>${body}<text x="246" y="66" fill="${c(out)}" font-family="var(--f-mono)" font-size="20" font-weight="700">${out}</text></svg>`;
+    return out;
+  }
+  function paint(){
+    svg();
+    $('#g-a').textContent='A = '+a;$('#g-a').setAttribute('aria-pressed',a?'true':'false');
+    $('#g-b').textContent='B = '+b;$('#g-b').setAttribute('aria-pressed',b?'true':'false');$('#g-b').hidden=g==='NOT';
+    $('#g-desc').textContent=DESC[g];
+    $$('#g-pick .btn').forEach(x=>x.setAttribute('aria-pressed',x.textContent===g?'true':'false'));
+    let h=g==='NOT'?'<tr><th>A</th><th>Output</th></tr>':'<tr><th>A</th><th>B</th><th>Output</th></tr>';
+    if(g==='NOT')[0,1].forEach(x=>{h+=`<tr class="${x===a?'now':''}"><td>${x}</td><td>${gates.NOT(x)}</td></tr>`});
+    else [[0,0],[0,1],[1,0],[1,1]].forEach(([x,y])=>{h+=`<tr class="${x===a&&y===b?'now':''}"><td>${x}</td><td>${y}</td><td>${gates[g](x,y)}</td></tr>`});
+    $('#g-table').innerHTML=h;
+    if(g==='XOR'&&gates.XOR(a,b)===1){say('#st-gate','Yes. The switches are set differently, so XOR gives 1.',true);done('gates')}
+    else if(g==='XOR'&&prog.done.gates)say('#st-gate','The switches are set the same, so XOR gives 0.');
+  }
+  G.forEach(n=>{const x=document.createElement('button');x.type='button';x.className='btn';x.textContent=n;x.addEventListener('click',()=>{g=n;paint()});$('#g-pick').append(x)});
+  $('#g-a').addEventListener('click',()=>{a^=1;paint()});$('#g-b').addEventListener('click',()=>{b^=1;paint()});
+  paint();
+})();
+
+/* Level 4 */
+(function(){
+  let ha=1,hb=1;
+  function half(){
+    const r=gates.XOR(ha,hb),l=gates.AND(ha,hb);
+    [['#ha-a','A',ha],['#ha-b','B',hb]].forEach(([id,n,v])=>{$(id).textContent=`${n} = ${v}`;$(id).setAttribute('aria-pressed',v?'true':'false')});
+    $('#ha-res').textContent=`${ha} + ${hb} = ${l}${r}`;$('#ha-l').textContent=l;$('#ha-r').textContent=r;
+    $('#ha-msg').textContent=l?'1 + 1 is 2, and 2 written in bits is 10. You write 0, and the 1 moves on to the next column as a carry.':ha+hb?`The result is 1. Nothing moves on, so the left digit is 0.`:'The result is 0.';
+  }
+  $('#ha-a').addEventListener('click',()=>{ha^=1;half()});$('#ha-b').addEventListener('click',()=>{hb^=1;half()});half();
+})();
+(function(){
+  const N=4,MAX=2**N;
+  let A=5,B=3,step=null;const host=$('#adder');const cells={c:[],a:[],b:[],s:[]};
+  const lab=t=>{const e=document.createElement('span');e.className='cap';e.textContent=t;return e};
+  host.append(lab('Carry'));
+  for(let i=N-1;i>=0;i--){const e=document.createElement('span');e.className='cell carry';host.append(e);cells.c[i]=e}
+  const rowBits=(name,key)=>{host.append(lab(name));for(let i=N-1;i>=0;i--){const b=document.createElement('button');b.type='button';b.className='bit';b.setAttribute('aria-label',`${name}, bit worth ${2**i}`);
+    b.addEventListener('click',()=>{if(key==='a')A^=1<<i;else B^=1<<i;step=null;paint()});host.append(b);cells[key][i]=b}};
+  rowBits('A','a');rowBits('B','b');
+  host.append(lab('Sum'));
+  for(let i=N-1;i>=0;i--){const e=document.createElement('span');e.className='cell sum';host.append(e);cells.s[i]=e}
+  function paint(){
+    const r=add8(A,B,N),real=A+B,upto=step===null?N:step;
+    for(let i=0;i<N;i++){
+      const a=A>>i&1,b=B>>i&1,act=step!==null&&i===step-1;
+      cells.a[i].textContent=a;cells.a[i].setAttribute('aria-pressed',a?'true':'false');cells.a[i].classList.toggle('active',act);
+      cells.b[i].textContent=b;cells.b[i].setAttribute('aria-pressed',b?'true':'false');cells.b[i].classList.toggle('active',act);
+      cells.c[i].textContent=i<upto&&r.carries[i]?'1':'';
+      cells.s[i].textContent=i<upto?r.sum>>i&1:'';cells.s[i].classList.toggle('active',act);
+    }
+    $('#add-res').textContent=`${A} + ${B} = ${step!==null&&step<N?'?':r.sum}`;
+    const m=$('#add-msg');
+    if(step!==null&&step>0){const i=step-1,a=A>>i&1,b=B>>i&1,c=r.carries[i],n=a+b+c;m.textContent=`Column ${2**i}: ${[a,b,c].join(' + ')} = ${n}. Write ${n&1}, carry ${n>>1}.`}
+    else if(step===0)m.textContent='Start from the right-hand column. Press Next column.';
+    else m.textContent=r.overflow?`The true result is ${real}, but it does not fit in 4 bits. The bit worth ${MAX} falls off and ${r.sum} is left.`:'The result fits in 4 bits.';
+    const b=$('#add-step');b.textContent=step===null?'Step by step':step<N?`Next column (${step+1} of ${N})`:'Finish';
+    if(r.overflow){say('#st-add',`Overflow: ${A} + ${B} = ${real}, but 4 bits keep only ${r.sum}.`,true);done('adding')}
+  }
+  $('#add-step').addEventListener('click',()=>{step=step===null?0:step<N?step+1:null;paint()});
+  paint();
+})();
+
+/* Level 5 */
+(function(){
+  let A=5,B=3;
+  function paint(){
+    $('#mul-a').textContent=A;$('#mul-b').textContent=B;
+    let h='',sum=0;
+    for(let i=0;i<4;i++){const on=B>>i&1,v=on?A<<i:0;sum+=v;
+      h+=`<div class="mulrow${on?'':' off'}"><span class="mono">${bits(v,8)}</span><span class="small">${on?`Bit worth ${2**i} is 1: A × ${2**i} = ${v}`:`Bit worth ${2**i} is 0: skip`}</span></div>`}
+    h+=`<div class="mulrow total"><span class="mono">${bits(sum,8)}</span><span class="small">Sum: ${A} × ${B} = ${sum}</span></div>`;
+    $('#mul-rows').innerHTML=h;
+    if(sum===30){say('#st-mul',`Yes: ${A} × ${B} = 30.`,true);done('multiply')}
+  }
+  bitRow($('#mul-ba'),4,{value:A,onChange:v=>{A=v;paint()}});
+  bitRow($('#mul-bb'),4,{value:B,onChange:v=>{B=v;paint()}});
+  paint();
+})();
+
+/* Level 6 */
+(function(){
+  const enc=new TextEncoder(),t=$('#txt');
+  function paint(){
+    const list=[...t.value];let total=0,h='';
+    list.forEach(ch=>{const by=[...enc.encode(ch)];total+=by.length;
+      h+=`<div class="chr"><b>${ch===' '?'␣':esc(ch)}</b><span class="n">number ${ch.codePointAt(0)}</span>${by.map(x=>`<span>${bits(x,8)}</span>`).join('')}</div>`});
+    $('#chars').innerHTML=h||'<p class="small dim">Empty. Type something in the box above.</p>';
+    $('#txt-sum').textContent=`${list.length} ${list.length===1?'character':'characters'} · ${total} ${total===1?'byte':'bytes'} · ${total*8} bits`;
+    if(list.length===2&&total===3){say('#st-txt','Yes. Accented letters outside ASCII, such as é, take 2 bytes each.',true);done('text')}
+  }
+  t.addEventListener('input',paint);
+  $('#txt-case').addEventListener('click',()=>{const a=[...t.value];if(!a.length)return;const cp=a[0].codePointAt(0);if((cp>=65&&cp<=90)||(cp>=97&&cp<=122)){a[0]=String.fromCodePoint(cp^32);t.value=a.join('');paint()}else say('#st-txt','This trick only works for the letters A to Z.',false)});
+  paint();
+})();
+
+/* Level 7 */
+(function(){
+  const base=1000,mem=[110,111,114,98,101,114,116,0,44,1,65,73,0,7,255,0];let addr=1000,size=1;
+  const host=$('#ram');
+  mem.forEach((b,i)=>{const x=document.createElement('button');x.type='button';x.className='byte';x.innerHTML=`<i>${base+i}</i><span>${bits(b,8)}</span>`;x.addEventListener('click',()=>{addr=base+i;paint()});host.append(x)});
+  const seg=(hostId,items,get,set)=>items.forEach(([v,t])=>{const x=document.createElement('button');x.type='button';x.className='btn';x.textContent=t;x.dataset.v=v;x.addEventListener('click',()=>{set(v);paint()});$(hostId).append(x)});
+  seg('#ram-size',[[1,'1 byte'],[2,'2 bytes'],[4,'4 bytes']],()=>size,v=>size=+v);
+  function paint(){
+    const i=addr-base,end=i+size;
+    $$('.byte',host).forEach((x,k)=>x.classList.toggle('sel',k>=i&&k<end));
+    $$('#ram-size .btn').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===size?'true':'false'));
+    $('#ram-cmd').textContent=`Read ${size} ${size===1?'byte':'bytes'} from address ${addr}`;
+    if(end>mem.length){$('#ram-t').textContent='Outside memory';$('#ram-n').textContent='Outside memory';return}
+    const by=mem.slice(i,end);
+    $('#ram-n').textContent=by.reduce((s,b,k)=>s+b*256**k,0).toLocaleString('en-GB');
+    $('#ram-t').textContent=by.map(b=>b>=32&&b<127?String.fromCharCode(b):'·').join('');
+    if(addr===1007){say('#st-ram','Yes. After the letter t come only zeros, so the text ends here.',true);done('memory')}
+    else if(mem[i]===0)say('#st-ram','This is all zeros too, but the text ends earlier.',false);
+    else if(!prog.done.memory)say('#st-ram','');
+  }
+  paint();
+})();
+
+/* Level 8 */
+const cpuUI=(function(){
+  const PROGS={
+    add:{n:'7 + 5',m:{0:30,1:47,2:224,3:240,14:7,15:5}},
+    count:{n:'Countdown',m:{0:31,1:224,2:62,3:117,4:97,5:224,6:240,14:1,15:5}},
+    mul:{n:'3 × 4',m:{0:28,1:46,2:76,3:29,4:63,5:77,6:120,7:96,8:28,9:224,10:240,12:0,13:4,14:3,15:1}}
+  };
+  const toMem=m=>{const a=new Array(16).fill(0);Object.entries(m).forEach(([k,v])=>a[+k]=v);return a};
+  let origin='add',base=toMem(PROGS.add.m),s=newCpu(base),timer=null;
+  const host=$('#cpu-mem'),rows=[];
+  for(let a=0;a<16;a++){
+    const r=document.createElement('div');r.className='memrow';
+    const ad=document.createElement('span');ad.className='ad';ad.textContent=a;r.append(ad);
+    const bs=[];
+    for(let i=7;i>=0;i--){const b=document.createElement('button');b.type='button';b.className='bit';b.setAttribute('aria-label',`Address ${a}, bit worth ${2**i}`);
+      b.addEventListener('click',()=>{base[a]^=1<<i;s.mem[a]^=1<<i;paint()});r.append(b);bs[i]=b}
+    const v=document.createElement('span');v.className='val';r.append(v);
+    const m=document.createElement('span');m.className='asm';r.append(m);
+    host.append(r);rows[a]={r,bs,v,m};
+  }
+  function paint(){
+    rows.forEach((x,a)=>{const b=s.mem[a];for(let i=0;i<8;i++){const on=b>>i&1;x.bs[i].textContent=on;x.bs[i].setAttribute('aria-pressed',on?'true':'false')}
+      x.v.textContent=b;x.m.textContent=disasm(b);x.r.classList.toggle('pc',a===s.pc);x.r.classList.toggle('touch',a===s.read||a===s.wrote)});
+    $('#r-a').textContent=s.a;$('#r-pc').textContent=s.pc;$('#r-out').textContent=s.out.length?s.out.join(' '):'-';
+    $$('#cpu-progs .btn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===origin?'true':'false'));
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null}$('#cpu-run').textContent='Run'}
+  function step(){
+    const l=cpuStep(s);
+    if(!l){stop();return}
+    $('#s-f').textContent=l.fetch;$('#s-d').textContent=l.decode;$('#s-e').textContent=l.exec;
+    if(s.halted||s.steps>=300){stop();if(!s.halted)$('#s-e').textContent='Stopped after 300 steps. The program is going round in a loop.';check()}
+    paint();
+  }
+  function check(){
+    if(origin!=='add'||!s.halted)return;
+    const start=toMem(PROGS.add.m);let flips=0;base.forEach((b,i)=>{let x=b^start[i];while(x){flips+=x&1;x>>=1}});
+    if(s.out[0]===2&&flips===1){say('#st-cpu','Yes. ADD is 0010 and SUB is 0011. One bit turned adding into subtracting.',true);done('cpu')}
+    else if(s.out[0]===2)say('#st-cpu',`It works, but you changed ${flips} bits. It can be done with one.`,false);
+    else if(flips)say('#st-cpu',`The program printed ${s.out.length?s.out[0]:'nothing'}. Look at the list of instructions.`,false);
+  }
+  function reset(){stop();s=newCpu(base);$('#s-f').textContent='Press Step.';$('#s-d').textContent='';$('#s-e').textContent='';paint()}
+  function load(mem,key){base=Array.from(mem);origin=key;reset()}
+  Object.entries(PROGS).forEach(([k,p])=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=p.n;b.dataset.k=k;b.addEventListener('click',()=>load(toMem(p.m),k));$('#cpu-progs').append(b)});
+  $('#cpu-step').addEventListener('click',()=>{stop();step()});
+  $('#cpu-reset').addEventListener('click',reset);
+  $('#cpu-run').addEventListener('click',()=>{if(timer){stop();return}if(s.halted)reset();$('#cpu-run').textContent='Stop';timer=setInterval(()=>{if(cur!=='cpu'){stop();return}step()},calm?120:420)});
+  paint();
+  return{load};
+})();
+
+/* Level 9 */
+(function(){
+  const i=$('#cc-in');let last=null;
+  function paint(){
+    const r=compileExpr(i.value);last=r.error?null:r;
+    $('#cc-load').disabled=!last;
+    if(r.error){say('#cc-err',r.error,false);$('#cc-toks').textContent='';$('#cc-tab').innerHTML='';$('#cc-sum').textContent='';return}
+    say('#cc-err','');
+    $('#cc-toks').innerHTML='Tokens: '+r.toks.map(t=>`<b class="mono">[${esc(t==='-'?'−':t)}]</b>`).join(' ');
+    let h='<tr><th>Address</th><th>Instruction</th><th>Bits</th></tr>';
+    r.rows.forEach(x=>{h+=`<tr><td class="mono">${x.addr}</td><td class="mono">${x.note}</td><td class="mono">${bits(x.byte,8)}</td></tr>`});
+    $('#cc-tab').innerHTML=h;
+    $('#cc-sum').textContent=`${r.n} ${r.n===1?'number takes':'numbers take'} ${r.cells} cells: ${r.cells-r.n} for instructions and ${r.n} for data.`;
+    if(r.cells===10){say('#st-cc','Yes. 4 numbers make 6 instructions and 4 cells of data.',true);done('compiler')}
+  }
+  i.addEventListener('input',paint);
+  $('#cc-load').addEventListener('click',()=>{if(!last)return;cpuUI.load(last.mem,'cc');go('cpu')});
+  paint();
+})();
+
+/* Level 10 */
+(function(){
+  let c=newCache(),busy=false,res={};const host=$('#rams');
+  for(let a=0;a<32;a++){const b=document.createElement('button');b.type='button';b.className='rc';b.textContent=a;b.setAttribute('aria-label','Cell '+a);b.addEventListener('click',()=>{if(!busy){read(a)}});host.append(b)}
+  const cells=[...host.children];
+  function paint(hit){
+    cells.forEach((e,a)=>{e.classList.toggle('in',c.lines.includes(a>>2));e.classList.remove('hit','miss')});
+    if(hit!=null)cells[hit].classList.add(c.last);
+    $('#c-hit').textContent=c.hits;$('#c-miss').textContent=c.misses;$('#c-time').textContent=fmt(c.time)+' ns';
+  }
+  function read(a){cacheRead(c,a);paint(a)}
+  function bars(){const m=Math.max(res.seq||0,res.jump||0,1);['seq','jump'].forEach(k=>{$('#b-'+k).style.width=(res[k]||0)/m*100+'%';$('#n-'+k).textContent=res[k]?fmt(res[k])+' ns':'?'});
+    if(res.seq&&res.jump){say('#st-cache',`The same 32 reads. Jumping around took ${dec(res.jump/res.seq,1)} times longer.`,true);done('cache')}}
+  function run(order,key){
+    if(busy)return;c=newCache();paint();
+    const finish=()=>{res[key]=c.time;busy=false;$$('#c-seq,#c-jump').forEach(b=>b.disabled=false);bars()};
+    if(calm){order.forEach(a=>cacheRead(c,a));paint();finish();return}
+    busy=true;$$('#c-seq,#c-jump').forEach(b=>b.disabled=true);let i=0;
+    const t=setInterval(()=>{if(i>=order.length){clearInterval(t);finish();return}read(order[i++])},55);
+  }
+  $('#c-seq').addEventListener('click',()=>run([...Array(32).keys()],'seq'));
+  $('#c-jump').addEventListener('click',()=>run([...Array(32).keys()].map(i=>(i*13+7)%32),'jump'));
+  $('#c-clr').addEventListener('click',()=>{if(busy)return;c=newCache();paint()});
+  paint();
+})();
+
+/* Level 11 */
+(function(){
+  const F=[['#fl32','FP32',8,23],['#fl16','FP16',5,10],['#flb16','BF16',8,7]];
+  const show=v=>{if(!isFinite(v))return'too big';const a=Math.abs(v);return(a>=1e7||(a&&a<1e-4))?v.toExponential(4):String(+v.toPrecision(9))};
+  function paint(){
+    const {raw,x}=parseNum($('#fl-in').value);
+    if(raw===''||!isFinite(x)){$('#fl-err').textContent='Type a plain number, for example 0.7213.';return}
+    $('#fl-err').textContent='';let inf16=false,fin8=false;
+    F.forEach(([id,name,eb,mb])=>{const r=encodeFloat(x,eb,mb);
+      if(name==='FP16')inf16=!isFinite(r.value);if(name==='BF16')fin8=isFinite(r.value);
+      const cell=(s,k)=>[...s].map(b=>`<span class="fb ${k}">${b}</span>`).join('');
+      const err=isFinite(r.value)?'error '+Math.abs(r.value-x).toExponential(1):'out of range';
+      $(id).innerHTML=`<div class="flhead"><b>${name}: ${show(r.value)}</b><span class="mono dim">${err}</span></div><div class="fbits">${cell(r.s,'s')}${cell(r.e,'e')}${cell(r.m,'m')}</div>`});
+    say('#st-fl',inf16&&fin8?'FP16 stops at 65,504, while BF16 has a huge range at the cost of less precision.':'',inf16&&fin8?true:undefined);
+  }
+  $('#fl-in').addEventListener('input',paint);paint();
+  const cv=$('#q-c');
+  const sig=x=>.5+.34*Math.sin(x*Math.PI*3)+.12*Math.sin(x*Math.PI*8.6);
+  function draw(){
+    const n=+$('#q-n').value,L=2**n,dpr=window.devicePixelRatio||1,w=cv.clientWidth||300,h=cv.clientHeight||150;
+    $('#q-v').textContent=n;$('#q-t').textContent=`${fmt(L)} values. The gap between them is ${dec(1/(L-1),4)}. The copper line is what gets stored, and the light line is the true value.`;
+    if(n===7){say('#st-q','Yes. 7 bits give 128 values and a gap of 0.0079. 6 bits still give 0.0159.',true);done('fractions')}
+    if(cv.offsetParent===null)return;
+    cv.width=w*dpr;cv.height=h*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,w,h);
+    const cs=getComputedStyle(document.documentElement),Y=v=>h-8-v*(h-16);
+    g.strokeStyle=cs.getPropertyValue('--silk-dim').trim();g.lineWidth=2;g.beginPath();
+    for(let x=0;x<=w;x++){const y=Y(sig(x/w));x?g.lineTo(x,y):g.moveTo(x,y)}g.stroke();
+    g.strokeStyle=cs.getPropertyValue('--hi').trim();g.lineWidth=2.5;g.beginPath();
+    for(let x=0;x<=w;x++){const y=Y(Math.round(sig(x/w)*(L-1))/(L-1));x?g.lineTo(x,y):g.moveTo(x,y)}g.stroke();
+  }
+  $('#q-n').addEventListener('input',draw);addEventListener('resize',()=>{if(cur==='fractions')draw()});hooks.fractions=draw;draw();
+})();
+
+/* Level 12 */
+(function(){
+  function paint(){
+    const p=+$('#par').value,t=parTimes(p),m=Math.max(t.cpu,t.gpu);
+    $('#par-v').textContent=p+'%';
+    $('#t-cpu').style.width=t.cpu/m*100+'%';$('#t-gpu').style.width=t.gpu/m*100+'%';
+    $('#v-cpu').textContent=dec(t.cpu,3)+' s';$('#v-gpu').textContent=dec(t.gpu,3)+' s';
+    $('#par-msg').textContent=t.gpu<t.cpu?`The GPU wins, ${dec(t.cpu/t.gpu,1)} times faster.`:`The CPU wins, ${dec(t.gpu/t.cpu,1)} times faster.`;
+  }
+  $('#par').addEventListener('input',paint);
+  $('#par-check').addEventListener('click',()=>{const p=+$('#par').value;
+    if(p===97){say('#st-gpu','Yes. Even 3% of work that must run in order holds the GPU back. That is why the job has to be almost entirely parallel.',true);done('gpu')}
+    else if(parTimes(p).gpu<parTimes(p).cpu)say('#st-gpu','The GPU wins here, but it starts winning earlier. Move the slider left.',false);
+    else say('#st-gpu','The CPU still wins here. Move the slider right.',false)});
+  paint();
+})();
+
+/* Level 13 */
+(function(){
+  let seq=['cat'],calc=false;const W=TOY.W.map(r=>r.slice());
+  const f=(v,d=2)=>(v<0?'−':'')+dec(Math.abs(v),d);
+  function paint(){
+    const last=seq[seq.length-1],ended=last==='.';
+    $('#ai-sent').textContent=seq.join(' ');
+    const vec=ended?null:TOY.emb[last];
+    $('#ai-vec').textContent=ended?'sentence finished':`[${vec.map(v=>f(v,1)).join('; ')}]`;
+    const m=$('#ai-mat');
+    if(ended){m.innerHTML='';$('#ai-top').disabled=true;return}
+    $('#ai-top').disabled=false;
+    const r=toyForward(vec,W),pf=v=>v<0?`(${f(v,1)})`:f(v,1);
+    m.innerHTML=TOY.out.map((t,i)=>`<div class="airow"><button class="tok" type="button" data-t="${t}">${t==='.'?'full stop':t}</button><span class="bar"><i style="width:${r.probs[i]*100}%"></i></span><span class="mono">${Math.round(r.probs[i]*100)}%</span>${calc?`<span class="mono calc">${W[i].map((x,k)=>`${pf(x)} × ${f(vec[k],1)}`).join(' + ')} = ${f(r.scores[i])}</span>`:''}</div>`).join('');
+    $$('.tok',m).forEach(b=>b.addEventListener('click',()=>{seq.push(b.dataset.t);paint()}));
+    $('#ai-count').textContent='Each row above is the weights multiplied by these 3 numbers. That is 15 multiplications and 10 additions in total. At the end, the softmax function turns the results into percentages.';
+  }
+  $('#ai-calc').addEventListener('click',()=>{calc=!calc;$('#ai-calc').setAttribute('aria-pressed',calc?'true':'false');$('#ai-calc').textContent=calc?'Hide the maths':'Show the maths';$('#ai-more').hidden=!calc;paint()});
+  const check=()=>{const r=toyForward(TOY.emb.cat,W);
+    if(r.probs[1]>r.probs[0]){say('#st-ai',`Yes. After "cat" the model now gives "sleeps" ${Math.round(r.probs[1]*100)}% and "eats" ${Math.round(r.probs[0]*100)}%. That is one step of learning, except that training changes all the weights automatically.`,true);done('ai')}
+    else say('#st-ai','');};
+  $('#ai-top').addEventListener('click',()=>{const r=toyForward(TOY.emb[seq[seq.length-1]],W);seq.push(TOY.out[r.probs.indexOf(Math.max(...r.probs))]);paint()});
+  $('#ai-kot').addEventListener('click',()=>{seq=['cat'];paint()});
+  $('#ai-pies').addEventListener('click',()=>{seq=['dog'];paint()});
+  const wi=$('#ai-w');const wp=()=>{W[1][0]=+wi.value;$('#ai-wv').textContent=f(W[1][0],1);paint();check()};
+  wi.addEventListener('input',wp);wp();
+})();
+
+/* Practice */
+(function(){
+  const r=n=>Math.floor(Math.random()*n);let streak=0,task=null;
+  function gen(){
+    const w=Math.min(8,4+Math.floor(streak/3));
+    switch(['b2d','b2d','d2b','add','gate','pow','text','wrap'][r(8)]){
+      case'b2d':{const v=1+r(2**w-1);return{q:`What number is ${bits(v,w)}?`,ok:s=>s===String(v),why:`${bits(v,w)} is ${terms(v)} = ${v}.`,m:'numeric'}}
+      case'd2b':{const v=1+r(2**w-1);return{q:`Write ${v} in bits.`,ok:s=>/^[01]+$/.test(s)&&parseInt(s,2)===v,why:`${v} is ${bits(v,w)}, because ${terms(v)}.`,m:'numeric'}}
+      case'add':{const k=w-1,a=1+r(2**k-1),b=1+r(2**k-1);return{q:`${bits(a,w)} + ${bits(b,w)} = ? Answer in bits.`,ok:s=>/^[01]+$/.test(s)&&parseInt(s,2)===a+b,why:`${a} + ${b} = ${a+b}, which is ${bits(a+b,w)}.`,m:'numeric'}}
+      case'gate':{const a=r(2),b=r(2),g=['AND','OR','XOR','NOT'][r(4)];const v=g==='NOT'?gates.NOT(a):gates[g](a,b);return{q:g==='NOT'?`NOT ${a} = ?`:`${a} ${g} ${b} = ?`,ok:s=>s===String(v),why:`The result is ${v}.`,m:'numeric'}}
+      case'pow':{const n=1+r(10);return{q:`How many different values can you store in ${n} ${n===1?'bit':'bits'}?`,ok:s=>s.replace(/[\s,]/g,'')===String(2**n),why:`2 to the power of ${n} is ${fmt(2**n)}.`,m:'numeric'}}
+      case'text':{const t=['cat','bit','token','byte','chip','register'][r(6)];return{q:`How many bits does the word "${t}" take in ASCII?`,ok:s=>s===String(t.length*8),why:`${t.length} characters × 8 bits = ${t.length*8}.`,m:'numeric'}}
+      default:{const a=100+r(156),b=157+r(99);return{q:`${a} + ${b} in 8 bits. What is left?`,ok:s=>s===String((a+b)%256),why:`${a+b} − 256 = ${(a+b)%256}.`,m:'numeric'}}
+    }
+  }
+  function next(){task=gen();$('#d-q').textContent=task.q;$('#d-in').value=''}
+  function stats(){$('#d-streak').textContent=streak;$('#d-best').textContent=prog.best;$('#d-ok').textContent=prog.ok}
+  $('#d-form').addEventListener('submit',e=>{e.preventDefault();const s=$('#d-in').value.trim();if(!s)return;
+    if(task.ok(s)){streak++;prog.ok++;prog.best=Math.max(prog.best,streak);say('#d-st','Correct. '+task.why,true);if(prog.ok>=10)done('practice')}
+    else{streak=0;say('#d-st','Not quite. '+task.why,false)}
+    save();stats();next();$('#d-in').focus({preventScroll:true})});
+  stats();next();
+})();
+
+$$('#deck a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.getAttribute('href').slice(1))}));
+const start=location.hash.slice(1)||prog.last||'bit';
+go(CH.some(c=>c[0]===start)?start:'bit',false);
+paintRail();
+})();
+</script>
+<script src="/fx.js" defer></script>
+</body>
+</html>
