@@ -9,6 +9,7 @@ Materiał jest tylko po angielsku. Polska wersja została usunięta 13 paździer
 | Adres | Plik | Temat |
 |---|---|---|
 | `/training` | `training.html` | MAZOR AI Training v1.0: 8 modułów w 4 kategoriach, formaty 2h, pół dnia, cały dzień, ćwiczenia z kluczem, handout do druku, plan pilotażu. 19 sekcji, 9 dem. |
+| `/signal` | `signal.html` | Network. From Signal to Internet: jak prompt dociera z laptopa do modelu. Sygnał, sieć domowa i MAC, adres IP, router i NAT, DNS, TCP i porty, HTTPS, internet, tunele, cała podróż jednego promptu. 10 sekcji, 10 dem, w każdej polecenie do sprawdzenia na własnym komputerze. Stan na 2026-11-11. |
 | `/bit` | `bit.html` | 0. From Bit to Token. Prequel zakładki 1: od tranzystora do modelu językowego. 13 poziomów i trening, każdy poziom z zadaniem do przeklikania, postęp zapisany w przeglądarce. Własny wygląd (płytka drukowana), poziomy przełączane w miejscu, adres poziomu w `#`. |
 | `/` | `index.html` | 1. From Token to Answer. Jak działa model językowy, od tokena do produktu. 4 części po 5 kroków, 10 dem. |
 | `/agents` | `agents.html` | 2. From Task to Agent. Pętla, narzędzia, notatnik, uprawnienia, gdzie się psuje. 15 sekcji, 7 dem. |

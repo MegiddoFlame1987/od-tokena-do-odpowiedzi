@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="How a prompt travels from your laptop to a model: signal, home network, IP address, router and NAT, DNS, TCP and ports, HTTPS, the internet, tunnels. Training material with interactive demos.">
+<meta name="color-scheme" content="light dark">
+<title>From Signal to Internet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long column, max 760px, sticky part nav; every section = heading, one sentence, one demo, one "status" line */
+:root{
+  --bg:#F5F4F9;--fg:#1B1A26;--muted:#5F5D70;--line:#D9D7E4;--card:#FFFFFF;--soft:#ECEAF4;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--teal:#0F6E56;--teal-bg:#E1F5EE;--amber:#BA7517;--amber-bg:#FAEEDA;--coral:#993C1D;--coral-bg:#FAECE7;--gray:#5F5E5A;--gray-bg:#EDECE7;
+  --display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;--body:"Atkinson Hyperlegible",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15141C;--fg:#E8E6F0;--muted:#A5A2B8;--line:#2E2C3C;--card:#1E1D28;--soft:#262432;
+  --purple:#AFA9EC;--purple-bg:#26215C;--teal:#5DCAA5;--teal-bg:#04342C;--amber:#EF9F27;--amber-bg:#412402;--coral:#F0997B;--coral-bg:#4A1B0C;--gray:#B4B2A9;--gray-bg:#2C2C2A;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,7vw,56px);letter-spacing:-.02em}
+h2{font-size:clamp(24px,4.5vw,32px);margin:0 0 6px}
+h3{font-size:21px;margin:0 0 4px}
+p{margin:0 0 14px;max-width:62ch}
+a{color:var(--purple)}
+.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+.hero p.lead{font-size:19px;color:var(--muted);margin-top:16px}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:28px}
+.chain a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:13px;line-height:1.3}
+.chain a b{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.chain a:hover{border-color:var(--purple)}
+@media (max-width:640px){.chain{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ph{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:15px;margin:12px 0}.ph b{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}@media (max-width:520px){.ph{grid-template-columns:1fr}}
+nav.parts{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line);z-index:5;display:flex;gap:4px;overflow-x:auto;padding:8px 0;margin:0 -20px;padding-inline:20px}
+nav.parts a{flex:0 0 auto;font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 10px;border-radius:999px;border:1px solid transparent}
+nav.parts a:hover{border-color:var(--line);color:var(--fg)}
+.part{padding-top:56px}
+.part>header{margin-bottom:24px}
+.part>header .k{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
+.part>header p{color:var(--muted)}
+section.s{padding:28px 0 8px;border-top:1px solid var(--line)}
+section.s .k{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0 16px}
+.demo svg{width:100%;height:auto;display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.row label{font-size:14px;color:var(--muted);min-width:110px}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--purple)}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--purple)}
+button.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+textarea{width:100%;font:inherit;font-size:15px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);resize:vertical;min-height:72px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:15px;color:var(--muted);margin:10px 0 0}
+.out{font-size:16px;line-height:1.7;margin:10px 0 0}
+.chip{display:inline-block;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-size:14px;margin:2px 2px 2px 0;border:1px solid transparent}
+.c-purple{background:var(--purple-bg);color:var(--purple)}.c-teal{background:var(--teal-bg);color:var(--teal)}.c-amber{background:var(--amber-bg);color:var(--amber)}.c-coral{background:var(--coral-bg);color:var(--coral)}.c-gray{background:var(--gray-bg);color:var(--gray)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.tbl{overflow-x:auto}
+.status{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding:4px 12px;margin:8px 0 12px}
+.status b{color:var(--fg);font-weight:700}
+.bar{height:10px;border-radius:5px;background:var(--soft);overflow:hidden;display:flex}
+.dots{display:flex;gap:6px}.dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots span.on{background:var(--fg)}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+svg text{font-family:var(--body);font-size:13px;fill:var(--fg)}
+svg text.m{fill:var(--muted);font-size:12px}
+svg text.mono{font-family:var(--mono);font-size:12px}
+svg .ln{stroke:var(--muted);stroke-width:1;fill:none}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:pl 1.2s ease-in-out infinite}}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+/* --- added for this page --- */
+.back{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--purple)}
+.code{font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--soft);border-radius:8px;padding:12px 14px;margin:10px 0;white-space:pre-wrap;overflow-x:auto}
+.code .kk{color:var(--purple)}.code .vv{color:var(--teal)}
+.log{font-size:15px;line-height:1.55;margin:0;padding:0;list-style:none}
+.log li{padding:7px 0 7px 26px;border-bottom:1px solid var(--line);position:relative}
+.log li:last-child{border-bottom:0}
+.log li b.s{position:absolute;left:0;top:7px;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.pick{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chk{display:block;font-size:15px;padding:6px 0;cursor:pointer}
+.chk input{margin-right:9px;accent-color:var(--purple)}
+.verdict{font-family:var(--display);font-size:20px;font-weight:700;margin:4px 0 2px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:640px){.scroll svg{min-width:620px}.scroll::after{content:"← scroll →";display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:6px}}
+.chain.six{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:640px){.chain.six{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:420px){.chain.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tabs a:hover{color:var(--fg);border-color:var(--purple)}
+.tabs a[aria-current="page"]{color:var(--purple);border-color:var(--purple);background:var(--purple-bg)}
+/* --- added for /signal --- */
+.wave{fill:none;stroke:var(--purple);stroke-width:2.5;stroke-linejoin:round}
+.lit{fill:var(--amber)}.dark{fill:var(--soft);stroke:var(--line)}
+.inp{font:inherit;font-size:15px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);flex:1;min-width:180px}
+.inp:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.try{font-size:15px;margin:6px 0 12px;max-width:none}
+.try code,.note code{font-family:var(--mono);font-size:13px;background:var(--soft);padding:1px 6px;border-radius:5px;word-break:break-word}
+button:disabled{opacity:.45;cursor:default}
+</style>
+<link rel="stylesheet" href="/fx.css">
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <nav class="tabs" aria-label="Material tabs"><a href="/training" class="tab-train">Training</a><a href="/signal" aria-current="page">Network</a><a href="/bit">0 Bits</a><a href="/">1 Tokens</a><a href="/agents">2 Agents</a><a href="/workshop">3 Workshop</a><a href="/detection">4 Detection</a><a href="/news">5 News</a></nav>
+  <div class="k" style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--purple);margin-top:18px">TRAINING MATERIAL · NETWORK</div>
+  <h1>From Signal to Internet</h1>
+  <p class="lead">Every prompt you send to a model travels as a signal. It is a voltage in a cable, a flash of light in glass or a radio wave in the air. On the way it passes your router, your internet provider and several networks you have never heard of. This page follows that trip one step at a time. Two questions come up at every step: who can see your data here, and who can reach your computer.</p>
+  <p class="note" style="margin-top:16px">Each section ends with a command to try on your own computer. Every address in the demos comes from a range set aside for examples, so it never points at a real machine. State of play: 11 November 2026.</p>
+  <div class="chain">
+    <a href="#p1"><b>I</b>Signal</a><a href="#p2"><b>II</b>Address</a><a href="#p3"><b>III</b>Names and delivery</a><a href="#p4"><b>IV</b>On the way</a><a href="#p5"><b>V</b>The whole trip</a>
+  </div>
+</header>
+
+<nav class="parts" aria-label="Parts">
+  <a href="#p1">I Signal</a><a href="#p2">II Address</a><a href="#p3">III Names</a><a href="#p4">IV On the way</a><a href="#p5">V Whole trip</a><a href="#status">Status</a>
+</nav>
+
+<!-- ===================== I ===================== -->
+<div class="part" id="p1">
+<header><div class="k">Part I</div><h2>Signal</h2><p>A bit is only a 0 or a 1. To travel, it has to become something physical and reach the next box in the room.</p></header>
+
+<section class="s" id="s1">
+<div class="k">1 / 10</div><h3>A bit becomes a signal</h3>
+<p>The same bits look different in each medium. In copper they are a change of voltage, in glass a flash of light, in the air a change in a radio wave. Pick a medium and watch the same eight bits.</p>
+<div class="demo">
+  <div class="pick" id="sgB"></div>
+  <svg id="sgSvg" viewBox="0 0 640 130" role="img" aria-label="The bits 1 0 1 1 0 0 1 0 drawn as a signal"></svg>
+  <div class="verdict" id="sgT"></div>
+  <div class="ph" id="sgP"></div>
+</div>
+<p class="try"><b>Try it:</b> on Windows run <code>netsh wlan show interfaces</code>. It shows your Wi-Fi band, signal strength and link speed. On a Mac, hold Option and click the Wi-Fi icon.</p>
+<div class="status"><b>Verified:</b> copper Ethernet carries bits as voltage, fibre as pulses of light, Wi-Fi as changes in a radio wave (IEEE 802.3 and 802.11). One copper cable run is specified for up to 100 metres. <b>Simplified:</b> real links never send a plain on and off. They pack several bits into one change of the signal, which is why speeds are so high.</div>
+</section>
+
+<section class="s" id="s2">
+<div class="k">2 / 10</div><h3>Your home network: frames and MAC addresses</h3>
+<p>Inside your home, devices talk in frames. A frame is a small envelope with the sender and the receiver written on the outside. Those two labels are MAC addresses: a fixed address of each network card. Pick a device and send a frame to the router.</p>
+<div class="demo">
+  <div class="pick" id="frB"></div>
+  <div class="verdict" id="frT"></div>
+  <div class="ph" id="frP"></div>
+  <p class="note" id="frN"></p>
+</div>
+<p class="try"><b>Try it:</b> run <code>arp -a</code> on Windows, Mac or Linux. It lists the devices your computer talked to recently, with their MAC addresses.</p>
+<div class="status"><b>Verified:</b> a MAC address has 48 bits. In a factory address the first 24 bits name the maker of the card (IEEE). Phones now usually use a random MAC address for each Wi-Fi network, which makes them harder to follow. <b>Simplified:</b> the demo treats the router, the switch and the Wi-Fi point as one box. In most homes one box from the provider does all three jobs.</div>
+</section>
+</div>
+
+<!-- ===================== II ===================== -->
+<div class="part" id="p2">
+<header><div class="k">Part II</div><h2>Address</h2><p>A MAC address works only inside one network. To cross the internet, every packet needs an address the whole world understands, and a router that guards the door.</p></header>
+
+<section class="s" id="s3">
+<div class="k">3 / 10</div><h3>IP address: where on the internet</h3>
+<p>An IP address is the delivery address of a packet. A packet is one small piece of a message, with that address written on it. Your router gives private addresses to devices at home and holds one public address for the outside world. Type an address to see which kind it is.</p>
+<div class="demo">
+  <div class="row"><input class="inp" id="ipIn" type="text" inputmode="decimal" aria-label="IPv4 address" placeholder="192.168.1.1"><button type="button" id="ipGo">Check</button></div>
+  <div class="pick" id="ipPre"></div>
+  <div class="verdict" id="ipT"></div>
+  <div class="ph" id="ipP"></div>
+</div>
+<p class="try"><b>Try it:</b> run <code>ipconfig</code> on Windows, or <code>ip addr</code> on Linux, to see the private address of your computer. Then open the status page of your router and find its internet address (often called WAN). If it starts with 100.64 up to 100.127, your provider shares one public address between many customers.</p>
+<div class="status"><b>Verified:</b> an IPv4 address has 32 bits, about 4.3 billion addresses in total (RFC 791). The private ranges are fixed in RFC 1918, the range shared by providers in RFC 6598, the example ranges in RFC 5737. <b>Simplified:</b> the newer IPv6 has 128 bits, enough for every device to have its own public address (RFC 8200). Many networks now run both side by side. The demo checks only IPv4.</div>
+</section>
+
+<section class="s" id="s4">
+<div class="k">4 / 10</div><h3>NAT and the firewall: why the outside cannot knock</h3>
+<p>The whole home shares one public address. NAT is the trick that makes it work: the router keeps a table of which device inside started which conversation. An answer that matches a row comes in. Anything else is dropped. Start a few conversations, then let a stranger knock.</p>
+<div class="demo">
+  <div class="pick">
+    <button type="button" id="natL">Laptop calls the model API</button>
+    <button type="button" id="natPh">Phone opens a website</button>
+    <button type="button" id="natK22">Stranger knocks on port 22</button>
+    <button type="button" id="natK443">Stranger knocks on port 443</button>
+  </div>
+  <div class="pick">
+    <button type="button" id="natF" aria-pressed="false">Port forwarding 443 to home server: off</button>
+    <button type="button" id="natC">Clear table</button>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Inside</th><th>Public side</th><th>Talking to</th></tr></thead>
+    <tbody id="natRows"></tbody>
+  </table></div>
+  <p class="out" id="natOut"></p>
+</div>
+<p class="try"><b>Try it:</b> open the page of your router (often <code>http://192.168.1.1</code>) and find Port Mapping and DMZ. Both lists should be empty, unless you know exactly why a row is there.</p>
+<div class="status"><b>Verified:</b> NAT rewrites the address and port of outgoing packets and keeps a table to match the answers (RFC 3022). Port forwarding adds a permanent row for everyone. DMZ sends every packet without a row to one device. <b>Simplified:</b> in a real router the firewall and NAT are separate rules, shown here as one. <b>Practical:</b> nothing in this material needs a change in your router. The laptop, the mail check and the model API all call out.</div>
+</section>
+</div>
+
+<!-- ===================== III ===================== -->
+<div class="part" id="p3">
+<header><div class="k">Part III</div><h2>Names and delivery</h2><p>People remember names, machines need numbers. Then the message has to arrive whole, at the right program.</p></header>
+
+<section class="s" id="s5">
+<div class="k">5 / 10</div><h3>DNS: names into numbers</h3>
+<p>DNS is the phone book of the internet. You type a name and a resolver, a server that looks names up for you, asks a chain of servers: first the root, then the servers for the ending such as .com or .app, then the servers that own the name. If the name does not exist, the answer is NXDOMAIN. Type a name, or try the real typo below.</p>
+<div class="demo">
+  <div class="row"><input class="inp" id="dnIn" type="text" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Domain name" placeholder="from-token-to-answer.vercel.app"><button type="button" id="dnGo">Look up</button></div>
+  <div class="pick" id="dnPre"></div>
+  <ol class="log" id="dnLog"></ol>
+  <div class="verdict" id="dnT"></div>
+  <p class="note" id="dnN"></p>
+</div>
+<p class="try"><b>Try it:</b> run <code>nslookup from-token-to-answer.vercel.app</code>, then <code>nslookup from-token-to-answer.app</code>. The first gives an address. The second says the name does not exist.</p>
+<div class="status"><b>Verified:</b> DNS is a tree with the root at the top, read from the right end of the name (RFC 1034 and 1035). NXDOMAIN means the name does not exist. Answers are kept for a set time, so the full chain runs only on the first visit. <b>Simplified:</b> the addresses in the demo are made up. <b>Practical:</b> ordinary DNS questions are not encrypted, so your provider can see which names you look up, even when the page itself is locked.</div>
+</section>
+
+<section class="s" id="s6">
+<div class="k">6 / 10</div><h3>Packets, TCP and ports</h3>
+<p>A long message is cut into packets, and some get lost on the way. TCP numbers them, the receiver confirms what arrived and asks again for what is missing. UDP just sends and never asks. Send the same message both ways and lose one packet.</p>
+<div class="demo">
+  <div class="pick" id="tcB"></div>
+  <label class="chk"><input type="checkbox" id="tcLose" checked>Lose packet 3 on the way</label>
+  <div class="out" id="tcBox"></div>
+  <div class="ph" id="tcP"></div>
+  <p class="note">A port is a number that says which program on the machine a packet is for. Ports in this material: 443 for web pages and model APIs, 993 for reading mail over a locked connection, 53 for DNS, 22 for remote control of a server.</p>
+</div>
+<p class="try"><b>Try it:</b> on Windows run <code>netstat -an | find "ESTABLISHED"</code>. On a Mac or Linux run <code>netstat -an | grep ESTABLISHED</code>. Each line is one open conversation, with its ports.</p>
+<div class="status"><b>Verified:</b> TCP numbers the data, confirms receipt and sends again what was lost (RFC 9293). UDP sends without confirmation (RFC 768). Port numbers run from 0 to 65535. <b>Simplified:</b> TCP counts bytes, not whole packets, and opens every conversation with a three step handshake. The newer HTTP/3 runs over QUIC, which builds the same careful delivery on top of UDP (RFC 9000).</div>
+</section>
+</div>
+
+<!-- ===================== IV ===================== -->
+<div class="part" id="p4">
+<header><div class="k">Part IV</div><h2>On the way</h2><p>Between you and the model sit people and companies you do not know. Encryption decides what they can read. Distance decides how long you wait.</p></header>
+
+<section class="s" id="s7">
+<div class="k">7 / 10</div><h3>HTTPS: who sees what on the way</h3>
+<p>TLS is the lock behind the padlock icon and the S in HTTPS. It encrypts the content between your computer and the server. Everyone in between still sees that you are talking, to whom, when and how much. Pick a connection and a person on the route.</p>
+<div class="demo">
+  <div class="pick" id="tlP"></div>
+  <div class="pick" id="tlO"></div>
+  <div class="verdict" id="tlT"></div>
+  <div class="ph" id="tlPh"></div>
+</div>
+<p class="try"><b>Try it:</b> click the padlock or the site settings icon next to the address bar of your browser, then open the certificate. You see who issued it and until when it is valid.</p>
+<div class="status"><b>Verified:</b> TLS 1.3 encrypts everything after the opening handshake and checks the certificate of the server against a trusted authority (RFC 8446). The name of the site is usually sent in the clear at the start (SNI, RFC 6066). <b>Simplified:</b> encrypted DNS and newer extensions can hide the name, but they are not used everywhere yet. <b>Practical:</b> the rule from <a href="/workshop#s2">tab 3</a> still stands. The lock protects the road, not the destination.</div>
+</section>
+
+<section class="s" id="s8">
+<div class="k">8 / 10</div><h3>The internet is a network of networks</h3>
+<p>No single company runs the internet. Tens of thousands of separate networks agree to pass packets for each other. Distance still costs time, because light in glass covers about 200,000 kilometres per second. Move the slider to see the shortest possible round trip.</p>
+<div class="demo">
+  <div class="pick" id="dsPre"></div>
+  <div class="row"><label for="dsR">Distance</label><input type="range" id="dsR" min="10" max="20000" step="10" value="5570"><span class="num" id="dsV"></span></div>
+  <div class="verdict" id="dsT"></div>
+  <div class="ph" id="dsP"></div>
+</div>
+<p class="try"><b>Try it:</b> on Windows run <code>tracert from-token-to-answer.vercel.app</code>, on a Mac or Linux <code>traceroute from-token-to-answer.vercel.app</code>. Each line is one router on the way, with its delay. A line of stars is a router that chose not to answer.</p>
+<div class="status"><b>Verified:</b> networks swap routes with each other using BGP (RFC 4271). <b>Simplified:</b> the slider assumes one straight cable and no waiting inside routers, so real round trips are longer. The speed is rounded: light in glass travels at about two thirds of its speed in empty space. Most traffic between continents runs through cables on the sea floor, not satellites. <b>Logical:</b> where the data centre stands changes the delay you feel. An agent that runs fifty steps pays the round trip fifty times.</div>
+</section>
+</div>
+
+<!-- ===================== V ===================== -->
+<div class="part" id="p5">
+<header><div class="k">Part V</div><h2>The whole trip</h2><p>How to reach a machine at home without opening the door. Then one prompt, followed from the Enter key to the answer.</p></header>
+
+<section class="s" id="s9">
+<div class="k">9 / 10</div><h3>Tunnels and VPNs: reaching home without opening a door</h3>
+<p>A tunnel wraps your packets inside other, encrypted packets. A VPN is a private network built from such tunnels. Port forwarding opens a door in the router for the whole internet. A tunnel works the other way round: both devices call out first, so the router never has to open anything. Compare the two.</p>
+<div class="demo">
+  <div class="pick" id="tuB"></div>
+  <ol class="log" id="tuLog"></ol>
+  <div class="ph" id="tuP"></div>
+</div>
+<p class="try"><b>Try it:</b> if you use Tailscale, run <code>tailscale status</code>. It lists your devices with their 100.x addresses. That is the shared range from section 3, reused inside the private network.</p>
+<div class="status"><b>Verified:</b> Tailscale is built on WireGuard, which runs over UDP, and connects devices through NAT, with relays as a fallback when no direct path works (Tailscale documentation). <b>Simplified:</b> the coordination server knows which devices you have and their addresses, even though it cannot read the traffic. <b>Practical:</b> for reaching a home machine from outside, a tunnel is the safer default than an open port.</div>
+</section>
+
+<section class="s" id="s10">
+<div class="k">10 / 10</div><h3>One prompt, start to finish</h3>
+<p>Everything together, on one case: your laptop sends a prompt to a model in a data centre. Step through it and watch who could read the prompt at each step.</p>
+<div class="demo">
+  <div class="row"><button type="button" id="trPrev">Back</button><button type="button" id="trNext">Next</button><div class="dots" id="trDots" aria-hidden="true"></div></div>
+  <div class="verdict" id="trT"></div>
+  <div class="ph" id="trP"></div>
+  <p class="note" id="trN"></p>
+</div>
+<p class="try"><b>Try it:</b> open the developer tools of your browser (F12), choose the Network tab and reload this page. Each row is one request that made the full trip.</p>
+<div class="status"><b>Verified:</b> the order follows how browsers and API programs connect: DNS, then TCP or QUIC, then TLS, then the request. <b>Simplified:</b> the layers are not separate boxes in real life, and HTTP/3 joins steps 3 and 4 into one. The model address is made up. <b>Practical:</b> step 9 is the line that matters for work data. Everything before it is about the road. Everything after it is about the company you send to.</div>
+</section>
+</div>
+
+<!-- ===================== STATUS ===================== -->
+<div class="part" id="status">
+<header><div class="k">Finally</div><h2>What is verified and what is simplified</h2><p>All together. The mechanisms on this page change slowly, so most rows will hold for years.</p></header>
+<div class="tbl"><table>
+  <tr><th>Verified (standard or documentation)</th><th>Simplified or uncertain</th></tr>
+  <tr><td>Copper carries bits as voltage, fibre as light, Wi-Fi as radio</td><td>Real links pack many bits into one change of the signal</td></tr>
+  <tr><td>A MAC address has 48 bits, phones often use a random one per network</td><td>Router, switch and Wi-Fi point shown as one box</td></tr>
+  <tr><td>IPv4 has 32 bits, private and shared ranges are fixed in RFCs</td><td>The demo checks IPv4 only, not IPv6</td></tr>
+  <tr><td>NAT keeps a table and drops packets that match no row</td><td>Firewall and NAT are separate rules in a real router</td></tr>
+  <tr><td>DNS is a tree, NXDOMAIN means the name does not exist</td><td>Demo addresses are made up</td></tr>
+  <tr><td>TCP confirms and resends, UDP does not</td><td>TCP counts bytes, not packets</td></tr>
+  <tr><td>TLS hides the content, not who talks to whom</td><td>Hiding the site name is not used everywhere yet</td></tr>
+  <tr><td>Networks swap routes with BGP</td><td>The round trip assumes a straight cable</td></tr>
+  <tr><td>Tailscale uses WireGuard and relays as a fallback</td><td>The coordination server still knows your devices</td></tr>
+</table></div>
+<p class="note" style="margin-top:18px"><b style="color:var(--fg)">Sources:</b> <a href="https://www.rfc-editor.org/rfc/rfc791">RFC 791 IPv4</a> · <a href="https://www.rfc-editor.org/rfc/rfc1918">RFC 1918 private ranges</a> · <a href="https://www.rfc-editor.org/rfc/rfc6598">RFC 6598 shared range</a> · <a href="https://www.rfc-editor.org/rfc/rfc5737">RFC 5737 example ranges</a> · <a href="https://www.rfc-editor.org/rfc/rfc3022">RFC 3022 NAT</a> · <a href="https://www.rfc-editor.org/rfc/rfc1034">RFC 1034</a> and <a href="https://www.rfc-editor.org/rfc/rfc1035">RFC 1035 DNS</a> · <a href="https://www.rfc-editor.org/rfc/rfc9293">RFC 9293 TCP</a> · <a href="https://www.rfc-editor.org/rfc/rfc768">RFC 768 UDP</a> · <a href="https://www.rfc-editor.org/rfc/rfc9000">RFC 9000 QUIC</a> · <a href="https://www.rfc-editor.org/rfc/rfc8446">RFC 8446 TLS 1.3</a> · <a href="https://www.rfc-editor.org/rfc/rfc6066">RFC 6066 SNI</a> · <a href="https://www.rfc-editor.org/rfc/rfc4271">RFC 4271 BGP</a> · <a href="https://www.rfc-editor.org/rfc/rfc8200">RFC 8200 IPv6</a> · <a href="https://source.android.com/docs/core/connect/wifi-mac-randomization">Android MAC randomisation</a> · <a href="https://tailscale.com/kb/1257/connection-types">Tailscale: connection types</a> · <a href="https://www.wireguard.com/">WireGuard</a></p>
+</div>
+
+<footer>The network tab of the material. Next: <a href="/bit">From Bit to Token</a>, what happens to the bits inside the machine, and <a href="/">From Token to Answer</a>, how a model reads them. Changes as they happen: <a href="/news">News</a>.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+function hel(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+function clear(n){while(n&&n.firstChild)n.removeChild(n.firstChild);}
+function ph(node,rows){clear(node);rows.forEach(function(r){node.appendChild(hel('b',null,r[0]));node.appendChild(hel('div',null,r[1]));});}
+function $(id){return document.getElementById(id);}
+function group(host,list,cb){
+  clear(host);var bs=[];
+  list.forEach(function(item){
+    var b=hel('button',null,item[1]);b.type='button';b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false');});b.classList.add('on');b.setAttribute('aria-pressed','true');cb(item[0]);});
+    host.appendChild(b);bs.push(b);
+  });
+  return bs;
+}
+function steps(node,list){clear(node);list.forEach(function(t,i){var li=hel('li');li.appendChild(hel('b','s',String(i+1)));li.appendChild(document.createTextNode(t));node.appendChild(li);});}
+
+/* s1: a bit becomes a signal */
+(function(){
+  var bits=[1,0,1,1,0,0,1,0],svg=$('sgSvg');
+  var M={
+    copper:['Copper cable: high or low voltage',[['Changes','The voltage between two wires'],['Home speed','Usually 1 Gbit/s on a modern cable'],['Weak spot','About 100 metres per cable run']]],
+    fibre:['Fibre: light on or off',[['Changes','Light inside a thin thread of glass'],['Home speed','Up to the speed in your broadband contract'],['Weak spot','Sharp bends in the glass']]],
+    wifi:['Wi-Fi: a stronger or weaker radio wave',[['Changes','The shape of a radio wave, here its strength'],['Home speed','Depends on distance, walls and neighbours'],['Weak spot','Every device on the same channel shares the air']]]
+  };
+  function draw(k){
+    clear(svg);var x0=20,w=(640-40)/bits.length,i,d;
+    bits.forEach(function(b,j){svg.appendChild(el('text',{x:x0+j*w+w/2,y:124,'text-anchor':'middle','class':'mono'},String(b)));});
+    if(k==='copper'){
+      d='M'+x0+' '+(bits[0]?30:100);
+      for(i=0;i<bits.length;i++){var y=bits[i]?30:100;d+=' L'+(x0+i*w)+' '+y+' L'+(x0+(i+1)*w)+' '+y;}
+      svg.appendChild(el('path',{d:d,'class':'wave'}));
+      svg.appendChild(el('text',{x:4,y:34,'class':'m'},'+'));svg.appendChild(el('text',{x:4,y:104,'class':'m'},'0'));
+    }else if(k==='fibre'){
+      bits.forEach(function(b,j){svg.appendChild(el('rect',{x:x0+j*w+5,y:30,width:w-10,height:66,rx:8,'class':b?'lit':'dark'}));});
+    }else{
+      d='';var n=24;
+      for(i=0;i<bits.length;i++){var amp=bits[i]?38:10;for(var s=0;s<=n;s++){var x=x0+i*w+s*w/n,yy=65-amp*Math.sin(s/n*Math.PI*4);d+=(d?' L':'M')+x.toFixed(1)+' '+yy.toFixed(1);}}
+      svg.appendChild(el('path',{d:d,'class':'wave'}));
+    }
+    $('sgT').textContent=M[k][0];ph($('sgP'),M[k][1]);
+  }
+  group($('sgB'),[['copper','Copper cable'],['fibre','Fibre'],['wifi','Wi-Fi']],draw)[0].click();
+})();
+
+/* s2: frames and MAC addresses */
+(function(){
+  var router='02:5e:00:00:00:01';
+  var D={laptop:['Laptop','02:1a:4c:22:9f:10'],phone:['Phone','6a:31:07:be:42:c8'],tv:['TV','02:7c:11:05:3a:91'],printer:['Printer','02:44:d0:18:6e:02']};
+  function show(k){
+    $('frT').textContent=D[k][0]+' sends a frame to the router';
+    ph($('frP'),[['From (MAC)',D[k][1]],['To (MAC)',router+', the router'],['Inside','A packet for the internet, with IP addresses on it (section 3)'],['Who hears it','Every device in Wi-Fi range hears the radio. Only the one with the matching address keeps the frame, and modern Wi-Fi encrypts it.']]);
+    $('frN').textContent=k==='phone'?'This phone made up a random address for this Wi-Fi network. Another network sees a different one.':'The addresses in this demo are made up. In a real factory address the first half names the maker of the card.';
+  }
+  group($('frB'),[['laptop','Laptop'],['phone','Phone'],['tv','TV'],['printer','Printer']],show)[0].click();
+})();
+
+/* s3: IP address checker */
+(function(){
+  var inp=$('ipIn');
+  function parse(s){var m=/^\s*(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\s*$/.exec(s);if(!m)return null;var a=[+m[1],+m[2],+m[3],+m[4]];for(var i=0;i<4;i++){if(a[i]>255)return null;}return a;}
+  function kind(a){
+    var x=a[0],y=a[1],z=a[2];
+    if(x===10||(x===172&&y>=16&&y<=31)||(x===192&&y===168))return['Private','Works only inside one home or office network. Millions of homes reuse the same numbers, so on the internet it means nothing.','RFC 1918'];
+    if(x===100&&y>=64&&y<=127)return['Shared by your provider (CGNAT)','The provider puts many customers behind one public address. If your router shows this as its internet address, nobody outside can reach you through port forwarding. Tailscale also uses this range inside its own private network.','RFC 6598'];
+    if(x===127)return['This computer','A packet to this address never leaves the machine. Programs on one computer use it to talk to each other.','RFC 1122'];
+    if(x===169&&y===254)return['No answer from the router','The device asked for an address, got no reply and picked one itself. Usually a sign that the connection to the router is broken.','RFC 3927'];
+    if((x===192&&y===0&&z===2)||(x===198&&y===51&&z===100)||(x===203&&y===0&&z===113))return['Example only','Set aside for books and training material. It never points at a real machine. Every demo on this page uses it.','RFC 5737'];
+    if(x===0||x>=224)return['Special','Reserved for special jobs, such as sending to many devices at once. Not the address of one machine.','RFC 6890'];
+    return['Public','Reachable from the whole internet, unless a firewall blocks the way in. Every server you visit has one.','RFC 791'];
+  }
+  function run(v){
+    if(v!=null)inp.value=v;var a=parse(inp.value);
+    if(!a){$('ipT').textContent='Not an IPv4 address';ph($('ipP'),[['Format','Four numbers from 0 to 255 with dots between them, for example 192.168.1.1']]);return;}
+    var k=kind(a);$('ipT').textContent=k[0];
+    ph($('ipP'),[['Meaning',k[1]],['Rule',k[2]],['In bits',a.map(function(n){return('00000000'+n.toString(2)).slice(-8);}).join(' ')]]);
+  }
+  $('ipGo').addEventListener('click',function(){run();});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')run();});
+  ['192.168.1.1','100.72.10.5','203.0.113.20','127.0.0.1','8.8.8.8'].forEach(function(p){var b=hel('button',null,p);b.type='button';b.addEventListener('click',function(){run(p);});$('ipPre').appendChild(b);});
+  run('192.168.1.1');
+})();
+
+/* s4: NAT table */
+(function(){
+  var rows=[],fwd=false,port=40001,pub='203.0.113.7',tb=$('natRows'),out=$('natOut'),fb=$('natF');
+  function render(){
+    clear(tb);
+    if(!rows.length&&!fwd){var tr=hel('tr'),td=hel('td',null,'Empty. Nothing inside has called out yet.');td.colSpan=3;tr.appendChild(td);tb.appendChild(tr);}
+    rows.forEach(function(r){var tr=hel('tr');r.forEach(function(c){tr.appendChild(hel('td','num',c));});tb.appendChild(tr);});
+    if(fwd){var t2=hel('tr');t2.appendChild(hel('td','num','192.168.1.50:443'));t2.appendChild(hel('td','num',pub+':443'));t2.appendChild(hel('td',null,'Anyone on the internet'));tb.appendChild(t2);}
+  }
+  function call(inside,dest,what){var p=port++;rows.push([inside,pub+':'+p,dest]);out.textContent=what+' The router writes a row. The answer from '+dest+' matches it, so it comes back in.';render();}
+  function knock(n){
+    if(n===443&&fwd)out.textContent='A stranger at 192.0.2.66 knocks on port 443. The permanent row says: pass it to 192.168.1.50. The home server is now open to everyone, not only to you.';
+    else out.textContent='A stranger at 192.0.2.66 knocks on port '+n+'. No row matches, so the router drops the packet. Nothing inside even notices.';
+  }
+  $('natL').addEventListener('click',function(){call('192.168.1.23:'+(51544+rows.length),'198.51.100.10:443','The laptop calls the model API.');});
+  $('natPh').addEventListener('click',function(){call('192.168.1.42:'+(60312+rows.length),'198.51.100.80:443','The phone opens a website.');});
+  $('natK22').addEventListener('click',function(){knock(22);});
+  $('natK443').addEventListener('click',function(){knock(443);});
+  fb.addEventListener('click',function(){fwd=!fwd;fb.classList.toggle('on',fwd);fb.setAttribute('aria-pressed',String(fwd));fb.textContent='Port forwarding 443 to home server: '+(fwd?'on':'off');out.textContent=fwd?'A permanent row is added. It does not wait for anyone inside to call out.':'The permanent row is gone. Strangers are dropped again.';render();});
+  $('natC').addEventListener('click',function(){rows=[];out.textContent='Table cleared. Rows also expire by themselves after a few minutes of silence.';render();});
+  render();out.textContent='Pick an action above.';
+})();
+
+/* s5: DNS lookup */
+(function(){
+  var TLD={com:1,app:1,org:1,net:1};
+  var REG={'vercel.app':1,'example.com':1,'amd.com':1,'gmail.com':1};
+  var HOST={'from-token-to-answer.vercel.app':'198.51.100.24','api.tokenlab.amd.com':'198.51.100.31','imap.gmail.com':'198.51.100.45','www.example.com':'198.51.100.60','example.com':'198.51.100.60'};
+  var inp=$('dnIn');
+  function run(v){
+    if(v!=null)inp.value=v;
+    var name=inp.value.trim().toLowerCase().replace(/\.$/,'');
+    var log=$('dnLog'),T=$('dnT'),N=$('dnN');
+    if(!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(name)){clear(log);T.textContent='Not a valid name';N.textContent='A name is made of parts separated by dots, for example www.example.com.';return;}
+    var parts=name.split('.'),tld=parts[parts.length-1],dom=parts.slice(-2).join('.'),s=[];
+    s.push('Your computer asks the resolver: where is '+name+'? The resolver is usually run by your provider, or it is a public one such as 1.1.1.1.');
+    s.push('The resolver asks a root server: who handles names ending in .'+tld+'?');
+    if(!TLD[tld]){s.push('Root server: this demo knows no .'+tld+' ending. Answer: NXDOMAIN.');steps(log,s);T.textContent='NXDOMAIN: this name does not exist';N.textContent='The demo knows only .com, .app, .org and .net. Try nslookup for the real answer.';return;}
+    s.push('Root server: ask the .'+tld+' servers. The resolver asks them: who handles '+dom+'?');
+    if(!REG[dom]){s.push('The .'+tld+' servers: nobody has registered '+dom+'. Answer: NXDOMAIN.');steps(log,s);T.textContent='NXDOMAIN: this name does not exist';
+      N.textContent=name==='from-token-to-answer.app'?'A real mistake from the day this page was written. The site was up. The name was wrong: the real one ends in .vercel.app, so the browser showed DNS_PROBE_FINISHED_NXDOMAIN.':'Check the spelling. One wrong letter gives a different name, and most names are not registered.';return;}
+    s.push('The .'+tld+' servers: ask the servers of '+dom+'.');
+    if(!HOST[name]){s.push('The '+dom+' servers: there is no '+name+'. Answer: NXDOMAIN.');steps(log,s);T.textContent='NXDOMAIN: this name does not exist';N.textContent='The owner of '+dom+' exists, but never created this name.';return;}
+    s.push('The '+dom+' servers: '+name+' is at '+HOST[name]+'. The resolver keeps the answer for a while and passes it to your computer.');
+    steps(log,s);T.textContent='Found: '+HOST[name];N.textContent='Demo address. Run nslookup to see the real one.';
+  }
+  $('dnGo').addEventListener('click',function(){run();});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')run();});
+  ['from-token-to-answer.vercel.app','from-token-to-answer.app','api.tokenlab.amd.com','mail.example.com'].forEach(function(p){var b=hel('button',null,p);b.type='button';b.addEventListener('click',function(){run(p);});$('dnPre').appendChild(b);});
+  run('from-token-to-answer.vercel.app');
+})();
+
+/* s6: TCP and UDP */
+(function(){
+  var words=['Count','the stops','on line 3','this shift','and send','the total'],cur='tcp',lose=$('tcLose'),box=$('tcBox');
+  function send(){
+    clear(box);var l=lose.checked;
+    words.forEach(function(w,i){
+      var c='c-teal',t=(i+1)+' '+w;
+      if(l&&i===2){if(cur==='udp'){c='c-coral';t='3 lost';}else{c='c-amber';t='3 '+w+', sent again';}}
+      box.appendChild(hel('span','chip '+c,t));
+    });
+    if(!l)ph($('tcP'),[['Result','All 6 packets arrived. The message is complete.'],['Packets sent','6']]);
+    else if(cur==='udp')ph($('tcP'),[['Result','Packet 3 never arrived and nobody asks for it. The message reads: Count the stops ... this shift and send the total.'],['Packets sent','6'],['Good for','Calls and video. A late piece of sound is useless anyway.']]);
+    else ph($('tcP'),[['Result','The receiver confirms 1 and 2, notices that 3 is missing and asks again. Packet 3 is sent a second time. The message is complete.'],['Packets sent','7'],['Good for','Files, web pages and prompts. Every byte has to arrive.']]);
+  }
+  group($('tcB'),[['tcp','Send with TCP'],['udp','Send with UDP']],function(m){cur=m;send();})[0].click();
+  lose.addEventListener('change',send);
+})();
+
+/* s7: who sees what */
+(function(){
+  var S={
+    https:{cafe:['Usually yes','Yes','No. It is locked.'],isp:['Usually yes','Yes','No. It is locked.'],model:['Yes','Yes','Yes, all of it. It has to read the prompt to answer.']},
+    http:{cafe:['Yes','Yes','Yes, every word'],isp:['Yes','Yes','Yes, every word'],model:['Yes','Yes','Yes, every word']}
+  };
+  var N={cafe:'The owner of the cafe Wi-Fi',isp:'Your internet provider',model:'The model provider'};
+  var p='https',o='cafe';
+  function show(){
+    var r=S[p][o];
+    $('tlT').textContent=N[o]+(p==='https'?', on a locked connection':', on an open connection');
+    ph($('tlPh'),[['Site name',r[0]],['Your address and timing',r[1]],['Your prompt',r[2]],['In short',p==='https'?(o==='model'?'The lock opens here. What you send, this company reads.':'The lock protects the road. This person sees the envelope, not the letter.'):'Without the lock, everyone on the route can read everything.']]);
+  }
+  group($('tlP'),[['https','HTTPS, with the lock'],['http','HTTP, no lock']],function(k){p=k;show();})[0].click();
+  group($('tlO'),[['cafe','Cafe Wi-Fi'],['isp','Internet provider'],['model','Model provider']],function(k){o=k;show();})[0].click();
+})();
+
+/* s8: distance and delay */
+(function(){
+  var r=$('dsR');
+  function show(){
+    var km=+r.value,one=km/200,rt=km/100;
+    $('dsV').textContent=km.toLocaleString('en-GB')+' km';
+    $('dsT').textContent='At least '+rt.toFixed(1)+' ms there and back';
+    ph($('dsP'),[['One way','Light in glass needs '+one.toFixed(1)+' ms'],['Round trip','At least '+rt.toFixed(1)+' ms, before any router does any work'],['Fifty agent steps','At least '+(rt*50/1000).toFixed(2)+' s spent only on distance'],['You feel it',rt<20?'No. Far below what a person notices.':(rt<100?'Barely, in a single reply.':'Yes, in every step that waits for an answer.')]]);
+  }
+  [['Poole to London',150],['London to Frankfurt',640],['London to New York',5570],['London to Sydney',17000]].forEach(function(p){var b=hel('button',null,p[0]);b.type='button';b.addEventListener('click',function(){r.value=p[1];show();});$('dsPre').appendChild(b);});
+  r.addEventListener('input',show);show();
+})();
+
+/* s9: port forwarding or tunnel */
+(function(){
+  var M={
+    port:[['You add a rule in the router: port 443 goes to the home server.','The rule is open to every address on the internet, not only to you.','Automated scanners test public addresses all day, so the open port gets found.','Your phone connects to the public address of your home.','It works only if your provider gives you a public address. Behind a shared one (section 3) it fails.'],
+      [['Change in router','Yes, a permanent rule'],['Who can try to connect','Anyone on the internet'],['Works behind a shared provider address','No']]],
+    tunnel:[['The laptop and the phone each call out to a coordination server and register.','The server tells each device where the other one can be reached.','Both send packets to each other at the same moment, so each router sees an answer to its own call.','Traffic between them is encrypted with WireGuard.','If no direct path works, a relay passes the packets on. They stay encrypted end to end, so the relay cannot read them.'],
+      [['Change in router','None'],['Who can try to connect','Only your own registered devices'],['Works behind a shared provider address','Yes']]]
+  };
+  function show(k){steps($('tuLog'),M[k][0]);ph($('tuP'),M[k][1]);}
+  group($('tuB'),[['port','Port forwarding'],['tunnel','Tunnel (Tailscale, WireGuard)']],show)[1].click();
+})();
+
+/* s10: one prompt, start to finish */
+(function(){
+  var S=[
+    ['You press Enter','The app writes your prompt and its settings into a request, as text in JSON format.','Application','You and the app'],
+    ['Name into number','The laptop asks the resolver where api.model.example lives and gets 198.51.100.10 back.','Names (DNS, section 5)','Nobody yet. The prompt has not left. Your provider can see the name you looked up.'],
+    ['Open a conversation','TCP opens a conversation with port 443 of that address.','Transport (TCP, section 6)','Nobody'],
+    ['Lock the line','The server shows its certificate and both sides agree on keys. From now on the request is locked.','Security (TLS, section 7)','Only the two ends'],
+    ['Cut into packets','The locked request is cut into IP packets, each with the server address on it.','Network (IP, section 3)','Nobody on the route'],
+    ['Into the air','Wi-Fi turns every packet into radio frames for the router.','Link and signal (sections 1 and 2)','Nobody. The cafe owner sees only locked data.'],
+    ['Through the router','The router swaps your private address for the public one and writes a row in its table.','Router (NAT, section 4)','Nobody'],
+    ['Across the internet','The packets cross your provider and several other networks, maybe under the sea.','Internet (section 8)','Nobody. Each network sees addresses and sizes.'],
+    ['The lock opens','In the data centre the TLS lock opens and the request is read in full.','Application','The model provider, every word'],
+    ['The answer','The model cuts the text into tokens and writes an answer. It travels back the same way, locked.','Model','The model provider, then you']
+  ];
+  var i=0,dots=$('trDots');
+  S.forEach(function(){dots.appendChild(hel('span'));});
+  function show(){
+    var s=S[i];$('trT').textContent=(i+1)+'. '+s[0];
+    ph($('trP'),[['What happens',s[1]],['Layer',s[2]],['Who can read the prompt',s[3]]]);
+    Array.prototype.forEach.call(dots.children,function(d,j){d.classList.toggle('on',j<=i);});
+    $('trPrev').disabled=i===0;$('trNext').disabled=i===S.length-1;
+    var n=$('trN');clear(n);
+    if(i===S.length-1){n.appendChild(document.createTextNode('What happens inside the model: '));var a=hel('a',null,'From Bit to Token');a.href='/bit';n.appendChild(a);n.appendChild(document.createTextNode(' and '));var b=hel('a',null,'From Token to Answer');b.href='/';n.appendChild(b);n.appendChild(document.createTextNode('.'));}
+    else n.textContent='Step '+(i+1)+' of '+S.length+'.';
+  }
+  $('trPrev').addEventListener('click',function(){if(i>0){i--;show();}});
+  $('trNext').addEventListener('click',function(){if(i<S.length-1){i++;show();}});
+  show();
+})();
+})();
+</script>
+<script src="/fx.js" defer></script>
+</body>
+</html>
