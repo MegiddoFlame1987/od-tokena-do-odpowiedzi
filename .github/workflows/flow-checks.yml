@@ -1,0 +1,125 @@
+name: Flow checks
+
+# Mazor Studio Flow v1 (STUDIO-010). Canonical copy: MegiddoFlame1987/mozar-studio,
+# flow/ci/flow-checks.yml. `python flow/init.py <repo>` installs it, together with
+# flow/classify.py and flow/suppressions.py, through a pull request.
+#
+# This is the sandbox: agent-written code runs here, in Actions, never on Norbert's
+# laptop. The agent tool layer refuses to write `.github/workflows/`, and any change
+# to it is elevated and needs Norbert's GOVERNANCE accept, so a writer cannot edit
+# the gate that checks it.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: flow-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  flow-classify:
+    name: flow-classify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Decide the level from the changed paths
+        id: level
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 flow/classify.py \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --github-output "$GITHUB_OUTPUT"
+      - name: Put the level on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEVEL: ${{ steps.level.outputs.level }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -eu
+          other=standard
+          if [ "$LEVEL" = "standard" ]; then other=elevated; fi
+          gh api --method DELETE \
+            "repos/$GITHUB_REPOSITORY/issues/$NUMBER/labels/level:$other" >/dev/null 2>&1 || true
+          gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$NUMBER/labels" \
+            -f "labels[]=level:$LEVEL"
+      - name: Say what the level means
+        env:
+          LEVEL: ${{ steps.level.outputs.level }}
+          REASON: ${{ steps.level.outputs.reason }}
+        run: |
+          echo "### Flow level: \`$LEVEL\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "$REASON" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$LEVEL" = "elevated" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo 'Needs the comment line \`ACCEPT <TASK-ID> GOVERNANCE\` from Norbert.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  flow-suppressions:
+    name: flow-suppressions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Refuse new suppression comments
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 flow/suppressions.py \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}"
+
+  flow-tests:
+    name: flow-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Tests and linter, whatever this repository has
+        run: |
+          set -eu
+          ran=0
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+            if node -e "process.exit(require('./package.json').scripts?.lint?0:1)"; then
+              npm run lint; ran=1
+            fi
+            if node -e "process.exit(require('./package.json').scripts?.test?0:1)"; then
+              npm test; ran=1
+            fi
+          fi
+          for requirements in requirements.txt */requirements.txt; do
+            [ -f "$requirements" ] && pip install -r "$requirements"
+          done
+          if [ -f pyproject.toml ] || [ -f ruff.toml ] || [ -f .ruff.toml ]; then
+            pip install ruff && ruff check . && ran=1
+          fi
+          # unittest discovery does not walk plain directories, so run it per directory.
+          for suite in $(ls -d . */ 2>/dev/null); do
+            if ls "$suite"/test_*.py >/dev/null 2>&1; then
+              echo "tests: $suite"
+              PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$suite" -p "test_*.py"
+              ran=1
+            fi
+          done
+          if [ "$ran" = "0" ]; then
+            echo "No tests and no linter in this repository. Nothing to run." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
