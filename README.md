@@ -80,3 +80,7 @@ Może kiedyś: osobny moduł szkolenia o polityce AI w firmie (dla zarządu).
 - v7: tylko angielski. Strony z `en/` przeniesione do katalogu głównego, polskie usunięte (historia: znacznik `pl-v6.2`), przełącznik języka zdjęty, komentarze w `fx.js` i `fx.css` po angielsku, 7 przekierowań 301 w `vercel.json`.
 - v8: przebudowa zakładki 1. Sześć części i 22 sekcje zamienione na cztery części po pięć kroków. Każda sekcja zaczyna się od sytuacji znanej czytelnikowi, termin pada po niej. Przeładowana sekcja o treningu rozbita na dwie. Tabela łańcucha przepisana na nową kolejność.
 - v9: zakładka 0 `/bit` (From Bit to Token), angielska wersja kursu „Od bitu do tokena”: 13 poziomów i trening, adresy poziomów po angielsku (`#gates`, `#cpu`...). Zakładka 0 na pasku `nav.tabs` wszystkich stron.
+
+## Flow
+
+To repo chodzi po Flow studia v1; zasady opisuje [FLOW.md](FLOW.md) w korzeniu repo. Checki (poziom zmiany, blokada komentarzy wyciszających, testy i linter) chodzą w GitHub Actions.
